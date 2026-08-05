@@ -204,5 +204,43 @@
     "yeah I'm coming on Friday",
     "Nicole's coming too, she's fine",
     "I'll walk back with her like always"
+  ],
+  "cineScenes": [
+    {
+      "img": "assets/cinematic/school.jpg",
+      "height": "210px", "objX": "44%", "objY": "54%",
+      "panXStart": "8px", "panXEnd": "-8px", "scaleStart": 1.05, "scaleEnd": 1.1,
+      "caption": "Four years in the same class.", "dur": 6750
+    },
+    {
+      "img": "assets/cinematic/hallway.jpg",
+      "height": "300px", "objX": "62%", "objY": "40%",
+      "panXStart": "10px", "panXEnd": "-10px", "scaleStart": 1.06, "scaleEnd": 1.1,
+      "caption": "The kind of friend group nobody's really new to.", "dur": 7500
+    },
+    {
+      "img": "assets/cinematic/nicole.jpg",
+      "height": "300px", "objX": "32%", "objY": "32%",
+      "panXStart": "-6px", "panXEnd": "6px", "scaleStart": 1.04, "scaleEnd": 1.1,
+      "caption": "Nicole's been your best friend the whole time.", "dur": 9000
+    },
+    {
+      "img": "assets/cinematic/benito.jpg",
+      "height": "520px", "objX": "19%", "objY": "26%",
+      "panXStart": "4px", "panXEnd": "0px", "scaleStart": 1.03, "scaleEnd": 1.0,
+      "caption": "Her ex is in the group too. Nobody thinks about that.", "dur": 6000
+    },
+    {
+      "img": "assets/cinematic/walking.jpg",
+      "height": "340px", "objX": "50%", "objY": "44%",
+      "panXStart": "0px", "panXEnd": "0px", "scaleStart": 1.02, "scaleEnd": 1.1,
+      "caption": "She cuts through the park most days. You walk with her.", "dur": 9750
+    },
+    {
+      "img": "assets/cinematic/bedroom.jpg",
+      "height": "340px", "objX": "49%", "objY": "58%",
+      "panXStart": "0px", "panXEnd": "0px", "scaleStart": 1.0, "scaleEnd": 1.35,
+      "caption": "Then one Sunday night, your phone buzzes.", "dur": 8250
+    }
   ]
 }

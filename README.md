@@ -144,6 +144,10 @@ intentionally small. Behavior is split into these files:
 - `methods/audio.js`: microphone recording and playback
 - `methods/ending.js`: ending screens and final summaries
 - `methods/lifecycle.js`: mount, unmount, scrolling, and keyboard shortcuts
+- `methods/cinematic.js`: opening Ken Burns cinematic (narration, ambient pad,
+  scene playback/skip/mute)
+- `methods/notifications.js`: arrival toast/chime for new messages and the
+  phone-icon camera punch-in
 - `methods/render.js`: values passed from game state into the template
 
 Methods are regular object methods that use `this`. They are merged onto the
@@ -249,6 +253,8 @@ node --check src/game/methods/relationships.js
 node --check src/game/methods/audio.js
 node --check src/game/methods/ending.js
 node --check src/game/methods/lifecycle.js
+node --check src/game/methods/cinematic.js
+node --check src/game/methods/notifications.js
 node --check src/game/methods/render.js
 ```
 

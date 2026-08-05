@@ -37,6 +37,10 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     window.removeEventListener('keydown', this._keys);
     window.removeEventListener('beforeunload', this._bye);
     this.wipeAudio();
+    clearTimeout(this._n1); clearTimeout(this._n2);
+    clearTimeout(this._msgToastHide); clearTimeout(this._msgToastClear);
+    clearTimeout(this._camT); clearTimeout(this._cineT);
+    this.stopAmbient();
   },
 
   wipeAudio() {
