@@ -1,0 +1,117 @@
+{
+  "dayName": "Wednesday",
+  "start": 440,
+  "feeling": "Violation",
+  "threadSub": "27 members",
+  "deskLabel": "Day 3 · the account",
+  "deskTitle": "@n.krueger",
+  "url": "https://social.example/n.kruger",
+  "name": "The account with her name",
+  "truth": "Not her. A copy — her name, her photos, her bio word for word. Her real account was still there, four years of posts, silent since Monday.",
+  "tell": "the two profiles side by side — 52 posts and four years against 4 posts and this week",
+  "fake": true,
+  "volunteer": "that account isn't mine. look at how long it's been there. mine has four years on it.",
+  "chat": [
+    {
+      "who": "Hanna",
+      "text": "has anyone else seen this"
+    },
+    {
+      "who": "Hanna",
+      "kind": "shot",
+      "shot": "fake",
+      "caption": "Screenshot — a profile."
+    },
+    {
+      "who": "Mia",
+      "text": "those are her photos"
+    },
+    {
+      "who": "Hanna",
+      "text": "she made a second account?? after all that??"
+    },
+    {
+      "who": "Lea",
+      "text": "it commented on my post at 2am"
+    },
+    {
+      "who": "Mia",
+      "text": "wait she left the group yesterday though"
+    },
+    {
+      "who": "Mia",
+      "text": "that doesn't sound like her at all"
+    },
+    {
+      "who": "Lea",
+      "text": "...are we sure that one's hers"
+    },
+    {
+      "who": "Hanna",
+      "text": "everyone report it"
+    },
+    {
+      "who": "Mia",
+      "text": "report which one"
+    },
+    {
+      "who": "Hanna",
+      "text": "both. someone else can sort it out"
+    }
+  ],
+  "dm": [
+    {
+      "who": "Nicole",
+      "text": "{name} i don't know what to do"
+    }
+  ],
+  "checks": [
+    {
+      "id": "d3side",
+      "where": "computer",
+      "cost": 5,
+      "label": "Put the two accounts side by side",
+      "effect": "hint",
+      "sift": "coverage",
+      "result": "Nicole Kruger, @nicole_kruger, 52 posts since 2022. Nicole K., @n.kruger, 4 posts since this week. Same face on both."
+    },
+    {
+      "id": "d3foll",
+      "where": "computer",
+      "cost": 4,
+      "label": "Look at the followers",
+      "effect": "hint",
+      "sift": "investigate",
+      "result": "42 followers. All from your class. All followed this week. Her real account has 349, going back years."
+    },
+    {
+      "id": "d3write",
+      "where": "computer",
+      "cost": 6,
+      "label": "Compare the writing to her real captions",
+      "effect": "hint",
+      "sift": "coverage",
+      "result": "She never uses full stops and never capitalises. This account does both, every time."
+    },
+    {
+      "id": "d3rev",
+      "where": "computer",
+      "cost": 8,
+      "label": "Reverse search the profile photo",
+      "effect": "hint",
+      "sift": "trace",
+      "result": "Nothing. It exists nowhere else online — which is what a photo lifted from a private account looks like."
+    },
+    {
+      "id": "d3sam",
+      "where": "phone",
+      "thread": "dm",
+      "cost": 5,
+      "say": "is that account yours?",
+      "label": "Ask Nicole if the account is hers",
+      "effect": "confirm",
+      "sift": "investigate",
+      "result": "Nicole: that is not me. i deleted nothing. someone made that."
+    }
+  ]
+}

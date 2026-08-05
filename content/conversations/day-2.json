@@ -1,0 +1,82 @@
+{
+  "dayName": "Tuesday",
+  "start": 1095,
+  "feeling": "Anger",
+  "threadSub": "28 members",
+  "deskLabel": "Day 2 · the photo",
+  "deskTitle": "nicole_party.jpg",
+  "url": "file:///downloads/nicole_party.jpg",
+  "name": "The party photo",
+  "truth": "A completely real, unedited photo — from a party last July, reposted as if it were last night.",
+  "tell": "reverse search — the same photo posted in July",
+  "fake": false,
+  "volunteer": "that photo is from mia's birthday. july. i'm in my room.",
+  "chat": [
+    {
+      "who": "Hanna",
+      "kind": "photo",
+      "caption": "Nicole laughing, arm around someone, garden at night."
+    },
+    {
+      "who": "Hanna",
+      "text": "she's literally out partying rn"
+    },
+    {
+      "who": "Hanna",
+      "text": "nele is at home crying and she's doing THIS"
+    },
+    {
+      "who": "Hanna",
+      "text": "no shame at all"
+    },
+    {
+      "who": "Mia",
+      "text": "{name} you're close with her right?"
+    },
+    {
+      "who": "Hanna",
+      "text": "{name}?? hello???"
+    }
+  ],
+  "dm": [],
+  "checks": [
+    {
+      "id": "d2look",
+      "where": "computer",
+      "cost": 3,
+      "label": "Look at the photo properly",
+      "effect": "hint",
+      "sift": "coverage",
+      "result": "Short sleeves, bare arms, a garden at night without a coat in sight. It is November."
+    },
+    {
+      "id": "d2bg",
+      "where": "computer",
+      "cost": 4,
+      "label": "Look at the background",
+      "effect": "hint",
+      "sift": "coverage",
+      "result": "There is a banner on the wall behind her. Half of it is hidden, but it reads LAURA'S BIRTHDAY."
+    },
+    {
+      "id": "d2rev",
+      "where": "computer",
+      "cost": 8,
+      "label": "Reverse search the photo",
+      "effect": "confirm",
+      "sift": "trace",
+      "result": "Uploaded 14 July, 23:41. Same file, same pixels."
+    },
+    {
+      "id": "d2sam",
+      "where": "phone",
+      "thread": "dm",
+      "cost": 5,
+      "say": "were you out last night?",
+      "label": "Ask Nicole about the photo",
+      "effect": "confirm",
+      "sift": "investigate",
+      "result": "Nicole: I haven't left my room in two days"
+    }
+  ]
+}

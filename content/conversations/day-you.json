@@ -1,0 +1,66 @@
+{
+  "dayName": "Wednesday",
+  "start": 1335,
+  "feeling": "Recognition",
+  "threadSub": "27 members",
+  "deskLabel": "Day 3 · you",
+  "deskTitle": "clip_you.m4a",
+  "url": "file:///downloads/clip_you.m4a",
+  "name": "The clip of you",
+  "truth": "Your words, cut the way hers were. If you sent a voice message it is your actual voice, spliced. If you never sent one it is a screenshot of something you typed, cropped to end where it suits.",
+  "tell": "the same check you had all week — asking for the whole thing",
+  "fake": true,
+  "volunteer": "now you know. it takes four minutes and it never comes off.",
+  "chat": [],
+  "dm": [
+    {
+      "who": "Nicole",
+      "kind": "voice",
+      "dur": "0:09",
+      "audio": "splice",
+      "caption": ""
+    },
+    {
+      "who": "Nicole",
+      "text": "why do you say this about me??"
+    },
+    {
+      "who": "Nicole",
+      "text": "i thought we were friends"
+    }
+  ],
+  "checks": [
+    {
+      "id": "d4slow",
+      "item": 5,
+      "where": "computer",
+      "cost": 3,
+      "label": "Listen again, slowly",
+      "effect": "hint",
+      "sift": "coverage",
+      "result": "One phrase ends mid-word. It does not end — it stops."
+    },
+    {
+      "id": "d4cmp",
+      "item": 5,
+      "where": "computer",
+      "cost": 5,
+      "label": "Compare it to the original",
+      "effect": "confirm",
+      "sift": "trace",
+      "result": "Your voice note from Sunday is still in the group. Same words. Different order."
+    },
+    {
+      "id": "d4when",
+      "item": 5,
+      "where": "phone",
+      "thread": "dm",
+      "cost": 6,
+      "say": "when was that recorded?",
+      "label": "Ask when it was recorded",
+      "effect": "confirm",
+      "sift": "investigate",
+      "result": "Nicole: it says tonight. you sent one on sunday. it's the same one isn't it"
+    }
+  ]
+}

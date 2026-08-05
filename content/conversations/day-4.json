@@ -1,0 +1,75 @@
+{
+  "dayName": "Thursday",
+  "start": 980,
+  "feeling": "Certainty",
+  "threadSub": "27 members",
+  "deskLabel": "Day 4 · the voice",
+  "deskTitle": "voice_nicole.m4a",
+  "url": "file:///downloads/voice_nicole.m4a",
+  "name": "The voice message",
+  "truth": "A cloned voice. The AI checker that said “97% authentic” was simply wrong, and it was the most convincing thing anyone posted all week.",
+  "tell": "asking where she was — she was somewhere else, with people who saw her",
+  "fake": true,
+  "volunteer": "i was at mia's nan's tonight until ten. her whole family saw me.",
+  "chat": [
+    {
+      "who": "Hanna",
+      "kind": "voice",
+      "dur": "0:22",
+      "caption": "Nicole's voice: “…honestly I hope she never comes back to school.”"
+    },
+    {
+      "who": "Hanna",
+      "text": "her own voice. done."
+    },
+    {
+      "who": "Lea",
+      "text": "I feel sick"
+    },
+    {
+      "who": "Mia",
+      "text": "ran it through an AI checker: 97% authentic. it's her."
+    }
+  ],
+  "dm": [],
+  "checks": [
+    {
+      "id": "d5listen",
+      "where": "computer",
+      "cost": 5,
+      "label": "Listen closely, twice",
+      "effect": "hint",
+      "sift": "coverage",
+      "result": "No room. No breath between sentences. The pauses are all exactly the same length."
+    },
+    {
+      "id": "d5comp",
+      "where": "computer",
+      "cost": 6,
+      "label": "Compare it to her old voice notes",
+      "effect": "hint",
+      "sift": "coverage",
+      "result": "Her real notes trail off, laugh, restart. This one never does."
+    },
+    {
+      "id": "d5ai",
+      "where": "computer",
+      "cost": 7,
+      "label": "Run the AI checker yourself",
+      "effect": "none",
+      "sift": null,
+      "result": "97% AUTHENTIC. The bar is green. It tells you nothing you can rely on, and it feels like proof."
+    },
+    {
+      "id": "d5where",
+      "where": "phone",
+      "thread": "group",
+      "cost": 6,
+      "say": "where was nicole tonight? does anyone actually know?",
+      "label": "Ask where she was tonight",
+      "effect": "confirm",
+      "sift": "investigate",
+      "result": "Mia: she was at my nan's until 10, my whole family saw her"
+    }
+  ]
+}

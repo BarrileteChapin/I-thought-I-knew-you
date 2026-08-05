@@ -1,0 +1,208 @@
+{
+  "groupPrelude": [
+    {
+      "who": "Mia",
+      "text": "has anyone actually done the chem thing"
+    },
+    {
+      "who": "Hanna",
+      "text": "no lol"
+    },
+    {
+      "who": "Mia",
+      "text": "btw my birthday thing is the 14th, my place on cedar, everyone's invited"
+    },
+    {
+      "who": "Hanna",
+      "text": "🎉🎉"
+    },
+    {
+      "who": "Mia",
+      "text": "free food"
+    }
+  ],
+  "backstory": [
+    "Four years in the same class. Same people, same group chat, running almost the whole time.",
+    "Nicole's been your best friend since 7 years. You walk home together most days.",
+    "Her ex Benito is in 10b too. They were together eight months and it ended six months ago. It was bad for a while. It isn't really anymore.",
+    "It's Sunday evening. You're on your phone, and the chat is working out what everyone's doing next week."
+  ],
+  "messages": [
+    {
+      "who": "Hanna",
+      "text": "ok so next week"
+    },
+    {
+      "who": "Hanna",
+      "text": "someone decide something"
+    },
+    {
+      "who": "Mia",
+      "text": "bowling or billiards"
+    },
+    {
+      "who": "Mia",
+      "text": "my birthday thing is friday, my place on cedar, everyone's invited",
+      "slow": true
+    },
+    {
+      "who": "Nicole",
+      "text": "is your mum making that cake again"
+    },
+    {
+      "who": "Mia",
+      "text": "obviously"
+    },
+    {
+      "who": "Mia",
+      "text": "she started asking about it on monday, it's a whole thing now"
+    },
+    {
+      "who": "Nicole",
+      "text": "then yes"
+    },
+    {
+      "who": "Benito",
+      "text": "👍"
+    },
+    {
+      "who": "Mia",
+      "text": "nicole you coming to volleyball thursday"
+    },
+    {
+      "who": "Nicole",
+      "text": "yeah"
+    },
+    {
+      "who": "You",
+      "mine": true,
+      "text": "i'll walk back with her after, she cuts through the park like 5ish",
+      "slow": true
+    },
+    {
+      "who": "Nicole",
+      "text": "🙄 i'm FINE"
+    },
+    {
+      "who": "Hanna",
+      "text": "aw that's nice of you {name}"
+    },
+    {
+      "who": "Mia",
+      "text": "{name} do you prefer billiards or bowling?",
+      "slow": true
+    },
+    {
+      "who": "Mia",
+      "text": "just send a voice note 🎤",
+      "stop": true
+    },
+    {
+      "who": "You",
+      "mine": true,
+      "kind": "voice",
+      "dur": "0:10",
+      "audio": "real",
+      "rec": true,
+      "caption": "You, reading it out."
+    },
+    {
+      "who": "Mia",
+      "text": "bowling it is"
+    },
+    {
+      "who": "Hanna",
+      "text": "finally"
+    },
+    {
+      "who": "Mia",
+      "text": "😭"
+    }
+  ],
+  "dmHistory": [
+    {
+      "who": "Nicole",
+      "kind": "voice",
+      "dur": "0:22",
+      "caption": "",
+      "old": true
+    },
+    {
+      "who": "Nicole",
+      "text": "ok that was too long sorry",
+      "old": true
+    },
+    {
+      "who": "You",
+      "mine": true,
+      "text": "it was 22 seconds",
+      "old": true
+    },
+    {
+      "who": "Nicole",
+      "text": "felt long",
+      "old": true
+    },
+    {
+      "who": "Nicole",
+      "text": "just saw a dog in a knitted hat. it looked furious",
+      "old": true
+    },
+    {
+      "who": "Nicole",
+      "text": "no context. goodnight",
+      "old": true
+    },
+    {
+      "who": "You",
+      "mine": true,
+      "text": "goodnight",
+      "old": true
+    },
+    {
+      "who": "Nicole",
+      "kind": "voice",
+      "dur": "0:09",
+      "caption": "",
+      "old": true
+    },
+    {
+      "who": "Nicole",
+      "text": "that one was short. respect me",
+      "old": true
+    },
+    {
+      "who": "Nicole",
+      "text": "are you bringing the good pens tomorrow or the bad ones",
+      "old": true
+    },
+    {
+      "who": "You",
+      "mine": true,
+      "text": "the bad ones obviously",
+      "old": true
+    },
+    {
+      "who": "Nicole",
+      "text": "😔",
+      "old": true
+    },
+    {
+      "who": "System",
+      "sys": true,
+      "text": "Monday",
+      "old": true
+    }
+  ],
+  "recordingLines": [
+    "I prefer bowling",
+    "I can come after volleyball",
+    "see you there"
+  ],
+  "recordingLinesOld": [
+    "no I haven't done the chemistry yet",
+    "yeah I'm coming on Friday",
+    "Nicole's coming too, she's fine",
+    "I'll walk back with her like always"
+  ]
+}

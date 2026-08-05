@@ -1,0 +1,85 @@
+{
+  "dayName": "Monday",
+  "start": 1300,
+  "feeling": "Disgust",
+  "threadSub": "28 members",
+  "deskLabel": "Day 1 · the video",
+  "deskTitle": "IMG_4471.mp4",
+  "url": "file:///downloads/IMG_4471.mp4",
+  "name": "The video of Nicole",
+  "truth": "Real footage, cut. In the full 40-second version she is repeating, disgusted, something an older student said. One sentence was removed from the front.",
+  "tell": "asking Mia, who was standing there when it happened",
+  "fake": true,
+  "volunteer": "someone recorded longer than that clip. it starts in the middle.",
+  "chat": [
+    {
+      "who": "Hanna",
+      "kind": "video",
+      "caption": "Nicole, filmed at a party: “…she's honestly the most pathetic person in our year.”"
+    },
+    {
+      "who": "Hanna",
+      "text": "yo WHAT"
+    },
+    {
+      "who": "Mia",
+      "text": "💀💀"
+    },
+    {
+      "who": "Lea",
+      "text": "wow. I thought I knew her"
+    },
+    {
+      "who": "Hanna",
+      "text": "sending this to the other groups"
+    }
+  ],
+  "dm": [
+    {
+      "who": "Nicole",
+      "text": "please tell me you don't believe this"
+    }
+  ],
+  "checks": [
+    {
+      "id": "d1slow",
+      "where": "computer",
+      "cost": 5,
+      "label": "Watch it again, slowly",
+      "effect": "hint",
+      "sift": "coverage",
+      "result": "At 0:00 the sentence starts mid-word. “—thetic person in our year.” Something came before it."
+    },
+    {
+      "id": "d1rev",
+      "where": "computer",
+      "cost": 8,
+      "label": "Reverse search the video",
+      "effect": "none",
+      "sift": "trace",
+      "result": "No matches found. This file doesn't appear anywhere else online."
+    },
+    {
+      "id": "d1jonas",
+      "where": "phone",
+      "thread": "group",
+      "cost": 2,
+      "say": "who filmed that?",
+      "label": "Ask who filmed it",
+      "effect": "hint",
+      "sift": "investigate",
+      "result": "Hanna: idk that's how I got it"
+    },
+    {
+      "id": "d1mia",
+      "where": "phone",
+      "thread": "group",
+      "cost": 6,
+      "say": "mia you were there — is that what she actually said?",
+      "label": "Ask Mia, she was at that party",
+      "effect": "confirm",
+      "sift": "investigate",
+      "result": "Mia: that's not what happened, someone else said that"
+    }
+  ]
+}

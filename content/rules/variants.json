@@ -1,0 +1,42 @@
+{
+  "2": [
+    null,
+    {
+      "fake": true,
+      "volunteer": "that photo isn't even me. look at the hands.",
+      "results": {
+        "d2look": "The shadow under her arm falls the wrong way. The light is coming from two directions at once.",
+        "d2bg": "The banner behind her repeats. The same letter, twice, forty pixels apart.",
+        "d2rev": "No earlier copy anywhere. The file was created eleven hours ago.",
+        "d2sam": "Nicole: that isn't a photo of me. i don't own that dress."
+      }
+    }
+  ],
+  "3": [
+    null,
+    {
+      "fake": false,
+      "volunteer": "i know how it looks. i wrote all of it. i was so angry.",
+      "results": {
+        "d3side": "Same handle she has always had. Same four years of posts behind it.",
+        "d3foll": "Four hundred followers, going back years. Nothing new this week.",
+        "d3write": "No full stops, no capitals. It reads exactly like her.",
+        "d3rev": "The profile photo is on her old blog, from 2022.",
+        "d3sam": "Nicole: yes that's mine. i said those things. i was angry."
+      }
+    }
+  ],
+  "4": [
+    null,
+    {
+      "fake": false,
+      "volunteer": "i said it. i'd had the worst day and i said it.",
+      "results": {
+        "d5listen": "Room tone. A chair moving. She breathes in the middle of the third sentence.",
+        "d5comp": "It trails off and restarts the way her real notes do.",
+        "d5ai": "97% AUTHENTIC. The bar is green. It tells you nothing you can rely on either way.",
+        "d5where": "Mia: she wasn't with us tonight. i don't know where she was."
+      }
+    }
+  ]
+}

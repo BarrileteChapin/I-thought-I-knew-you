@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1B4FE0">
+  <title>I Thought I Knew You</title>
+  <link rel="stylesheet" href="./styles/design-system.css">
+  <link rel="stylesheet" href="./styles/game.css">
+  <script src="./assets/vendor/react.production.min.js"></script>
+  <script src="./assets/vendor/react-dom.production.min.js"></script>
+  <script src="./src/game/methods/core.js"></script>
+  <script src="./src/game/methods/lifecycle.js"></script>
+  <script src="./src/game/methods/audio.js"></script>
+  <script src="./src/game/methods/intro.js"></script>
+  <script src="./src/game/methods/relationships.js"></script>
+  <script src="./src/game/methods/actions.js"></script>
+  <script src="./src/game/methods/days.js"></script>
+  <script src="./src/game/methods/ending.js"></script>
+  <script src="./src/game/methods/render.js"></script>
+  <script src="./src/data/load-game-data.js"></script>
+  <script>
+    // The original bundle resolves these paths through its asset manifest.
+    // The organized version serves the same assets directly from GitHub Pages.
+    window.__R = function (assetPath) { return assetPath; };
+  </script>
+</head>
+<body>
+  <div id="app-loading" role="status">Loading...</div>
+  <script>
+    (async function bootOrganizedGame() {
+      const loading = document.getElementById('app-loading');
+
+      function setError(message) {
+        if (loading) {
+          loading.textContent = message;
+          loading.style.color = '#8A1C1C';
+        }
+        console.error('[game] ' + message);
+      }
+
+      async function readSource(path) {
+        const response = await fetch(path);
+        if (!response.ok) throw new Error(path + ' returned HTTP ' + response.status);
+        return response.text();
+      }
+
+      try {
+        await window.loadGameData();
+
+        const [template, logic] = await Promise.all([
+          readSource('./src/template/app-template.html'),
+          readSource('./src/game/game-logic.js')
+        ]);
+
+        const root = document.createElement('x-dc');
+        root.innerHTML = template;
+
+        const logicScript = document.createElement('script');
+        logicScript.type = 'text/x-dc';
+        logicScript.dataset.dcScript = '';
+        logicScript.dataset.props = JSON.stringify({
+          accent: {
+            editor: 'color',
+            default: '#1B4FE0',
+            tsType: 'string',
+            options: ['#1B4FE0', '#1B4FE0', '#111111']
+          },
+          nightIntensity: {
+            editor: 'range',
+            default: 1,
+            min: 0.4,
+            max: 1.6,
+            step: 0.1,
+            tsType: 'number'
+          },
+          showClock: { editor: 'boolean', default: true, tsType: 'boolean' }
+        });
+        logicScript.textContent = logic;
+        root.appendChild(logicScript);
+
+        document.body.replaceChildren(root);
+
+        const runtime = document.createElement('script');
+        runtime.src = './src/runtime/dc-runtime.js';
+        runtime.onerror = () => setError('Could not load the React component runtime.');
+        document.head.appendChild(runtime);
+      } catch (error) {
+        setError('Could not load the game source: ' + error.message);
+      }
+    }());
+  </script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+{
+  "1": [
+    {
+      "id": "dm1a",
+      "label": "Reply: “I don't believe it. what actually happened?”",
+      "say": "i don't believe it. what actually happened?",
+      "reply": "thank you. i've been sat here all night",
+      "sam": 10,
+      "reason": "— you answered her"
+    },
+    {
+      "id": "dm1b",
+      "label": "Ask what actually happened",
+      "say": "tell me what actually happened",
+      "reply": "someone said something vile and i repeated it back at them. that's it.",
+      "sam": 8,
+      "reason": "— you asked her"
+    },
+    {
+      "id": "dm1c",
+      "label": "Say you'll call her",
+      "say": "i'll call you in a bit",
+      "reply": "ok. please do",
+      "sam": 12,
+      "reason": "— you offered to call"
+    }
+  ],
+  "2": [
+    {
+      "id": "dm2a",
+      "label": "Tell her about the photo",
+      "say": "tim posted a photo of you at a party",
+      "reply": "i know. it's from july.",
+      "sam": 8,
+      "reason": "— you told her"
+    },
+    {
+      "id": "dm2b",
+      "label": "Ask if she's ok",
+      "say": "are you ok",
+      "reply": "no. but thanks for asking",
+      "sam": 8,
+      "reason": "— you asked how she was"
+    },
+    {
+      "id": "dm2c",
+      "label": "Ask where she was last night",
+      "say": "where were you last night?",
+      "reply": "my room. same as the night before.",
+      "sam": 4,
+      "reason": "— you asked her to account for herself"
+    }
+  ],
+  "3": [
+    {
+      "id": "dm3a",
+      "label": "Tell her about the account",
+      "say": "there's an account going round with your name on it",
+      "reply": "i know. i can't get it taken down. it's not mine.",
+      "sam": 10,
+      "reason": "— you told her"
+    },
+    {
+      "id": "dm3b",
+      "label": "Ask who has her old photos",
+      "say": "who else has your old photos?",
+      "reply": "you. mia. him.",
+      "sam": 6,
+      "reason": "— you asked her"
+    },
+    {
+      "id": "dm3c",
+      "label": "Ask if she's alright",
+      "say": "are you alright",
+      "reply": "not really",
+      "sam": 8,
+      "reason": "— you asked how she was"
+    },
+    {
+      "id": "dm3d",
+      "clip": true,
+      "label": "“that's my voice but I never said that”",
+      "say": "that's my voice but i never said that",
+      "reply": "i know what i heard",
+      "sam": 4,
+      "reason": "— you answered her"
+    },
+    {
+      "id": "dm3e",
+      "clip": true,
+      "needs": 5,
+      "label": "“someone cut up my voice note from sunday”",
+      "say": "someone cut up my voice note from sunday",
+      "reply": "oh. oh god. that's what they did to me on monday",
+      "sam": 14,
+      "reason": "— you showed her how it was done"
+    },
+    {
+      "id": "dm3f",
+      "clip": true,
+      "label": "“I don't know what that is”",
+      "say": "i don't know what that is",
+      "reply": "ok",
+      "sam": -4,
+      "reason": "— you answered her"
+    }
+  ],
+  "4": [
+    {
+      "id": "dm5a",
+      "label": "Tell her you don't believe the voice message",
+      "say": "that voice message isn't you",
+      "reply": "no. it isn't.",
+      "sam": 10,
+      "reason": "— you told her you believed her"
+    },
+    {
+      "id": "dm5b",
+      "label": "Ask where she was tonight",
+      "say": "where were you tonight?",
+      "reply": "at mia's nan's. her whole family saw me.",
+      "sam": 6,
+      "reason": "— you asked her"
+    },
+    {
+      "id": "dm4a",
+      "label": "Send her what you found",
+      "say": "i found where it was cut. i can show you",
+      "reply": "send it. please.",
+      "sam": 12,
+      "reason": "— you sent her what you found"
+    },
+    {
+      "id": "dm4b",
+      "label": "Ask her to compare it to your old voice notes",
+      "say": "compare it to the voice notes i've sent you before",
+      "reply": "it's the same words. different order. i can hear it now",
+      "sam": 10,
+      "reason": "— you asked her to compare"
+    },
+    {
+      "id": "dm5c",
+      "label": "Ask if she wants you to say something",
+      "say": "do you want me to say something in the group?",
+      "reply": "i don't know. maybe.",
+      "sam": 8,
+      "reason": "— you asked what she wanted"
+    }
+  ]
+}
