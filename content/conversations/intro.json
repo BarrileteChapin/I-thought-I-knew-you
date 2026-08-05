@@ -234,13 +234,13 @@
       "img": "assets/cinematic/walking.jpg",
       "height": "340px", "objX": "50%", "objY": "44%",
       "panXStart": "0px", "panXEnd": "0px", "scaleStart": 1.02, "scaleEnd": 1.1,
-      "caption": "She cuts through the park most days. You walk with her.", "dur": 9750
+      "caption": "You and her cut through the park most days. You walk and chat with her.", "dur": 9750
     },
     {
       "img": "assets/cinematic/bedroom.jpg",
       "height": "340px", "objX": "49%", "objY": "58%",
       "panXStart": "0px", "panXEnd": "0px", "scaleStart": 1.0, "scaleEnd": 1.35,
-      "caption": "Then one Sunday night, your phone buzzes.", "dur": 8250
+      "caption": "Then one Sunday night, your phone buzzes and makes you question everything...", "dur": 8250
     }
   ]
 }
