@@ -1,5 +1,9 @@
 window.GameMethods = Object.assign(window.GameMethods || {}, {
   componentDidMount() {
+    if (this.LLM_CHAT_ENABLED) {
+      console.log('[chat-llm] preloading chat model');
+      this.ensureLlm(false);
+    }
     this._bye = () => this.wipeAudio();
     window.addEventListener('pagehide', this._bye);
     this._keys = (e) => {
@@ -33,6 +37,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   },
 
   componentWillUnmount() {
+    this._chatGeneration = (this._chatGeneration || 0) + 1;
     window.removeEventListener('pagehide', this._bye);
     window.removeEventListener('keydown', this._keys);
     window.removeEventListener('beforeunload', this._bye);

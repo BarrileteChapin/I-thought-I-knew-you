@@ -70,6 +70,7 @@ Content editors should normally work only in `content/`.
 - `content/conversations/day-4.json`: Thursday voice scenario
 - `content/conversations/day-you.json`: later clip involving the player
 - `content/conversations/dm-options.json`: Nicole private-message choices
+- `content/chat_context.md`: day-specific context for typed chat replies
 
 A normal message looks like this:
 
@@ -137,6 +138,8 @@ intentionally small. Behavior is split into these files:
 
 - `methods/core.js`: day lookup, formatting, avatars, relationship tiers, and
   selectors
+- `methods/chat-llm.js`: local chat model loading, prompts, typed replies, and
+  fallbacks
 - `methods/actions.js`: player actions, investigation checks, time, and scoring
 - `methods/days.js`: day transitions and day cards
 - `methods/intro.js`: name entry and introduction flow
@@ -265,4 +268,3 @@ all referenced IDs still exist. Then manually verify the affected game path:
 
 Check the browser console for failed fetches, missing assets, template errors,
 and runtime errors.
-
