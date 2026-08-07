@@ -475,8 +475,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       msgToastY: st.msgToastVisible ? '0px' : '-14px',
       msgToastWho: st.msgToast ? st.msgToast.who : '',
       msgToastText: st.msgToast ? st.msgToast.text : '',
-      msgToastInitial: st.msgToast ? (st.msgToast.kind === 'dm' ? 'N' : '🍕') : '',
-      msgToastDotBg: st.msgToast && st.msgToast.kind === 'dm' ? C.accent : C.ink,
+      msgToastAvatar: st.msgToast ? (st.msgToast.avatar || this.faceOf(st.msgToast.kind === 'dm' ? 'Nicole' : 'Hanna')) : '',
       msgToastLeft: (st.day === 3 && st.phase === 'morning') ? 'var(--hot-toast-am-l)' : 'var(--hot-toast-l)',
       msgToastTop: (st.day === 3 && st.phase === 'morning') ? 'var(--hot-toast-am-t)' : 'var(--hot-toast-t)',
       msgToastTipLeft: (st.day === 3 && st.phase === 'morning') ? 'auto' : '38px',
@@ -513,7 +512,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
        chatTyping: st.chatBusy || (st.tab === 'dm' && st.dmGhostTyping),
       dmSilenceLine: st.tab === 'dm' && tier === 'gone'
         ? (st.day <= 4 ? 'She hasn' + "'" + 't opened this since Wednesday.' : 'Still nothing.') : '',
-      samColor: st.samDead ? C.inkMuted : this.barColor(st.sam, 'accent'), groupColor: this.barColor(st.group, 'accent'),
+      samColor: st.samDead ? C.inkMuted : this.barStatusColor(st.sam), groupColor: this.barStatusColor(st.group),
       samOpacity: st.flashSam ? 1 : (st.samDead ? 0.55 : 0.9),
       tipSamOpen: st.tip === 'sam', tipGroupOpen: st.tip === 'group',
       tipOpen: st.tip !== null,
@@ -875,12 +874,18 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       isMoves: st.screen === 'end' && st.endStep === 5,
       isLastCard: st.screen === 'end' && st.endStep === 6,
       isInvitation: st.screen === 'end' && st.endStep === 7,
+      showEndBack: st.screen === 'end' && st.endStep > 1,
       alwaysTrue: true,
       nextSection: () => {
         const n = this.state.endStep + 1;
         console.log('[endingScreen] ' + this.state.endStep + ' → ' + n);
         this.setState({ endStep: n });
         if (n === 6) { this.setState({ replayShown: false }); setTimeout(() => this.setState({ replayShown: true }), 3000); }
+      },
+      prevSection: () => {
+        const n = Math.max(1, this.state.endStep - 1);
+        console.log('[endingScreen] ' + this.state.endStep + ' → ' + n);
+        this.setState({ endStep: n });
       },
       dmCloseSub: (st.samDead ? 'locked' : st.sam < 35 ? 'low' : 'high') === 'locked' ? 'last seen Wednesday' : 'last seen Thursday',
       dmCloseMsgs: st.dm.slice(-8).map((m, k) => ({

@@ -107,6 +107,10 @@
   /* Breakpoints (media queries must repeat the px value; keep in sync) */
   --bp-desktop: 768px;
 
+  /* Phone shell size */
+  --frame-w: 100%;
+  --frame-h: 100dvh; /* mobile: fill viewport (falls back via max-height) */
+
   /* Radius */
   --r-xs: 3px;
   --r-sm: 8px;
@@ -155,11 +159,11 @@
   --hot-phone-am-l: 61%;
   --hot-phone-am-t: 50%;
   --hot-phone-am-w: 25%;
-  /* Message toast above phone (evening vs Wed morning) */
-  --hot-toast-l: 16.5%;
-  --hot-toast-t: 60%;
-  --hot-toast-am-l: 28%;
-  --hot-toast-am-t: 55%;
+  /* Message toast anchored above phone (same % box as hotspots) */
+  --hot-toast-l: 17%;
+  --hot-toast-t: 56%;
+  --hot-toast-am-l: 30%;
+  --hot-toast-am-t: 50%;
 
   /* Brand / action */
   --c-accent: #1B4FE0;
@@ -212,6 +216,7 @@
   --c-white-fog: rgba(255, 255, 255, .85);
   --c-white-sheet: rgba(255, 255, 255, .94);
   --c-white-bloom: rgba(255, 255, 255, .95);
+  --c-tooltip: rgba(255, 255, 255, .82);
   --c-black: #000000;
   --c-black-soft: rgba(0, 0, 0, .2);
   --c-black-mid: rgba(0, 0, 0, .35);
@@ -234,14 +239,18 @@
   --c-danger: #E01B1B;
   --c-danger-deep: #D62B2B;
   --c-danger-dark: #8A1C1C;
+  --c-warning: #D97706;
+  --c-safe: #1A7A5C;
 
   /* Legacy warm tint */
   --c-warm-soft: rgba(242, 177, 92, .10);
 }
 
-/* Desktop: rounded phone shell (keep min-width in sync with --bp-desktop) */
+/* Desktop: phone mockup size + rounded shell (keep min-width in sync with --bp-desktop) */
 @media (min-width: 768px) {
   :root {
+    --frame-w: 390px;
+    --frame-h: 844px;
     --r-frame: 32px;
   }
 }
@@ -363,4 +372,29 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 16px;
   font-weight: 700;
   text-align: left;
+}
+
+.g-btn-footer-row {
+  display: flex;
+  gap: 10px;
+}
+
+.g-btn-footer-row .g-btn-footer {
+  width: auto;
+  flex: 1;
+}
+
+.g-btn-footer-back {
+  flex: 1;
+  background: transparent;
+  color: var(--c-ink);
+  border: 1px solid var(--c-line);
+  padding: 15px 22px;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.g-btn-footer-back:hover {
+  border-color: var(--c-accent);
 }

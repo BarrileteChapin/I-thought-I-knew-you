@@ -58,6 +58,13 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     return 'rgb(' + c.join(',') + ')';
   },
 
+  /* Discrete bar status: danger <35, warning <65, else safe */
+  barStatusColor(v) {
+    if (v < 35) return 'var(--c-danger)';
+    if (v < 65) return 'var(--c-warning)';
+    return 'var(--c-safe)';
+  },
+
   samTier(v) {
     const s = v === undefined ? this.state.sam : v;
     if (this.state.samDead || this.state.samSilent || s < 16) return 'gone';
