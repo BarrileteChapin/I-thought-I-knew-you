@@ -343,6 +343,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
     const s = st.stats;
     const dayClutter = st.day;
+    const savedGame = st.screen === 'title' ? this.readSavedGame() : null;
 
     return {
       colors: C,
@@ -865,6 +866,11 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
 
       start: () => this.setState({ screen: 'name', nameDraft: '' }, () => { const el = this.nameRef.current; if (el) el.focus(); }),
+      hasSave: !!savedGame,
+      savePlayerName: this.savedPlayerName(savedGame),
+      saveProgressLabel: this.describeSave(savedGame),
+      continueGame: () => this.continueGame(),
+      startOver: () => this.startOver(),
       isNameEntry: st.screen === 'name', nameDraft: st.nameDraft, nameRef: this.nameRef,
       onNameChange: (e) => this.setState({ nameDraft: e.target.value.replace(/[^A-Za-z \-]/g, '').slice(0, 16) }),
       onNameKey: (e) => { if (e.key === 'Enter') this.submitName(); },
@@ -917,6 +923,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
           setTimeout(() => this.setState({ dmGhostTyping: false }), 4400);
         }
       },
+      backToTitle: () => { this.saveGame(); this.setState({ screen: 'title', confirmSleep: false }); },
 
       backToRoom: () => {
         const owed = st.dm.some(m => !m.mine && !m.sys && m.today);
@@ -943,23 +950,14 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       },
       cancelSleep: () => this.setState({ confirmSleep: false }),
       doSleep: () => this.endDay(),
-      restart: () => this.setState({
-        screen: 'title', day: 1, min: this.DAYS[1].start, done: {}, used: {},
-        hints: { 1: [], 2: [], 3: [], 4: [], 5: [] }, certainty: { 1: 'unchecked', 2: 'unchecked', 3: 'unchecked', 4: 'unchecked', 5: 'unchecked' },
-        credibility: 0, credibilityLost: false, voiceSent: false, reason: '',
-        pStage: -1, introLine: 0, introMsg: 0, introTyping: false, introReady: false, samSilent: false,
-        dmCloseTyping: false, dmCloseExtra: null, dmCloseReady: false, variant: Math.floor(Math.random() * 2),
-        replayShown: false, postedWed: false,
-        recOpen: false, recPhase: 'intro', recIdx: 0, recBusy: false, recLevel: 0, hasRecording: false, recTrying: false, recAttempts: 0, recTrying: false, recAttempts: 0,
-        minCheck: 0, minReact: 0, postsWith: 0, postsWithout: 0, dmChances: 0, endStep: 1, gamePhase: 'playing',
-        apology: false, reported: false, clipBack: false, phase: 'evening', sharedCount: 3,
-        profMenuOpen: false, reportReasonOpen: false, reportToast: false, reportedAccounts: {}, reportedFake: false,
-        actedToday: false, openedGroup: false, ignored: false, dmAnsweredToday: false,
-        shareTick: 0, shareHalved: false, fading: false, tool: 'player', socTab: 'feed', socProfileKey: null, socPostId: null, mediaOpen: null, seen: {}, zoom: false, dev: null, threadOpen: null, galleryNew: false, chatFlash: false,
-    writeIn: false, writeText: '', writeStatus: null, dragItem: null, pickIdx: null, pickerOpen: false, pickerMode: 'search', searched: {}, aiPickIdx: null, aiStage: 'idle', aiStep: 0, actionLog: [], reactionTimes: [],
-        final: { post: null, fwd: null, tell: null }, sam: 50, group: 50, pushIdx: 0, flashSam: false, flashGroup: false, samDead: false,
-        stats: { forwards: 0, reacts: 0, checks: 0, fast: 0, dmAnswered: 0, believed: 0, dismissed: 0, stopped: 0, fastest: null, sift: { investigate: 0, coverage: 0, trace: 0 } }
-      })
+      restart: () => {
+        clearTimeout(this._saveTimer);
+        clearTimeout(this._it);
+        clearTimeout(this._dc);
+        this.clearSavedGame();
+        this.wipeAudio();
+        this.setState(this.freshGameState({ screen: 'title' }));
+      }
     };
   }
 });
