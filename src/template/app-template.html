@@ -754,11 +754,22 @@
           <div style="display:flex;align-items:center;gap:7px;">
             <textarea value="{{ chatDraft }}" placeholder="{{ chatPlaceholder }}" sc-camel-on-input="{{ onChatDraft }}" sc-camel-on-key-down="{{ onChatKey }}" sc-camel-max-length="{{ 160 }}" rows="{{ 1 }}" style="flex:1;min-width:0;resize:none;border:1px solid #E4E4E4;border-radius:12px;background:#FFFFFF;color:#111111;font-family:inherit;font-size:15px;line-height:1.35;padding:10px 12px;outline:none;"></textarea>
             <button sc-camel-on-click="{{ sendChat }}" disabled="{{ chatSendDisabled }}" style="flex:0 0 auto;background:#1B4FE0;border:0;border-radius:12px;color:#FFFFFF;padding:10px 13px;font-size:14px;font-weight:600;min-height:42px;opacity:{{ chatSendOpacity }};">{{ chatSendLabel }}</button>
-            <sc-if value="{{ actionsToggleVisible }}" hint-placeholder-val="{{ false }}">
-              <button sc-camel-on-click="{{ toggleActions }}" title="More actions" style="flex:0 0 auto;width:32px;height:32px;border:0;background:transparent;color:#6B6B6B;padding:0;font-size:15px;line-height:1;">...</button>
-            </sc-if>
+            <button sc-camel-on-click="{{ tipChatTap }}" title="How to chat" style-after="content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:44px;height:44px;" style="position:relative;flex:0 0 auto;width:32px;height:32px;border:0;background:transparent;padding:0;line-height:0;display:flex;align-items:center;justify-content:center;">
+              <img src="assets/icons/icon-info.svg" alt="" width="16" height="16" style="display:block;">
+            </button>
           </div>
           <div style="font-size:10px;color:#8A8A8A;text-align:right;line-height:1.2;">{{ chatBudgetLabel }}</div>
+          <sc-if value="{{ dmSilenceLine }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:var(--fs-sm);color:var(--c-muted);line-height:1.45;">{{ dmSilenceLine }}</div>
+          </sc-if>
+          <sc-if value="{{ chatGuideOpen }}" hint-placeholder-val="{{ false }}">
+            <div sc-camel-on-click="{{ stopClick }}" style="margin-top:2px;background:var(--c-tooltip);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:var(--r-md);box-shadow:0 8px 28px var(--c-ink-ghost);padding:12px 14px;text-align:left;animation:fadeup var(--dur-instant) var(--ease);">
+              <div style="font-size:var(--fs-sm);line-height:1.45;color:var(--c-ink-strong);">{{ chatGuideLine1 }}</div>
+              <div style="font-size:var(--fs-sm);line-height:1.45;color:var(--c-ink-strong);margin-top:8px;">{{ chatGuideLine2 }}</div>
+              <div style="font-size:var(--fs-sm);line-height:1.45;color:var(--c-ink-strong);margin-top:8px;">{{ chatGuideLine3 }}</div>
+              <div style="font-size:var(--fs-sm);line-height:1.45;color:var(--c-muted-dark);margin-top:8px;font-style:italic;">{{ chatGuideExample }}</div>
+            </div>
+          </sc-if>
         </div>
         </sc-if>
 
@@ -770,16 +781,6 @@
             <button sc-camel-on-click="{{ sendWrite }}" style="flex:1;background:var(--c-accent);border:0;border-radius:var(--r-md);color:var(--c-white);padding:13px;font-size:var(--fs-body);font-weight:600;min-height:44px;text-align:left;">Send</button>
             <button sc-camel-on-click="{{ deleteWrite }}" style="flex:1;background:var(--c-white);border:1px solid var(--c-panel);border-radius:var(--r-md);color:var(--c-ink);padding:13px;font-size:var(--fs-body);min-height:44px;text-align:left;">Delete it</button>
           </div>
-        </div>
-        </sc-if>
-        <sc-if value="{{ optionsOpen }}" hint-placeholder-val="{{ true }}">
-        <div style="flex:0 0 auto;border-top:1px solid var(--c-panel);background:var(--c-white);padding:10px 12px 12px;display:flex;flex-direction:column;gap:7px;max-height:min(34%,250px);overflow-y:auto;">
-          <sc-for list="{{ phoneActions }}" as="a" hint-placeholder-count="4">
-            <button sc-camel-on-click="{{ a.run }}" disabled="{{ a.used }}" style="background:var(--c-white);border:1px solid var(--c-panel);border-radius:var(--r-md);color:var(--c-ink);padding:12px 14px;font-size:var(--fs-md);text-align:left;line-height:1.35;min-height:44px;opacity:{{ a.op }};" style-hover="border-color:var(--c-accent);">{{ a.label }}</button>
-          </sc-for>
-          <sc-if value="{{ dmSilenceLine }}" hint-placeholder-val="{{ false }}">
-            <div style="font-size:var(--fs-sm);color:var(--c-muted);line-height:1.45;padding:3px 2px;">{{ dmSilenceLine }}</div>
-          </sc-if>
         </div>
         </sc-if>
       </sc-if>
