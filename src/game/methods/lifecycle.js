@@ -52,6 +52,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
   wipeAudio() {
     try { if (this._stream) this._stream.getTracks().forEach(t => t.stop()); } catch (e) {}
+    this.stopAudio(false);
     this.clips = [];
     this._stream = null; this._rec = null; this._real = null; this._splice = null;
   },

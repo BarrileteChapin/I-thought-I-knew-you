@@ -15,30 +15,36 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
     const dmNew = st.dm.filter(m => !m.mine && !m.sys && m.today).length;
     const msgsRaw = st.tab === 'group' ? st.chat : st.dm;
-    const msgs = msgsRaw.map((m, i) => ({
-      id: i, who: m.who, text: ((m.text || m.caption || '…')).split('{name}').join(this.name()),
-      isNewMark: st.newMarkAt !== null && i === st.newMarkAt,
-      caption: (m.caption || '').split('{name}').join(this.name()), dur: m.dur || '0:14',
-      justify: m.mine ? 'flex-end' : 'flex-start',
-      bg: m.sys ? 'transparent' : (m.mine ? C.accentSoft : C.panel),
-      rule: m.sys ? '2px solid ' + C.muted : (m.mine ? '2px solid ' + C.accent : '0'),
-      showWho: !m.mine && !m.sys,
-      whoColor: this.whoColorOf(m.who),
-      textColor: m.sys ? C.muted : C.ink,
-      isSys: !!m.sys, rowDisplay: m.sys ? 'none' : 'flex',
-      mineFemale: !!m.mine && st.playerAvatar === 'female', mineMale: !!m.mine && st.playerAvatar === 'male',
-      theirs: !m.mine && !m.sys, avatar: this.faceOf(m.who),
-      isVideo: m.kind === 'video', isPhoto: m.kind === 'photo', isVoice: m.kind === 'voice', isTypedShot: m.kind === 'typedshot',
-      isShot: m.kind === 'shot', isProfileShot: m.shot === 'profile', isCommentShot: m.shot === 'comment',
-      openShot: () => { this.setState({ shotOpen: 'fake', sawFake: true }); this.maybeCompare('fake'); },
-      openPhoto: () => this.setState({ shotOpen: 'photo' }),
-      lightBg: m.sys ? C.washWarm : (m.mine ? C.accentWash : C.white),
-      lightWho: this.whoColorOf(m.who),
-      lightText: m.sys ? C.muted : C.ink,
-      radius: m.mine ? '14px 14px 4px 14px' : '14px 14px 14px 4px',
-      isText: !m.kind, tick: m.mine && !m.old ? (m.unsent ? '✓' : '✓✓') : '',
-      play: () => { if (m.audio) this.playBuf(m.audio); }
-    }));
+    const msgs = msgsRaw.map((m, i) => {
+      const audioKey = st.tab + ':' + i;
+      const isPlaying = m.kind === 'voice' && st.playingAudioKey === audioKey;
+      return {
+        id: i, who: m.who, text: ((m.text || m.caption || '…')).split('{name}').join(this.name()),
+        isNewMark: st.newMarkAt !== null && i === st.newMarkAt,
+        caption: (m.caption || '').split('{name}').join(this.name()), dur: m.dur || '0:14',
+        justify: m.mine ? 'flex-end' : 'flex-start',
+        bg: m.sys ? 'transparent' : (m.mine ? C.accentSoft : C.panel),
+        rule: m.sys ? '2px solid ' + C.muted : (m.mine ? '2px solid ' + C.accent : '0'),
+        showWho: !m.mine && !m.sys,
+        whoColor: this.whoColorOf(m.who),
+        textColor: m.sys ? C.muted : C.ink,
+        isSys: !!m.sys, rowDisplay: m.sys ? 'none' : 'flex',
+        mineFemale: !!m.mine && st.playerAvatar === 'female', mineMale: !!m.mine && st.playerAvatar === 'male',
+        theirs: !m.mine && !m.sys, avatar: this.faceOf(m.who),
+        isVideo: m.kind === 'video', isPhoto: m.kind === 'photo', isVoice: m.kind === 'voice', isTypedShot: m.kind === 'typedshot',
+        isShot: m.kind === 'shot', isProfileShot: m.shot === 'profile', isCommentShot: m.shot === 'comment',
+        openShot: () => { this.setState({ shotOpen: 'fake', sawFake: true }); this.maybeCompare('fake'); },
+        openPhoto: () => this.setState({ shotOpen: 'photo' }),
+        lightBg: m.sys ? C.washWarm : (m.mine ? C.accentWash : C.white),
+        lightWho: this.whoColorOf(m.who),
+        lightText: m.sys ? C.muted : C.ink,
+        radius: m.mine ? '14px 14px 4px 14px' : '14px 14px 14px 4px',
+        isText: !m.kind, tick: m.mine && !m.old ? (m.unsent ? '✓' : '✓✓') : '',
+        isPlaying, isStopped: !isPlaying,
+        voiceLabel: isPlaying ? 'Stop voice note' : 'Play voice note',
+        togglePlay: () => this.toggleChatAudio(audioKey, m)
+      };
+    });
 
     const tier = this.samTier();
     const phoneChecks = d.checks.filter(c => c.where === 'phone' && !st.done[c.id]);
@@ -386,18 +392,22 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         { key: 'social', label: 'Social Media', icon: 'assets/icons/app-social.svg', badge: 0 }
       ].map(a => ({
         label: a.label, badge: a.badge, icon: a.icon,
-        go: () => this.setState({
-          dev: a.key, threadOpen: null,
-          tool: a.key === 'gallery' ? 'player' : a.key === 'social' ? 'social' : a.key === 'fact' ? (this.state.tool === 'ai' ? 'ai' : 'search') : this.state.tool,
-          mediaOpen: null, socTab: 'feed', socProfileKey: null, socPostId: null,
-          galleryNew: a.key === 'gallery' ? false : this.state.galleryNew
-        })
+        go: () => {
+          this.stopAudio();
+          this.setState({
+            dev: a.key, threadOpen: null,
+            tool: a.key === 'gallery' ? 'player' : a.key === 'social' ? 'social' : a.key === 'fact' ? (this.state.tool === 'ai' ? 'ai' : 'search') : this.state.tool,
+            mediaOpen: null, socTab: 'feed', socProfileKey: null, socPostId: null,
+            galleryNew: a.key === 'gallery' ? false : this.state.galleryNew
+          });
+        }
       })),
       onChats: st.dev === 'chats', onDeviceTool: st.dev !== 'chats' && st.dev !== null,
       onChatList: st.dev === 'chats' && st.threadOpen === null,
       onThread: st.dev === 'chats' && st.threadOpen !== null,
       showShared: st.threadOpen === 'group',
       backToChats: () => {
+        this.stopAudio();
         const k = st.threadOpen;
         const lastRead = Object.assign({}, st.lastRead);
         if (k) lastRead[k] = (k === 'group' ? st.chat : st.dm).length;
@@ -424,6 +434,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
           preview: this.preview(st.dm), unread: dmNew, hasUnread: dmNew > 0 }
       ].map(t => Object.assign(t, {
         open: () => {
+          this.stopAudio();
           const list = t.key === 'group' ? this.state.chat : this.state.dm;
           const read = (this.state.lastRead || {})[t.key];
           this._pendingScroll = true;

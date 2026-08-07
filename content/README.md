@@ -24,7 +24,9 @@ Typical chat messages use this shape:
 
 The `who` value must match the character name used by the game. Messages sent
 by the player also use `"mine": true`. Keep the other optional fields when a
-message is a voice note, video, screenshot, or timed message.
+message is a voice note, video, screenshot, or timed message. Static voice notes
+can use `"audioSrc"` with a relative path such as
+`"assets/audios/example.wav"`.
 
 Day files also contain investigation checks. Each check has a stable `id`, a
 player-facing `label`, a time `cost`, and a `result`. Keep IDs unchanged when

@@ -20,6 +20,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   },
 
   showDayCard(n, phase) {
+    this.stopAudio();
     this.setState({ fading: false });
     const ph = phase || (n === 3 ? 'morning' : 'evening');
     const d = (n === 3 && ph === 'clip') ? this.DAY_YOU : this.allDays()[n];
@@ -29,6 +30,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   },
 
   startDay(n, phase) {
+    this.stopAudio();
     const ph = phase || (n === 3 ? 'morning' : 'evening');
     const d = (n === 3 && ph === 'clip') ? this.DAY_YOU : this.allDays()[n];
     const st = this.state;
@@ -70,7 +72,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       tab: quietPhase ? 'dm' : 'group', used: {}, reactedToday: false,
       lastRead: { group: baseGroup, dm: st.dm.length },
       newMarkAt: null, showNewPill: false,
-      actedToday: false, openedGroup: false, ignored: false, dmAnsweredToday: false,
+      actedToday: false, openedGroup: false, ignored: false, dmAnsweredToday: false, playingAudioKey: null,
       shareTick: 0, shareHalved: false, tool: 'player', socTab: 'feed', socProfileKey: null, socPostId: null, mediaOpen: null, seen: {}, zoom: false, dev: null, threadOpen: null, galleryNew: false, chatFlash: false,
       writeIn: false, writeText: '', writeStatus: null, chatDraft: '', chatBusy: false, actionsOpen: false, chatGroupLeft: 4, chatDmLeft: 3,
       dragItem: null, pickIdx: null, pickerOpen: false, pickerMode: 'search', searched: {}, aiPickIdx: null, aiStage: 'idle', aiStep: 0,

@@ -97,15 +97,84 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     this.log('— you sent your own voice');
   },
 
-  playBuf(which) {
+  toggleChatAudio(key, message) {
+    if (this.state.playingAudioKey === key) {
+      this.stopAudio();
+      return;
+    }
+    if (message.audioSrc) this.playFile(message.audioSrc, key);
+    else if (message.audio) this.playBuf(message.audio, key);
+  },
+
+  stopAudio(updateState) {
+    const shouldUpdate = updateState !== false;
+    const file = this._fileAudio;
+    this._fileAudio = null;
+    if (file) {
+      file.onended = null;
+      file.onerror = null;
+      try { file.pause(); file.currentTime = 0; } catch (e) {}
+      try { file.removeAttribute('src'); file.load(); } catch (e) {}
+    }
+
+    const buffer = this._bufferSource;
+    this._bufferSource = null;
+    if (buffer) {
+      buffer.onended = null;
+      try { buffer.stop(); } catch (e) {}
+    }
+
+    if (shouldUpdate && this.state.playingAudioKey !== null) {
+      this.setState({ playingAudioKey: null });
+    }
+  },
+
+  playFile(src, key) {
+    if (!src) return;
+    this.stopAudio();
+    let audio = null;
+    try {
+      audio = new Audio(src);
+      this._fileAudio = audio;
+      audio.preload = 'auto';
+      const clear = () => {
+        if (this._fileAudio !== audio) return;
+        this._fileAudio = null;
+        if (this.state.playingAudioKey === key) this.setState({ playingAudioKey: null });
+      };
+      audio.onended = clear;
+      audio.onerror = clear;
+      this.setState({ playingAudioKey: key || null });
+      const playing = audio.play();
+      if (playing && typeof playing.catch === 'function') playing.catch(clear);
+    } catch (e) {
+      if (this._fileAudio === audio) this._fileAudio = null;
+      if (this.state.playingAudioKey === key) this.setState({ playingAudioKey: null });
+    }
+  },
+
+  playBuf(which, key) {
     const b = which === 'splice' ? this._splice : this._real;
     if (!b || !this._ctx) return;
+    this.stopAudio();
+    let source = null;
     try {
-      const src = this._ctx.createBufferSource();
-      src.buffer = b;
-      src.connect(this._ctx.destination);
-      src.start();
-    } catch (e) {}
+      source = this._ctx.createBufferSource();
+      source.buffer = b;
+      source.connect(this._ctx.destination);
+      this._bufferSource = source;
+      const clear = () => {
+        if (this._bufferSource !== source) return;
+        this._bufferSource = null;
+        if (this.state.playingAudioKey === key) this.setState({ playingAudioKey: null });
+      };
+      source.onended = clear;
+      this.setState({ playingAudioKey: key || null });
+      source.start();
+    } catch (e) {
+      if (this._bufferSource === source) this._bufferSource = null;
+      if (this.state.playingAudioKey === key) this.setState({ playingAudioKey: null });
+    }
   },
 
   deleteRecording() {
