@@ -144,6 +144,7 @@ intentionally small. Behavior is split into these files:
 - `methods/audio.js`: microphone recording and playback
 - `methods/ending.js`: ending screens and final summaries
 - `methods/lifecycle.js`: mount, unmount, scrolling, and keyboard shortcuts
+- `methods/persistence.js`: autosave/restore of game state to `localStorage`
 - `methods/render.js`: values passed from game state into the template
 
 Methods are regular object methods that use `this`. They are merged onto the

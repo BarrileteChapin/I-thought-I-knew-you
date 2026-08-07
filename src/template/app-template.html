@@ -9,7 +9,16 @@
   <div style="font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#6B6B6B;margin-bottom:18px;">Four evenings</div>
   <h1 style="font-size:64px;line-height:1.02;margin:0 0 24px;font-weight:700;letter-spacing:-.02em;color:#111111;">I Thought<br>I Knew You</h1>
   <p style="font-size:19px;line-height:1.55;color:#6B6B6B;max-width:46ch;margin:0 0 40px;text-wrap:pretty;">You are fifteen. Your room, your bed, your phone. Nicole is in the class group chat tonight, and she is not going to be fine.</p>
-  <button sc-camel-on-click="{{ start }}" style="background:#1B4FE0;color:#E8E8E8;border:0;padding:16px 28px;font-size:16px;font-weight:700;text-align:left;min-width:220px;">Sunday evening</button>
+  <sc-if value="{{ hasSave }}" hint-placeholder-val="{{ false }}">
+    <div style="font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:#1B4FE0;margin-bottom:16px;">{{ saveProgressLabel }}</div>
+    <button sc-camel-on-click="{{ continueGame }}" style="background:#1B4FE0;color:#E8E8E8;border:0;padding:16px 28px;font-size:16px;font-weight:700;text-align:left;min-width:220px;">Continue</button>
+    <div style="margin-top:14px;">
+      <button sc-camel-on-click="{{ startOver }}" style="background:#6B6B6B;color:#E8E8E8;border:0;padding:16px 28px;font-size:16px;font-weight:700;text-align:left;min-width:220px;">Start over</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ !hasSave }}" hint-placeholder-val="{{ true }}">
+    <button sc-camel-on-click="{{ start }}" style="background:#1B4FE0;color:#E8E8E8;border:0;padding:16px 28px;font-size:16px;font-weight:700;text-align:left;min-width:220px;">Sunday evening</button>
+  </sc-if>
 </div>
 </sc-if>
 
@@ -130,6 +139,7 @@
 <div style="width:100%;height:100%;display:flex;flex-direction:column;background:#E8E8E8;color:#111111;">
 
   <div style="position:relative;z-index:10;flex:0 0 104px;height:104px;padding:14px 20px 0;display:flex;flex-direction:column;align-items:center;">
+    <button sc-camel-on-click="{{ backToTitle }}" title="Save and return to title" style="position:absolute;left:6px;top:6px;background:transparent;border:0;color:#111111;opacity:.4;font-size:18px;line-height:1;padding:10px;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;" style-hover="opacity:.7;">←</button>
     <div style="pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:4px;">
       <span style="font-size:12px;color:#111111;opacity:.5;font-variant-numeric:tabular-nums;">{{ clockLabel }}</span>
       <span style="font-size:22px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#111111;line-height:1;">{{ dayName }}</span>
@@ -512,10 +522,13 @@
 
   <sc-if value="{{ onHome }}" hint-placeholder-val="{{ true }}">
     <div style="flex:1;display:flex;flex-direction:column;padding:12px 20px 30px;">
-      <button sc-camel-on-click="{{ backToRoom }}" style="align-self:flex-start;background:rgba(255,255,255,.18);border:0;border-radius:999px;padding:8px 14px;min-height:44px;display:flex;align-items:center;gap:6px;text-align:left;color:#FFFFFF;font-size:14px;font-weight:500;" style-hover="background:rgba(255,255,255,.3);" style-active="background:rgba(255,255,255,.3);">
-        <span style="font-size:14px;line-height:1;">←</span>
-        <span>Close</span>
-      </button>
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <button sc-camel-on-click="{{ backToRoom }}" style="align-self:flex-start;background:rgba(255,255,255,.18);border:0;border-radius:999px;padding:8px 14px;min-height:44px;display:flex;align-items:center;gap:6px;text-align:left;color:#FFFFFF;font-size:14px;font-weight:500;" style-hover="background:rgba(255,255,255,.3);" style-active="background:rgba(255,255,255,.3);">
+          <span style="font-size:14px;line-height:1;">←</span>
+          <span>Close</span>
+        </button>
+        <button sc-camel-on-click="{{ backToTitle }}" style="background:transparent;border:0;padding:8px;min-height:44px;color:rgba(255,255,255,.55);font-size:13px;text-align:right;" style-hover="color:#FFFFFF;">Save &amp; exit</button>
+      </div>
       <div style="flex:1;"></div>
       <div style="display:flex;gap:11px;">
         <sc-for list="{{ apps }}" as="a" hint-placeholder-count="4">

@@ -335,6 +335,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
     const s = st.stats;
     const dayClutter = st.day;
+    const savedGame = st.screen === 'title' ? this.readSavedGame() : null;
 
     return {
       isTitle: st.screen === 'title', isRoom: st.screen === 'room' || st.screen === 'phone', isPhone: st.screen === 'phone',
@@ -858,6 +859,10 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
 
       start: () => this.setState({ screen: 'name', nameDraft: '' }, () => { const el = this.nameRef.current; if (el) el.focus(); }),
+      hasSave: !!savedGame,
+      saveProgressLabel: this.describeSave(savedGame),
+      continueGame: () => this.continueGame(),
+      startOver: () => this.startOver(),
       isNameEntry: st.screen === 'name', nameDraft: st.nameDraft, nameRef: this.nameRef,
       onNameChange: (e) => this.setState({ nameDraft: e.target.value.replace(/[^A-Za-z \-]/g, '').slice(0, 16) }),
       onNameKey: (e) => { if (e.key === 'Enter') this.submitName(); },
@@ -910,6 +915,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
           setTimeout(() => this.setState({ dmGhostTyping: false }), 4400);
         }
       },
+      backToTitle: () => { this.saveGame(); this.setState({ screen: 'title', confirmSleep: false }); },
 
       backToRoom: () => {
         const owed = st.dm.some(m => !m.mine && !m.sys && m.today);
@@ -936,7 +942,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       },
       cancelSleep: () => this.setState({ confirmSleep: false }),
       doSleep: () => this.endDay(),
-      restart: () => this.setState({
+      restart: () => { this.clearSavedGame(); this.setState({
         screen: 'title', day: 1, min: this.DAYS[1].start, done: {}, used: {},
         hints: { 1: [], 2: [], 3: [], 4: [], 5: [] }, certainty: { 1: 'unchecked', 2: 'unchecked', 3: 'unchecked', 4: 'unchecked', 5: 'unchecked' },
         credibility: 0, credibilityLost: false, voiceSent: false, reason: '',
@@ -952,7 +958,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     writeIn: false, writeText: '', writeStatus: null, dragItem: null, pickIdx: null, pickerOpen: false, pickerMode: 'search', searched: {}, aiPickIdx: null, aiStage: 'idle', aiStep: 0, actionLog: [], reactionTimes: [],
         final: { post: null, fwd: null, tell: null }, sam: 50, group: 50, pushIdx: 0, flashSam: false, flashGroup: false, samDead: false,
         stats: { forwards: 0, reacts: 0, checks: 0, fast: 0, dmAnswered: 0, believed: 0, dismissed: 0, stopped: 0, fastest: null, sift: { investigate: 0, coverage: 0, trace: 0 } }
-      })
+      }); }
     };
   }
 });
