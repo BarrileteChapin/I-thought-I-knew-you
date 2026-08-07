@@ -1,7 +1,7 @@
 <div style="display:none;" aria-hidden="true"><img id="__av-nicole" src="assets/av-nicole.webp" alt=""><img id="__av-mia" src="assets/av-mia.webp" alt=""><img id="__av-hanna" src="assets/av-hanna.webp" alt=""><img id="__av-lea" src="assets/av-lea.webp" alt=""><img id="__av-nele" src="assets/av-nele.webp" alt=""><img id="__av-benito" src="assets/av-benito.webp" alt=""></div>
 
-<div style="width:100%;min-height:100vh;background:var(--c-canvas);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--c-ink);">
-<div style="position:relative;flex:0 0 auto;width:390px;max-width:100vw;height:844px;max-height:100vh;background:var(--c-frame);border-radius:var(--r-frame);overflow:hidden;display:flex;flex-direction:column;">
+<div style="width:100%;height:100dvh;max-height:100dvh;overflow:hidden;background:var(--c-canvas);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--c-ink);">
+<div style="position:relative;flex:0 0 auto;width:var(--frame-w);max-width:100vw;height:var(--frame-h);max-height:100dvh;background:var(--c-frame);border-radius:var(--r-frame);overflow:hidden;display:flex;flex-direction:column;">
 
 <sc-if value="{{ isCinematic }}" hint-placeholder-val="{{ true }}">
 <div style="width:100%;height:100%;position:relative;overflow:hidden;background:#000000;">
@@ -69,7 +69,7 @@
 </sc-if>
 
 <sc-if value="{{ isNameEntry }}" hint-placeholder-val="{{ false }}">
-<div style="width:100%;height:100%;overflow-y:auto;padding:34px var(--space-screen-x) 24px;">
+<div style="width:100%;height:100%;overflow-y:auto;overscroll-behavior:contain;padding:34px var(--space-screen-x) 24px;">
   <div style="font-size:var(--fs-lead);line-height:1.5;color:var(--c-ink);max-width:46ch;margin-bottom:26px;animation:fadeup var(--dur-fade) var(--ease);">What is your name?</div>
   <input value="{{ nameDraft }}" sc-camel-on-change="{{ onNameChange }}" sc-camel-on-key-down="{{ onNameKey }}" ref="{{ nameRef }}" sc-camel-max-length="16" style="width:100%;max-width:360px;background:transparent;border:0;border-bottom:2px solid var(--c-line);color:var(--c-ink);font-family:var(--font-body);font-size:var(--fs-title);padding:8px 0 12px;outline:none;margin-bottom:26px;">
   <div style="font-size:var(--fs-lead);line-height:1.5;color:var(--c-ink);margin-bottom:20px;">Pick your avatar</div>
@@ -200,8 +200,8 @@
         </div>
         <div style="width:140px;height:3px;background:var(--c-ink-ghost);"><div style="height:3px;background:{{ samColor }};width:{{ samBar }};transition:width var(--dur-slow) var(--ease-bar),background var(--dur-med) var(--ease);"></div></div>
         <sc-if value="{{ tipSamOpen }}" hint-placeholder-val="{{ false }}">
-          <div sc-camel-on-click="{{ stopClick }}" style="position:absolute;z-index:var(--z-tooltip);top:34px;left:0;width:300px;max-width:calc(100vw - 32px);background:var(--c-white);border-radius:var(--r-md);box-shadow:0 8px 28px var(--c-ink-ghost);padding:16px;text-align:left;animation:fadeup var(--dur-instant) var(--ease);">
-            <span style="position:absolute;top:-6px;left:132px;width:12px;height:12px;background:var(--c-white);transform:rotate(45deg);"></span>
+          <div sc-camel-on-click="{{ stopClick }}" style="position:absolute;z-index:var(--z-tooltip);top:34px;left:0;width:300px;max-width:calc(100vw - 32px);background:var(--c-tooltip);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:var(--r-md);box-shadow:0 8px 28px var(--c-ink-ghost);padding:16px;text-align:left;animation:fadeup var(--dur-instant) var(--ease);">
+            <span style="position:absolute;top:-6px;left:132px;width:12px;height:12px;background:var(--c-tooltip);transform:rotate(45deg);"></span>
             <div style="position:relative;font-size:var(--fs-sm);line-height:1.5;color:var(--c-ink-strong);">How much Nicole trusts you.</div>
             <div style="position:relative;font-size:var(--fs-sm);line-height:1.5;color:var(--c-ink-strong);margin-top:10px;">The bar rises when you answer her, believe her, or stand up for her where other people can see it. It falls when you leave her on read, forward things about her, or stay quiet while the class talks.</div>
             <div style="position:relative;font-size:var(--fs-sm);line-height:1.5;color:var(--c-ink-strong);margin-top:10px;">The lower it gets, the slower and shorter her replies get. If it empties, she stops answering you — and that doesn't come back.</div>
@@ -218,8 +218,8 @@
         </div>
         <div style="width:140px;height:3px;background:var(--c-ink-ghost);"><div style="height:3px;background:{{ groupColor }};width:{{ groupBar }};transition:width var(--dur-slow) var(--ease-bar),background var(--dur-med) var(--ease);"></div></div>
         <sc-if value="{{ tipGroupOpen }}" hint-placeholder-val="{{ false }}">
-          <div sc-camel-on-click="{{ stopClick }}" style="position:absolute;z-index:var(--z-tooltip);top:34px;right:0;width:300px;max-width:calc(100vw - 32px);background:var(--c-white);border-radius:var(--r-md);box-shadow:0 8px 28px var(--c-ink-ghost);padding:16px;text-align:left;animation:fadeup var(--dur-instant) var(--ease);">
-            <span style="position:absolute;top:-6px;right:16px;width:12px;height:12px;background:var(--c-white);transform:rotate(45deg);"></span>
+          <div sc-camel-on-click="{{ stopClick }}" style="position:absolute;z-index:var(--z-tooltip);top:34px;right:0;width:300px;max-width:calc(100vw - 32px);background:var(--c-tooltip);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:var(--r-md);box-shadow:0 8px 28px var(--c-ink-ghost);padding:16px;text-align:left;animation:fadeup var(--dur-instant) var(--ease);">
+            <span style="position:absolute;top:-6px;right:16px;width:12px;height:12px;background:var(--c-tooltip);transform:rotate(45deg);"></span>
             <div style="position:relative;font-size:var(--fs-sm);line-height:1.5;color:var(--c-ink-strong);">What the class thinks of you.</div>
             <div style="position:relative;font-size:var(--fs-sm);line-height:1.5;color:var(--c-ink-strong);margin-top:10px;">The bar rises when you go along with everyone, and it rises most when you say something and can back it up. It falls when you contradict the group with nothing to show — after that, people stop taking your word for anything.</div>
             <div style="position:relative;font-size:var(--fs-sm);line-height:1.5;color:var(--c-ink-strong);margin-top:10px;">The lower it gets, the more they push back at you and leave you out. The higher it gets, the more they assume you're on their side.</div>
@@ -231,7 +231,7 @@
     <div style="pointer-events:none;height:12px;margin-top:8px;font-size:11px;text-align:center;color:var(--c-ink);opacity:{{ anyReasonOp }};transition:opacity var(--dur) var(--ease);">{{ anyReason }}</div>
   </div>
 
-  <div sc-camel-on-click="{{ tipOff }}" style="position:relative;flex:1 1 auto;min-height:0;overflow:hidden;background:var(--c-frame);transform-origin:20% 52%;transform:scale({{ sceneScale }});transition:transform .8s cubic-bezier(.16,.8,.24,1);">
+  <div sc-camel-on-click="{{ tipOff }}" style="position:relative;flex:1 1 auto;min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;background:var(--c-frame);transform-origin:20% 52%;transform:scale({{ sceneScale }});transition:transform .8s cubic-bezier(.16,.8,.24,1);">
     <div style="position:relative;width:100%;">
       <img src="{{ roomBg }}" alt="" style="display:block;width:100%;height:auto;pointer-events:none;">
 
@@ -258,25 +258,25 @@
           </sc-if>
         </button>
       </sc-if>
+
+      <sc-if value="{{ msgToastShown }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:{{ msgToastLeft }};top:{{ msgToastTop }};z-index:30;width:min(240px,74%);pointer-events:none;transform:translateY(calc(-100% - 12px));">
+        <div style="position:relative;background:var(--c-white);border-radius:16px;box-shadow:0 10px 26px var(--c-ink-shadow);padding:10px 12px;display:flex;align-items:center;gap:9px;opacity:{{ msgToastOpacity }};transform:translateY({{ msgToastY }});transition:opacity .28s ease,transform .28s ease;">
+          <span style="position:absolute;bottom:-5px;left:{{ msgToastTipLeft }};right:{{ msgToastTipRight }};width:11px;height:11px;background:var(--c-white);transform:rotate(45deg);"></span>
+          <img src="{{ msgToastAvatar }}" alt="" style="flex:0 0 30px;display:block;width:30px;height:30px;border-radius:50%;object-fit:cover;background:var(--c-line-soft);">
+          <div style="min-width:0;flex:1;">
+            <div style="font-size:11px;font-weight:700;color:var(--c-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ msgToastWho }}</div>
+            <div style="font-size:12px;color:var(--c-ink-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ msgToastText }}</div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
     </div>
 
     <div style="position:absolute;inset:0;pointer-events:none;background:var(--c-ink);opacity:{{ nightOpacity }};"></div>
     <div style="position:absolute;inset:0;pointer-events:none;background:var(--c-accent-morning);opacity:{{ morningWash }};mix-blend-mode:soft-light;"></div>
 
     <div style="position:absolute;inset:0;pointer-events:none;opacity:{{ pushVignetteOp }};transition:opacity .5s ease;background:radial-gradient(ellipse at 20% 52%,transparent 30%,rgba(0,0,0,.55) 100%);"></div>
-
-    <sc-if value="{{ msgToastShown }}" hint-placeholder-val="{{ false }}">
-    <div style="position:absolute;left:{{ msgToastLeft }};top:{{ msgToastTop }};transform:translateY(calc(-100% - 14px));z-index:30;width:min(240px,74%);pointer-events:none;">
-      <div style="position:relative;background:var(--c-white);border-radius:16px;box-shadow:0 10px 26px var(--c-ink-shadow);padding:10px 12px;display:flex;align-items:center;gap:9px;opacity:{{ msgToastOpacity }};transform:translateY({{ msgToastY }});transition:opacity .28s ease,transform .28s ease;">
-        <span style="position:absolute;bottom:-5px;left:{{ msgToastTipLeft }};right:{{ msgToastTipRight }};width:11px;height:11px;background:var(--c-white);transform:rotate(45deg);"></span>
-        <div style="flex:0 0 30px;width:30px;height:30px;border-radius:50%;background:{{ msgToastDotBg }};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--c-white);">{{ msgToastInitial }}</div>
-        <div style="min-width:0;flex:1;">
-          <div style="font-size:11px;font-weight:700;color:var(--c-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ msgToastWho }}</div>
-          <div style="font-size:12px;color:var(--c-ink-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ msgToastText }}</div>
-        </div>
-      </div>
-    </div>
-    </sc-if>
   </div>
 
   <sc-if value="{{ confirmSleepOpen }}" hint-placeholder-val="{{ false }}">
@@ -336,10 +336,10 @@
       <img sc-camel-on-click="{{ toggleZoom }}" src="assets/nicole-party.jpg" alt="" style="display:block;width:100%;height:auto;transform:scale({{ zoomScale }});transform-origin:center;transition:transform var(--dur-fast) var(--ease);cursor:zoom-in;">
     </sc-if>
     <sc-if value="{{ openIsShotFake }}" hint-placeholder-val="{{ false }}">
-      <img sc-camel-on-click="{{ toggleZoom }}" src="assets/screenshot-fake.png" alt="" style="display:block;width:100%;height:auto;transform:scale({{ zoomScale }});transform-origin:top center;transition:transform var(--dur-fast) var(--ease);cursor:zoom-in;">
+      <img sc-camel-on-click="{{ toggleZoom }}" src="assets/screenshot-fake.webp" alt="" style="display:block;width:100%;height:auto;transform:scale({{ zoomScale }});transform-origin:top center;transition:transform var(--dur-fast) var(--ease);cursor:zoom-in;">
     </sc-if>
     <sc-if value="{{ openIsShotReal }}" hint-placeholder-val="{{ false }}">
-      <img sc-camel-on-click="{{ toggleZoom }}" src="assets/screenshot-real.png" alt="" style="display:block;width:100%;height:auto;transform:scale({{ zoomScale }});transform-origin:top center;transition:transform var(--dur-fast) var(--ease);cursor:zoom-in;">
+      <img sc-camel-on-click="{{ toggleZoom }}" src="assets/screenshot-real.webp" alt="" style="display:block;width:100%;height:auto;transform:scale({{ zoomScale }});transform-origin:top center;transition:transform var(--dur-fast) var(--ease);cursor:zoom-in;">
     </sc-if>
     <sc-if value="{{ openIsAudio }}" hint-placeholder-val="{{ false }}">
       <div style="width:100%;padding:0 var(--space-screen-x);">
@@ -480,14 +480,14 @@
 <div style="position:absolute;left:3%;right:3%;top:2%;bottom:2%;border-radius:var(--r-phone);z-index:85;background:var(--c-ink-heavy);display:flex;align-items:center;justify-content:center;padding:24px;">
   <div style="width:100%;max-height:92vh;overflow-y:auto;border:2px solid var(--c-line);background:var(--c-white);">
     <sc-if value="{{ shotIsFake }}" hint-placeholder-val="{{ true }}">
-      <img src="assets/screenshot-fake.png" alt="" style="display:block;width:100%;height:auto;">
+      <img src="assets/screenshot-fake.webp" alt="" style="display:block;width:100%;height:auto;">
       <div style="padding:14px 20px;font-size:var(--fs-sm);color:var(--c-muted);">Sent by Hanna, 4:40pm. screenshot_2847.png</div>
     </sc-if>
     <sc-if value="{{ shotIsReal }}" hint-placeholder-val="{{ false }}">
       <div style="padding:12px 16px;border-bottom:1px solid var(--c-panel);">
         <button sc-camel-on-click="{{ closeShot }}" style="background:transparent;border:0;color:var(--c-muted);font-size:20px;padding:0 4px;line-height:1;" style-hover="color:var(--c-ink);">←</button>
       </div>
-      <img src="assets/screenshot-real.png" alt="" style="display:block;width:100%;height:auto;">
+      <img src="assets/screenshot-real.webp" alt="" style="display:block;width:100%;height:auto;">
       <div style="padding:14px 20px;font-size:var(--fs-sm);color:var(--c-muted);">@nicole_kruger</div>
     </sc-if>
     <sc-if value="{{ shotIsPhoto }}" hint-placeholder-val="{{ false }}">
@@ -615,9 +615,11 @@
 
   <sc-if value="{{ onApp }}" hint-placeholder-val="{{ false }}">
   <div style="flex:1 1 auto;min-height:0;display:flex;flex-direction:column;background:var(--c-white);overflow:hidden;">
+  <sc-if value="{{ !onThread }}" hint-placeholder-val="{{ true }}">
   <div style="flex:0 0 auto;display:flex;align-items:center;padding:0 10px 6px;border-bottom:1px solid var(--c-panel);">
     <button sc-camel-on-click="{{ goHome }}" class="g-btn g-btn-nav">← Home</button>
   </div>
+  </sc-if>
   <div style="flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden;">
 
     <sc-if value="{{ onChats }}" hint-placeholder-val="{{ true }}">
@@ -689,7 +691,7 @@
                 </sc-if>
                 <sc-if value="{{ m.isShot }}" hint-placeholder-val="{{ false }}">
                   <button sc-camel-on-click="{{ m.openShot }}" style="display:block;width:210px;padding:0;border:0;background:transparent;cursor:zoom-in;">
-                    <img src="assets/screenshot-fake.png" alt="" style="display:block;width:100%;height:auto;border-radius:10px;">
+                    <img src="assets/screenshot-fake.webp" alt="" style="display:block;width:100%;height:auto;border-radius:10px;">
                   </button>
                   <div style="font-size:var(--fs-caption);color:var(--c-muted);margin-top:5px;">screenshot_2847.png</div>
                 </sc-if>
@@ -819,10 +821,10 @@
                 <img src="assets/nicole-craft.jpg" alt="" style="display:block;width:100%;height:100%;object-fit:cover;">
               </sc-if>
               <sc-if value="{{ a.isShotFake }}" hint-placeholder-val="{{ false }}">
-                <img src="assets/screenshot-fake.png" alt="" style="display:block;width:100%;height:100%;object-fit:cover;object-position:top;">
+                <img src="assets/screenshot-fake.webp" alt="" style="display:block;width:100%;height:100%;object-fit:cover;object-position:top;">
               </sc-if>
               <sc-if value="{{ a.isShotReal }}" hint-placeholder-val="{{ false }}">
-                <img src="assets/screenshot-real.png" alt="" style="display:block;width:100%;height:100%;object-fit:cover;object-position:top;">
+                <img src="assets/screenshot-real.webp" alt="" style="display:block;width:100%;height:100%;object-fit:cover;object-position:top;">
               </sc-if>
               <sc-if value="{{ a.isVideoThumb }}" hint-placeholder-val="{{ false }}">
                 <video muted="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;height:100%;object-fit:cover;pointer-events:none;"><source src="assets/nicole_day0.webm" type="video/webm"><source src="assets/nicole_day0.mp4" type="video/mp4"></video>
@@ -1332,7 +1334,10 @@
   </sc-if>
   </div>
   <div style="flex:0 0 auto;padding:14px var(--space-screen-x) 20px;background:var(--c-frame);border-top:1px solid var(--c-ink-hair);">
-    <button sc-camel-on-click="{{ nextSection }}" class="g-btn g-btn-footer">Continue</button>
+    <div class="g-btn-footer-row">
+      <button sc-camel-on-click="{{ prevSection }}" class="g-btn g-btn-footer-back">Go back</button>
+      <button sc-camel-on-click="{{ nextSection }}" class="g-btn g-btn-footer">Continue</button>
+    </div>
   </div>
 </div>
 </sc-if>
@@ -1362,7 +1367,10 @@
   </div>
   </div>
   <div style="flex:0 0 auto;padding:14px var(--space-screen-x) 20px;background:var(--c-frame);border-top:1px solid var(--c-ink-hair);">
-    <button sc-camel-on-click="{{ nextSection }}" class="g-btn g-btn-footer">Continue</button>
+    <div class="g-btn-footer-row">
+      <button sc-camel-on-click="{{ prevSection }}" class="g-btn g-btn-footer-back">Go back</button>
+      <button sc-camel-on-click="{{ nextSection }}" class="g-btn g-btn-footer">Continue</button>
+    </div>
   </div>
 </div>
 </sc-if>
@@ -1379,7 +1387,10 @@
   </div>
   </div>
   <div style="flex:0 0 auto;padding:14px var(--space-screen-x) 20px;background:var(--c-frame);border-top:1px solid var(--c-ink-hair);">
-    <button sc-camel-on-click="{{ nextSection }}" class="g-btn g-btn-footer">Continue</button>
+    <div class="g-btn-footer-row">
+      <button sc-camel-on-click="{{ prevSection }}" class="g-btn g-btn-footer-back">Go back</button>
+      <button sc-camel-on-click="{{ nextSection }}" class="g-btn g-btn-footer">Continue</button>
+    </div>
   </div>
 </div>
 </sc-if>
@@ -1400,7 +1411,10 @@
   <div style="font-size:var(--fs-sm);color:var(--c-muted);">SIFT by Mike Caulfield, CC BY 4.0.</div>
   </div>
   <div style="flex:0 0 auto;padding:14px var(--space-screen-x) 20px;background:var(--c-frame);border-top:1px solid var(--c-ink-hair);">
-    <button sc-camel-on-click="{{ nextSection }}" class="g-btn g-btn-footer">Continue</button>
+    <div class="g-btn-footer-row">
+      <button sc-camel-on-click="{{ prevSection }}" class="g-btn g-btn-footer-back">Go back</button>
+      <button sc-camel-on-click="{{ nextSection }}" class="g-btn g-btn-footer">Continue</button>
+    </div>
   </div>
 </div>
 </sc-if>
@@ -1415,7 +1429,10 @@
   </div>
   <div style="flex:0 0 auto;padding:14px var(--space-screen-x) 20px;background:var(--c-frame);border-top:1px solid var(--c-ink-hair);">
     <sc-if value="{{ replayShown }}" hint-placeholder-val="{{ false }}">
-      <button sc-camel-on-click="{{ nextSection }}" style="width:100%;background:transparent;color:var(--c-ink);border:1px solid var(--c-line);padding:15px var(--space-screen-x);font-size:var(--fs-body);text-align:left;animation:fadeup .6s ease;" style-hover="border-color:var(--c-accent);">Continue</button>
+      <div class="g-btn-footer-row" style="animation:fadeup .6s ease;">
+        <button sc-camel-on-click="{{ prevSection }}" class="g-btn g-btn-footer-back">Go back</button>
+        <button sc-camel-on-click="{{ nextSection }}" class="g-btn g-btn-footer">Continue</button>
+      </div>
     </sc-if>
   </div>
 </div>
@@ -1428,7 +1445,10 @@
   <div style="font-size:var(--fs-title);line-height:1.6;color:var(--c-muted);max-width:40ch;">The game isn't going to tell you which.</div>
   </div>
   <div style="flex:0 0 auto;padding:14px var(--space-screen-x) 20px;background:var(--c-frame);border-top:1px solid var(--c-ink-hair);">
-    <button sc-camel-on-click="{{ restart }}" class="g-btn g-btn-footer">Play again</button>
+    <div class="g-btn-footer-row">
+      <button sc-camel-on-click="{{ prevSection }}" class="g-btn g-btn-footer-back">Go back</button>
+      <button sc-camel-on-click="{{ restart }}" class="g-btn g-btn-footer">Play again</button>
+    </div>
   </div>
 </div>
 </sc-if>

@@ -5,8 +5,12 @@ html,
 body {
   margin: 0;
   padding: 0;
+  height: 100%;
+  overflow: hidden;
   background: var(--c-canvas);
   font-family: var(--font-body);
+  /* Avoid iOS rubber-band / keyboard focus scrolling the document behind the app */
+  overscroll-behavior: none;
 }
 
 a {

@@ -30,10 +30,11 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     } catch (e) {}
   },
 
-  showMsgToast(who, text, kind, cb) {
+  showMsgToast(who, text, kind, cb, avatarWho) {
     clearTimeout(this._msgToastHide); clearTimeout(this._msgToastClear);
     this.playPing(kind);
-    this.setState({ msgToast: { who, text, kind }, msgToastVisible: false }, () => {
+    const face = this.faceOf(avatarWho || (kind === 'dm' ? 'Nicole' : who));
+    this.setState({ msgToast: { who, text, kind, avatar: face }, msgToastVisible: false }, () => {
       requestAnimationFrame(() => this.setState({ msgToastVisible: true }));
     });
     this._msgToastHide = setTimeout(() => {
@@ -77,7 +78,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const gt = this.toastPreview(firstGroup);
     this._n1 = setTimeout(() => {
       this.pushCamera();
-      this.showMsgToast('10b 🍕', gt, 'group', () => doDm(700));
+      this.showMsgToast('10b 🍕', gt, 'group', () => doDm(700), firstGroup.who);
     }, 1100);
   }
 });
