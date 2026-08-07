@@ -351,6 +351,12 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const socTab = st.socTab || 'feed';
     const prof = st.socProfileKey ? PROFILES[st.socProfileKey] : null;
     const openPost = st.socPostId ? feedPosts.find(p => p.id === st.socPostId) : null;
+    const seePost = (id) => {
+      const key = 'soc:' + id;
+      if (this.state.seen[key]) return;
+      const seen = Object.assign({}, this.state.seen); seen[key] = true;
+      this.setState({ seen });
+    };
     const NAME_HITS = {
       'nicole_garden.jpg': [{ source: 'social · @n.krueger', date: 'Posted today', kind: 'garden', goto: 'f5' }],
       'nicole_craft.jpg': [{ source: 'social · @n.krueger', date: 'Posted today', kind: 'craft', goto: 'f6' }],
@@ -358,6 +364,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     };
     const pickRow = st.pickIdx !== null ? rows[st.pickIdx] : null;
     const pickHits = pickRow ? (NAME_HITS[pickRow.name] || HITS[pickRow.day] || []) : [];
+    const socialUnseenCount = feedPosts.filter(p => !p.profileOnly && p.day === st.day && !st.seen['soc:' + p.id]).length;
 
 
     const s = st.stats;
@@ -423,12 +430,14 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       homeBarColor: C.inkMuted,
       goHome: () => this.setState({ dev: null, threadOpen: null, socInfoOpen: false }),
       apps: [
-        { key: 'chats', label: 'Message', icon: 'assets/icons/app-chats.svg', badge: st.unread > 0 ? st.unread : 0 },
-        { key: 'gallery', label: 'Photo Gallery', icon: 'assets/icons/app-gallery.svg', badge: 0 },
-        { key: 'fact', label: 'Fact Checker', icon: 'assets/icons/app-fact.svg', badge: 0 },
-        { key: 'social', label: 'Social Media', icon: 'assets/icons/app-social.svg', badge: 0 }
+        { key: 'chats', label: 'Message', icon: 'assets/icons/app-chats.svg', badge: st.unread > 0 ? st.unread : 0, dot: false },
+        { key: 'gallery', label: 'Photo Gallery', icon: 'assets/icons/app-gallery.svg', badge: 0, dot: false },
+        { key: 'fact', label: 'Fact Checker', icon: 'assets/icons/app-fact.svg', badge: 0, dot: false },
+        { key: 'social', label: 'Social Media', icon: 'assets/icons/app-social.svg', badge: socialUnseenCount, dot: false }
       ].map(a => ({
-        label: a.label, badge: a.badge, icon: a.icon,
+        label: a.label, badge: a.badge, icon: a.icon, dot: a.dot,
+        isChats: a.key === 'chats', isGallery: a.key === 'gallery',
+        isFact: a.key === 'fact', isSocial: a.key === 'social',
         go: () => {
           this.stopAudio();
           this.setState({
@@ -532,6 +541,11 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       msgToastTop: (st.day === 3 && st.phase === 'morning') ? 'var(--hot-toast-am-t)' : 'var(--hot-toast-t)',
       msgToastTipLeft: (st.day === 3 && st.phase === 'morning') ? 'auto' : '38px',
       msgToastTipRight: (st.day === 3 && st.phase === 'morning') ? '38px' : 'auto',
+      socToastShown: !!st.socToast,
+      socToastOpacity: st.socToastVisible ? 1 : 0,
+      socToastY: st.socToastVisible ? '0px' : '-14px',
+      socToastWho: st.socToast ? st.socToast.who : '',
+      socToastText: st.socToast ? st.socToast.text : '',
       sceneScale: st.cameraPush ? 1.045 : 1,
       pushVignetteOp: st.cameraPush ? 0.32 : 0,
       dayPanY: st.dayEnter ? '-52px' : '0px',
@@ -730,29 +744,40 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       socEmpty: false,
       socProfile: !!st.socProfileKey,
       socPost: !st.socProfileKey && socTab !== 'profile' && !!st.socPostId,
-      feed: feedPosts.filter(p => !p.profileOnly).map(p => ({
-        name: p.name, handle: p.handle, ago: p.ago, text: p.text,
-        hasText: !!p.text,
-        likes: p.likes, replies: p.replies, avatar: p.avatar || p.img,
-        hasPhoto: !!p.photo, isGarden: !!p.garden, isCraft: !!p.craft, dated: p.dated || '',
-        openGarden: () => this.setState({ feedImg: 'garden' }),
-        openCraft: () => this.setState({ feedImg: 'craft' }),
-        openParty: () => this.setState({ feedImg: 'party' }),
-        tappable: p.handle === '@nicole_kruger' || p.handle === '@n.krueger',
-        inert: !(p.handle === '@nicole_kruger' || p.handle === '@n.krueger'),
-        cursor: (p.handle === '@nicole_kruger' || p.handle === '@n.krueger') ? 'pointer' : 'default',
-        openProfile: () => {
-          this.setState({ socProfileKey: p.handle, socPostId: null, socInfoOpen: false, socTab: 'feed' });
-          if (p.handle === '@n.krueger') { this.setState({ sawFake: true }); this.maybeCompare('fake'); }
-          if (p.handle === '@nicole_kruger' && !st.reported) { this.setState({ sawReal: true }); this.maybeCompare('real'); }
-        },
-        openPost: () => this.setState({ socPostId: p.id, socProfileKey: null, socInfoOpen: false, socTab: 'feed' })
-      })),
-       profDead: !!(prof && prof.dead), profLive: !!(prof && !prof.dead),
-       profInfoOpen: !!st.socInfoOpen,
-       openProfInfo: () => this.setState({ socInfoOpen: true, profMenuOpen: false, reportReasonOpen: false }),
-       closeProfInfo: () => this.setState({ socInfoOpen: false }),
-       profMenuOpen: st.profMenuOpen, reportReasonOpen: st.reportReasonOpen, reportToast: st.reportToast,
+      feed: (() => {
+        const visible = feedPosts.filter(p => !p.profileOnly);
+        const todayCount = visible.filter(p => p.day === st.day).length;
+        const rowsOut = visible.map(p => ({
+          isRow: true, isDivider: false,
+          name: p.name, handle: p.handle, ago: p.ago, text: p.text,
+          hasText: !!p.text,
+          likes: p.likes, replies: p.replies, avatar: p.avatar || p.img,
+          hasPhoto: !!p.photo, isGarden: !!p.garden, isCraft: !!p.craft, dated: p.dated || '',
+          unseen: p.day === st.day && !st.seen['soc:' + p.id],
+          openGarden: () => { seePost(p.id); this.setState({ feedImg: 'garden' }); },
+          openCraft: () => { seePost(p.id); this.setState({ feedImg: 'craft' }); },
+          openParty: () => { seePost(p.id); this.setState({ feedImg: 'party' }); },
+          tappable: p.handle === '@nicole_kruger' || p.handle === '@n.krueger',
+          inert: !(p.handle === '@nicole_kruger' || p.handle === '@n.krueger'),
+          cursor: (p.handle === '@nicole_kruger' || p.handle === '@n.krueger') ? 'pointer' : 'default',
+          openProfile: () => {
+            seePost(p.id);
+            this.setState({ socProfileKey: p.handle, socPostId: null, socInfoOpen: false, socTab: 'feed' });
+            if (p.handle === '@n.krueger') { this.setState({ sawFake: true }); this.maybeCompare('fake'); }
+            if (p.handle === '@nicole_kruger' && !st.reported) { this.setState({ sawReal: true }); this.maybeCompare('real'); }
+          },
+          openPost: () => { seePost(p.id); this.setState({ socPostId: p.id, socProfileKey: null, socInfoOpen: false, socTab: 'feed' }); }
+        }));
+        if (todayCount > 0 && todayCount < rowsOut.length) {
+          rowsOut.splice(todayCount, 0, { isRow: false, isDivider: true });
+        }
+        return rowsOut;
+      })(),
+      profDead: !!(prof && prof.dead), profLive: !!(prof && !prof.dead),
+      profInfoOpen: !!st.socInfoOpen,
+      openProfInfo: () => this.setState({ socInfoOpen: true, profMenuOpen: false, reportReasonOpen: false }),
+      closeProfInfo: () => this.setState({ socInfoOpen: false }),
+      profMenuOpen: st.profMenuOpen, reportReasonOpen: st.reportReasonOpen, reportToast: st.reportToast,
       profReported: !!(st.socProfileKey && st.reportedAccounts[st.socProfileKey]),
       profNotReported: !(st.socProfileKey && st.reportedAccounts[st.socProfileKey]),
       openProfMenu: () => this.openProfMenu(), closeProfMenu: () => this.closeProfMenu(),

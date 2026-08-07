@@ -349,6 +349,19 @@
     <div style="position:absolute;inset:0;pointer-events:none;background:var(--c-accent-morning);opacity:{{ morningWash }};mix-blend-mode:soft-light;"></div>
 
     <div style="position:absolute;inset:0;pointer-events:none;opacity:{{ pushVignetteOp }};transition:opacity .5s ease;background:radial-gradient(ellipse at 20% 52%,transparent 30%,rgba(0,0,0,.55) 100%);"></div>
+
+    <sc-if value="{{ socToastShown }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:9%;top:calc(52% + 22%);transform:translateY(14px);z-index:29;width:min(240px,74%);pointer-events:none;">
+      <div style="position:relative;background:var(--c-white);border-radius:16px;box-shadow:0 10px 26px var(--c-ink-shadow);padding:10px 12px;display:flex;align-items:center;gap:9px;opacity:{{ socToastOpacity }};transform:translateY({{ socToastY }});transition:opacity .28s ease,transform .28s ease;">
+        <span style="position:absolute;top:-5px;left:38px;width:11px;height:11px;background:var(--c-white);transform:rotate(45deg);"></span>
+        <div style="flex:0 0 30px;width:30px;height:30px;border-radius:50%;background:var(--c-danger);display:flex;align-items:center;justify-content:center;font-size:13px;">📸</div>
+        <div style="min-width:0;flex:1;">
+          <div style="font-size:11px;font-weight:700;color:var(--c-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ socToastWho }}</div>
+          <div style="font-size:12px;color:var(--c-ink-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ socToastText }}</div>
+        </div>
+      </div>
+    </div>
+    </sc-if>
   </div>
 
   <sc-if value="{{ confirmSleepOpen }}" hint-placeholder-val="{{ false }}">
@@ -893,6 +906,9 @@
             <sc-if value="{{ a.badge }}" hint-placeholder-val="{{ false }}">
               <span style="position:absolute;top:-7px;right:-7px;min-width:20px;height:20px;border-radius:10px;background:var(--c-danger);color:var(--c-white);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 5px;">{{ a.badge }}</span>
             </sc-if>
+            <sc-if value="{{ a.dot }}" hint-placeholder-val="{{ false }}">
+              <span style="position:absolute;top:-2px;right:-2px;width:12px;height:12px;border-radius:6px;background:#E01B1B;box-shadow:0 0 0 2px #FFFFFF;"></span>
+            </sc-if>
           </button>
         </sc-for>
       </div>
@@ -1175,6 +1191,14 @@
         <sc-if value="{{ socFeed }}" hint-placeholder-val="{{ true }}">
           <div style="display:flex;flex-direction:column;">
             <sc-for list="{{ feed }}" as="p" hint-placeholder-count="5">
+              <sc-if value="{{ p.isDivider }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;align-items:center;gap:10px;padding:12px 18px;">
+                  <div style="flex:1;height:1px;background:var(--c-line);"></div>
+                  <div style="font-size:var(--fs-caption);letter-spacing:.08em;text-transform:uppercase;color:var(--c-ink-dim);">Earlier</div>
+                  <div style="flex:1;height:1px;background:var(--c-line);"></div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ p.isRow }}" hint-placeholder-val="{{ true }}">
               <div style="border-bottom:1px solid var(--c-panel);padding:16px 18px;display:flex;gap:12px;">
                 <sc-if value="{{ p.tappable }}" hint-placeholder-val="{{ false }}">
                   <button sc-camel-on-click="{{ p.openProfile }}" style="flex:0 0 40px;width:40px;height:40px;border-radius:20px;border:0;padding:0;overflow:hidden;background:transparent;"><img src="{{ p.avatar }}" alt="" style="display:block;width:40px;height:40px;object-fit:cover;"></button>
@@ -1188,6 +1212,9 @@
                       <span style="font-size:var(--fs-body);font-weight:700;color:var(--c-ink);">{{ p.name }}</span>
                       <span style="font-size:var(--fs-md);color:var(--c-ink-faint);">{{ p.handle }}</span>
                       <span style="font-size:var(--fs-md);color:var(--c-ink-faint);">· {{ p.ago }}</span>
+                      <sc-if value="{{ p.unseen }}" hint-placeholder-val="{{ false }}">
+                        <span title="New" style="display:inline-block;width:7px;height:7px;border-radius:4px;background:var(--c-danger);"></span>
+                      </sc-if>
                     </div>
                     <sc-if value="{{ p.hasText }}" hint-placeholder-val="{{ true }}">
                       <div style="font-size:var(--fs-body);line-height:1.45;color:var(--c-ink);margin-top:4px;">{{ p.text }}</div>
@@ -1225,6 +1252,7 @@
                   </button>
                 </div>
               </div>
+              </sc-if>
             </sc-for>
           </div>
         </sc-if>

@@ -76,12 +76,13 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       shotOpen: null, sawFake: false, sawReal: false, reportOpen: false,
       arrival: Date.now(), confirmSleep: false, sharedCount: shared, reason: '',
       pushIdx: st.pushIdx + (st.group < 35 ? 1 : 0),
-      msgToast: null, msgToastVisible: false, cameraPush: false,
+      msgToast: null, msgToastVisible: false, socToast: null, socToastVisible: false, cameraPush: false,
       dayEnter: true
     }, () => {
       requestAnimationFrame(() => this.setState({ dayEnter: false }));
       this.runDayArrival(d.chat, d.dm);
       if (n === 3 && ph === 'clip') this.generateDay3Voice();
+      if (n !== st.day) this.runSocialArrival(n);
     });
   }
 });
