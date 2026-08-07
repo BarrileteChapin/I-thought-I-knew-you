@@ -41,6 +41,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     window.removeEventListener('pagehide', this._bye);
     window.removeEventListener('keydown', this._keys);
     window.removeEventListener('beforeunload', this._bye);
+    clearTimeout(this._saveTimer);
+    this.saveGame();
     this.wipeAudio();
     clearTimeout(this._n1); clearTimeout(this._n2);
     clearTimeout(this._msgToastHide); clearTimeout(this._msgToastClear);
@@ -55,6 +57,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   },
 
   componentDidUpdate() {
+    this.scheduleSave();
     if (this._scrollToPost && this.state.dev === 'social') {
       const want = this._scrollToPost;
       requestAnimationFrame(() => {
