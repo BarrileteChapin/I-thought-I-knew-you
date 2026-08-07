@@ -132,6 +132,13 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     return (saved.playerName || '').trim() || 'Alex';
   },
 
+  savedPlayerAvatar(saved) {
+    if (!saved) return 'assets/av-player-female.webp';
+    return saved.playerAvatar === 'male'
+      ? 'assets/av-player-male.webp'
+      : 'assets/av-player-female.webp';
+  },
+
   continueGame() {
     const saved = this.readSavedGame();
     if (!saved) return;

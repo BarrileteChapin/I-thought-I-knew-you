@@ -23,7 +23,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       bg: m.sys ? 'transparent' : (m.mine ? C.accentSoft : C.panel),
       rule: m.sys ? '2px solid ' + C.muted : (m.mine ? '2px solid ' + C.accent : '0'),
       showWho: !m.mine && !m.sys,
-      whoColor: m.who === 'Nicole' ? C.accent : C.muted,
+      whoColor: this.whoColorOf(m.who),
       textColor: m.sys ? C.muted : C.ink,
       isSys: !!m.sys, rowDisplay: m.sys ? 'none' : 'flex',
       mineFemale: !!m.mine && st.playerAvatar === 'female', mineMale: !!m.mine && st.playerAvatar === 'male',
@@ -33,7 +33,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       openShot: () => { this.setState({ shotOpen: 'fake', sawFake: true }); this.maybeCompare('fake'); },
       openPhoto: () => this.setState({ shotOpen: 'photo' }),
       lightBg: m.sys ? C.washWarm : (m.mine ? C.accentWash : C.white),
-      lightWho: C.accent,
+      lightWho: this.whoColorOf(m.who),
       lightText: m.sys ? C.muted : C.ink,
       radius: m.mine ? '14px 14px 4px 14px' : '14px 14px 14px 4px',
       isText: !m.kind, tick: m.mine && !m.old ? (m.unsent ? '✓' : '✓✓') : '',
@@ -829,10 +829,10 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         justify: m.mine ? 'flex-end' : 'flex-start',
         bg: m.sys ? 'transparent' : (m.mine ? C.inkSoft : C.panel),
         rule: m.mine ? '2px solid ' + C.accent : '0',
-        showWho: !m.mine && !m.sys, whoColor: m.who === 'Nicole' ? C.accent : C.accent
+        showWho: !m.mine && !m.sys, whoColor: this.whoColorOf(m.who)
       })).concat(st.dmCloseExtra ? [{
         id: 999, who: 'Nicole', text: st.dmCloseExtra.text, justify: 'flex-start',
-        bg: C.panel, rule: '0', showWho: true, whoColor: C.accent
+        bg: C.panel, rule: '0', showWho: true, whoColor: this.whoColorOf('Nicole')
       }] : []),
       dmCloseTyping: st.dmCloseTyping, dmCloseReady: st.dmCloseReady,
       dmCloseLine: (st.samDead ? 'locked' : st.sam < 35 ? 'low' : 'high') === 'locked' ? 'She hasn' + "'" + 't opened this since Wednesday.'
@@ -878,6 +878,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       start: () => this.setState({ screen: 'name', nameDraft: '' }, () => { const el = this.nameRef.current; if (el) el.focus(); }),
       hasSave: !!savedGame,
       savePlayerName: this.savedPlayerName(savedGame),
+      savePlayerAvatar: this.savedPlayerAvatar(savedGame),
       saveProgressLabel: this.describeSave(savedGame),
       continueGame: () => this.continueGame(),
       startOver: () => this.startOver(),
@@ -917,9 +918,9 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         justify: m.mine ? 'flex-end' : 'flex-start',
         bg: m.mine ? C.inkSoft : C.panel,
         rule: m.mine ? '2px solid ' + C.accent : '0',
-        showWho: !m.mine && !m.sys, whoColor: m.who === 'Nicole' ? C.accent : C.accent,
+        showWho: !m.mine && !m.sys, whoColor: this.whoColorOf(m.who),
         lightBg: m.sys ? C.washWarm : (m.mine ? C.accentWash : C.white),
-        lightWho: m.who === 'Nicole' ? C.accent : C.accent,
+        lightWho: this.whoColorOf(m.who),
         lightText: m.sys ? C.muted : C.ink,
         radius: m.mine ? '14px 14px 4px 14px' : '14px 14px 14px 4px'
       })),

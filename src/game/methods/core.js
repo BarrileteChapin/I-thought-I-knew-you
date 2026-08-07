@@ -74,6 +74,15 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     }[who] || 'assets/av-mia.webp');
   },
 
+  /* CSS tokens: --c-who-* in styles/design-system.css */
+  whoColorOf(who) {
+    const slug = {
+      Nicole: 'nicole', Hanna: 'hanna', Mia: 'mia', Lea: 'lea',
+      Benito: 'benito', Nele: 'nele', Tim: 'hanna'
+    }[who] || 'default';
+    return 'var(--c-who-' + slug + ')';
+  },
+
   preview(list) {
     for (let i = list.length - 1; i >= 0; i--) {
       const m = list[i];

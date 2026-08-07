@@ -104,12 +104,15 @@
   --fs-display: 52px;
   --fs-hero: 64px;
 
+  /* Breakpoints (media queries must repeat the px value; keep in sync) */
+  --bp-desktop: 768px;
+
   /* Radius */
   --r-xs: 3px;
   --r-sm: 8px;
   --r-md: 12px;
   --r-lg: 16px;
-  --r-frame: 32px;
+  --r-frame: 0px; /* mobile: flush phone shell */
   --r-phone: 34px;
   --r-pill: 999px;
   --r-full: 50%;
@@ -161,6 +164,15 @@
   --c-accent-glow: #7C93E8;
   --c-accent-mist: #F1F4FE;
   --c-accent-morning: #DCE8F7;
+
+  /* Chat speaker names (showWho / lightWho) */
+  --c-who-nicole: #3295D2;
+  --c-who-hanna: #34B3AB;
+  --c-who-mia: #0B9A75;
+  --c-who-lea: #AC672E;
+  --c-who-benito: #FF6160;
+  --c-who-nele: #FF8018;
+  --c-who-default: var(--c-muted);
 
   /* Ink / text */
   --c-ink: #111111;
@@ -220,6 +232,13 @@
 
   /* Legacy warm tint */
   --c-warm-soft: rgba(242, 177, 92, .10);
+}
+
+/* Desktop: rounded phone shell (keep min-width in sync with --bp-desktop) */
+@media (min-width: 768px) {
+  :root {
+    --r-frame: 32px;
+  }
 }
 
 h1, h2, h3, h4, h5, h6 {
