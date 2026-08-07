@@ -51,7 +51,7 @@ class Component extends DCLogic {
     recOpen: false, recPhase: 'intro', recIdx: 0, recBusy: false, recLevel: 0, hasRecording: false, recTrying: false, recAttempts: 0,
     minCheck: 0, minReact: 0, postsWith: 0, postsWithout: 0, dmChances: 0, endStep: 1, gamePhase: 'playing',
     postedWed: false,
-    stats: { forwards: 0, reacts: 0, checks: 0, fast: 0, dmAnswered: 0, believed: 0, dismissed: 0, stopped: 0, fastest: null, sift: { investigate: 0, coverage: 0, trace: 0 } }
+    stats: { forwards: 0, reacts: 0, checks: 0, fast: 0, dmAnswered: 0, believed: 0, dismissed: 0, stopped: 0, fastest: null, sift: { investigate: 0, coverage: 0, trace: 0 }, chat: { dm: 0, group: 0, questioning: 0, pile_on: 0, supportive: 0, neutral: 0 } }
   };
 }
 

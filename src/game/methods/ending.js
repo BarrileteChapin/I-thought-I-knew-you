@@ -1,18 +1,44 @@
 window.GameMethods = Object.assign(window.GameMethods || {}, {
+  // Shared signals for ledger + finalCard (matches docs/ending-rules.html).
+  endingSignals(st, s) {
+    const chat = Object.assign({
+      dm: 0, group: 0, questioning: 0, pile_on: 0, supportive: 0, neutral: 0
+    }, (s.chat || {}));
+    const checks = (s.sift.investigate || 0) + (s.sift.coverage || 0) + (s.sift.trace || 0);
+    const dmCount = Math.max(s.dmAnswered || 0, chat.dm || 0);
+    const publiclySupported = !st.samDead
+      && chat.pile_on <= chat.supportive
+      && (chat.supportive > 0 || (st.final && st.final.post === 'support')
+        || (st.writeStatus === 'sent'
+          && [1, 2, 3, 4, 5].filter(n => st.certainty[n] === 'confirmed').length >= 2));
+    return {
+      chat, checks, dmCount, publiclySupported,
+      nicoleHigh: !st.samDead && st.sam >= 50,
+      groupOk: st.group >= 35
+    };
+  },
+
   ledger(st, s) {
-    const mins = n => n + (n === 1 ? ' minute' : ' minutes');
     const posts = st.postsWith + st.postsWithout;
+    const { chat, checks, dmCount, publiclySupported } = this.endingSignals(st, s);
+    const chances = Math.max(st.dmChances || 0, dmCount);
+    const toneBits = [];
+    if (chat.supportive) toneBits.push(chat.supportive + ' supportive');
+    if (chat.questioning) toneBits.push(chat.questioning + ' questioning');
+    if (chat.pile_on) toneBits.push(chat.pile_on + ' piling on');
+    if (chat.neutral) toneBits.push(chat.neutral + ' other');
     return [
-      { label: 'Forwarded', value: s.forwards + (s.forwards === 1 ? ' thing' : ' things') },
-      { label: 'Reacted', value: s.reacts + (s.reacts === 1 ? ' time' : ' times') },
-      { label: 'Posted in the group', value: posts === 0 ? 'never'
+      { label: 'Fact-checks', value: checks === 0 ? 'none'
+        : checks + (checks === 1 ? ' check' : ' checks')
+          + (checks >= 4 ? ' — enough to know' : checks >= 2 ? ' — some of the picture' : '') },
+      { label: 'Answered Nicole', value: dmCount === 0 ? 'never'
+        : dmCount + ' of ' + chances + (chances === 1 ? ' chance' : ' chances') },
+      { label: 'In the chats', value: toneBits.length ? toneBits.join(', ') : 'never typed' },
+      { label: 'Spoke up in the group', value: posts === 0 ? 'never'
         : posts + (posts === 1 ? ' time — ' : ' times — ') + st.postsWith + ' with proof, ' + st.postsWithout + ' without' },
-      { label: 'Answered Nicole', value: s.dmAnswered + ' of ' + Math.max(s.dmAnswered, 4) + ' times' },
-      { label: 'Reported her real account', value: st.reportedWrong ? 'yes' : 'no' },
+      { label: 'Stood with her in public', value: publiclySupported ? 'yes' : 'no' },
       { label: 'Reported the fake account', value: st.reportedFake ? 'yes' : 'no' },
-      { label: 'Fastest reaction', value: s.fastest === null ? '—' : s.fastest + (s.fastest === 1 ? ' second' : ' seconds') },
-      { label: 'Time spent checking', value: mins(st.minCheck) },
-      { label: 'Time spent reacting', value: mins(st.minReact) }
+      { label: 'Reported her real account', value: st.reportedWrong ? 'yes' : 'no' }
     ];
   },
 
@@ -116,25 +142,49 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   },
 
   finalCard(st, s) {
-    const checks = s.sift.investigate + s.sift.coverage + s.sift.trace;
-    // Swap these paths when per-result art is ready.
-    const img1 = 'assets/nicole_sad_bg.webp';
-    const img2 = 'assets/nicole_sad_bg.webp';
-    const img3 = 'assets/nicole_sad_bg.webp';
-    const img4 = 'assets/nicole_sad_bg.webp';
-    const img5 = 'assets/nicole_sad_bg.webp';
-    if (st.final.post === 'support' && checks >= 3) {
-      return { text: 'She checked it. She learned that from you.', image: img1 };
+    const { checks, dmCount, publiclySupported, nicoleHigh, groupOk } = this.endingSignals(st, s);
+    // Placeholder art until per-result images exist.
+    const img = 'assets/nicole_sad_bg.webp';
+
+    // 1 — investigated, stood up in public, kept Nicole, class still mostly ok
+    if (checks >= 4 && publiclySupported && nicoleHigh && groupOk) {
+      return {
+        text: 'You waited for the truth. Then you spoke it aloud. She heard you twice.',
+        image: img
+      };
     }
-    if (checks >= 4 && st.group < 40) {
-      return { text: 'Being right isn' + "'" + 't a resource. Being reliably right is.', image: img2 };
+    // 2 — investigated, stood up in public, kept Nicole, but the class cooled on you
+    if (checks >= 4 && publiclySupported && nicoleHigh) {
+      return {
+        text: 'You told the truth to the room. The room grew quieter around you.',
+        image: img
+      };
     }
-    if (checks >= 2 && st.final.post !== 'support' && s.dmAnswered > 0) {
-      return { text: 'You knew by Tuesday. It changed nothing.', image: img3 };
+    // 3 — investigated enough, stayed private: lots of DMs, Nicole still trusts you
+    if (checks >= 2 && !publiclySupported && dmCount >= 3 && nicoleHigh) {
+      return {
+        text: 'You were the only one who knew. And you kept it between the two of you.',
+        image: img
+      };
     }
-    if (s.dmAnswered > 0 && st.final.post !== 'support') {
-      return { text: 'She knew. Nobody else did.', image: img4 };
+    // 4 — investigated enough, some private contact, little public courage
+    if (checks >= 2 && !publiclySupported && dmCount >= 1) {
+      return {
+        text: 'A few words in the dark. None in the light.',
+        image: img
+      };
     }
-    return { text: 'I thought I knew you, ' + this.name() + '.', image: img5 };
+    // 5 — investigated, but did not turn that into care (public or private)
+    if (checks >= 2) {
+      return {
+        text: 'You found the crack in their story. You let them keep telling it.',
+        image: img
+      };
+    }
+    // 6 — else / little investigation
+    return {
+      text: 'I thought I knew you, ' + this.name() + '.',
+      image: img
+    };
   }
 });

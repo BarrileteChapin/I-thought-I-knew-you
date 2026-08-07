@@ -154,7 +154,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         { label: 'Compression signature', value: 'consistent', pct: '97%' },
         { label: 'Metadata', value: 'intact', pct: '99%' }
       ] },
-      'nicole_garden.webp': { score: 8, len: '1 image', hint: true, rows: [
+      'nicole_garden.jpg': { score: 8, len: '1 image', hint: true, rows: [
         { label: 'Generation artefacts', value: 'detected', pct: '88%' },
         { label: 'Pixel-level consistency', value: 'irregular', pct: '24%' },
         { label: 'Compression signature', value: 'inconsistent', pct: '19%' },
@@ -331,7 +331,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const prof = st.socProfileKey ? PROFILES[st.socProfileKey] : null;
     const openPost = st.socPostId ? feedPosts.find(p => p.id === st.socPostId) : null;
     const NAME_HITS = {
-      'nicole_garden.webp': [{ source: 'social · @n.krueger', date: 'Posted today', kind: 'garden', goto: 'f5' }],
+      'nicole_garden.jpg': [{ source: 'social · @n.krueger', date: 'Posted today', kind: 'garden', goto: 'f5' }],
       'nicole_craft.jpg': [{ source: 'social · @n.krueger', date: 'Posted today', kind: 'craft', goto: 'f6' }],
       'nicole_party_repost.jpg': [{ source: 'social · @nicole_kruger', date: 'Posted 14 July, last year', quote: 'laura' + "'" + 's birthday 🎂', kind: 'image', goto: 'old10' }]
     };
@@ -343,6 +343,12 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const dayClutter = st.day;
     const savedGame = st.screen === 'title' ? this.readSavedGame() : null;
     const endCard = this.finalCard(st, s);
+    const endSig = this.endingSignals(st, s);
+    const checkBarPct = Math.min(100, Math.round(100 * endSig.checks / 4));
+    const careBarPct = endSig.publiclySupported ? 100
+      : endSig.dmCount >= 3 ? 66
+      : endSig.dmCount >= 1 ? 33
+      : 0;
 
     const cineScene = this.CINE_SCENES[st.cineIdx] || this.CINE_SCENES[0] || {};
 
@@ -630,7 +636,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       toastOn: st.toast,
       feedImgOpen: !!st.feedImg,
       feedImgIsGarden: st.feedImg === 'garden', feedImgIsCraft: st.feedImg === 'craft', feedImgIsParty: st.feedImg === 'party',
-      feedImgName: { garden: 'nicole_garden.webp', craft: 'nicole_craft.jpg', party: 'nicole_party_repost.jpg' }[st.feedImg] || '',
+      feedImgName: { garden: 'nicole_garden.jpg', craft: 'nicole_craft.jpg', party: 'nicole_party_repost.jpg' }[st.feedImg] || '',
       closeFeedImg: () => this.setState({ feedImg: null }),
       saveFeedImg: () => { if (st.feedImg) this.saveImage(st.feedImg); },
       openIsAudio: openRow.kind === 'audio', openIsShot: openRow.kind === 'shot',
@@ -932,10 +938,15 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       groupStandingLine: st.group < 35 ? 'Two people stopped replying to you this week.'
         : st.group >= 65 ? 'Nobody in the group has anything against you.' : '',
       ledger: this.ledger(st, s),
-      checkingLabel: st.minCheck + ' minutes checking',
-      reactingLabel: st.minReact + ' minutes reacting',
-      checkingBar: Math.round(100 * st.minCheck / Math.max(1, st.minCheck + st.minReact)) + '%',
-      reactingBar: Math.round(100 * st.minReact / Math.max(1, st.minCheck + st.minReact)) + '%',
+      checkingLabel: endSig.checks === 0 ? 'No fact-checks'
+        : endSig.checks + (endSig.checks === 1 ? ' fact-check' : ' fact-checks')
+          + (endSig.checks >= 4 ? ' — heavy' : endSig.checks >= 2 ? ' — medium' : ''),
+      reactingLabel: endSig.publiclySupported ? 'Stood with her in public'
+        : endSig.dmCount >= 3 ? 'Only spoke in private'
+        : endSig.dmCount >= 1 ? 'A few private words'
+        : 'Stayed quiet',
+      checkingBar: checkBarPct + '%',
+      reactingBar: careBarPct + '%',
       omissions: this.omissions(st),
       moves: this.moves(s),
       siftLine: (s.sift.investigate + s.sift.coverage + s.sift.trace) === 0
@@ -1070,7 +1081,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         writeIn: false, writeText: '', writeStatus: null, chatDraft: '', chatBusy: false, actionsOpen: false, chatGroupLeft: 4, chatDmLeft: 3, llmUsedReplies: [], llmReplySeed: 0,
         dragItem: null, pickIdx: null, pickerOpen: false, pickerMode: 'search', searched: {}, aiPickIdx: null, aiStage: 'idle', aiStep: 0, actionLog: [], reactionTimes: [],
         final: { post: null, fwd: null, tell: null }, sam: 50, group: 50, pushIdx: 0, flashSam: false, flashGroup: false, samDead: false,
-        stats: { forwards: 0, reacts: 0, checks: 0, fast: 0, dmAnswered: 0, believed: 0, dismissed: 0, stopped: 0, fastest: null, sift: { investigate: 0, coverage: 0, trace: 0 } }
+        stats: { forwards: 0, reacts: 0, checks: 0, fast: 0, dmAnswered: 0, believed: 0, dismissed: 0, stopped: 0, fastest: null, sift: { investigate: 0, coverage: 0, trace: 0 }, chat: { dm: 0, group: 0, questioning: 0, pile_on: 0, supportive: 0, neutral: 0 } }
       })
     };
   }
