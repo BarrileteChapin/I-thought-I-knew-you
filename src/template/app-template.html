@@ -1,4 +1,4 @@
-<div style="display:none;" aria-hidden="true"><img id="__av-nicole" src="assets/av-nicole.png" alt=""><img id="__av-mia" src="assets/av-mia.png" alt=""><img id="__av-hanna" src="assets/av-hanna.png" alt=""><img id="__av-lea" src="assets/av-lea.png" alt=""><img id="__av-nele" src="assets/av-nele.png" alt=""><img id="__av-benito" src="assets/av-benito.png" alt=""></div>
+<div style="display:none;" aria-hidden="true"><img id="__av-nicole" src="assets/av-nicole.webp" alt=""><img id="__av-mia" src="assets/av-mia.webp" alt=""><img id="__av-hanna" src="assets/av-hanna.webp" alt=""><img id="__av-lea" src="assets/av-lea.webp" alt=""><img id="__av-nele" src="assets/av-nele.webp" alt=""><img id="__av-benito" src="assets/av-benito.webp" alt=""></div>
 
 <div style="width:100%;min-height:100vh;background:var(--c-canvas);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--c-ink);">
 <div style="position:relative;flex:0 0 auto;width:390px;max-width:100vw;height:844px;max-height:100vh;background:var(--c-frame);border-radius:var(--r-frame);overflow:hidden;display:flex;flex-direction:column;">
@@ -30,10 +30,10 @@
   <div style="font-size:var(--fs-lead);line-height:1.5;color:var(--c-ink);margin-bottom:18px;">Pick your avatar</div>
   <div style="display:flex;gap:20px;justify-content:center;margin-bottom:30px;">
     <button sc-camel-on-click="{{ pickFemale }}" style="background:transparent;border:0;padding:0;border-radius:var(--r-full);position:relative;top:{{ femaleLift }};transition:top var(--dur-instant) var(--ease);">
-      <img src="assets/avatar-female.png" alt="" style="display:block;width:72px;height:72px;border-radius:36px;object-fit:cover;box-shadow:{{ femaleRing }};">
+      <img src="assets/av-player-female.webp" alt="" style="display:block;width:72px;height:72px;border-radius:36px;object-fit:cover;box-shadow:{{ femaleRing }};">
     </button>
     <button sc-camel-on-click="{{ pickMale }}" style="background:transparent;border:0;padding:0;border-radius:var(--r-full);position:relative;top:{{ maleLift }};transition:top var(--dur-instant) var(--ease);">
-      <img src="assets/avatar-male.png" alt="" style="display:block;width:72px;height:72px;border-radius:36px;object-fit:cover;box-shadow:{{ maleRing }};">
+      <img src="assets/av-player-male.webp" alt="" style="display:block;width:72px;height:72px;border-radius:36px;object-fit:cover;box-shadow:{{ maleRing }};">
     </button>
   </div>
   <div>
@@ -112,10 +112,10 @@
             </sc-if>
           </div>
           <sc-if value="{{ m.mineFemale }}" hint-placeholder-val="{{ false }}">
-            <img src="assets/avatar-female.png" alt="" style="flex:0 0 30px;display:block;width:30px;height:30px;border-radius:15px;object-fit:cover;margin-left:8px;" decoding="sync" loading="eager">
+            <img src="assets/av-player-female.webp" alt="" style="flex:0 0 30px;display:block;width:30px;height:30px;border-radius:15px;object-fit:cover;margin-left:8px;" decoding="sync" loading="eager">
           </sc-if>
           <sc-if value="{{ m.mineMale }}" hint-placeholder-val="{{ false }}">
-            <img src="assets/avatar-male.png" alt="" style="flex:0 0 30px;display:block;width:30px;height:30px;border-radius:15px;object-fit:cover;margin-left:8px;" decoding="sync" loading="eager">
+            <img src="assets/av-player-male.webp" alt="" style="flex:0 0 30px;display:block;width:30px;height:30px;border-radius:15px;object-fit:cover;margin-left:8px;" decoding="sync" loading="eager">
           </sc-if>
         </div>
       </sc-for>
@@ -186,21 +186,34 @@
     <div style="pointer-events:none;height:12px;margin-top:8px;font-size:11px;text-align:center;color:var(--c-ink);opacity:{{ anyReasonOp }};transition:opacity var(--dur) var(--ease);">{{ anyReason }}</div>
   </div>
 
-  <div sc-camel-on-click="{{ tipOff }}" style="position:relative;flex:1 1 auto;min-height:0;overflow:hidden;background:var(--c-frame);">
+  <div sc-camel-on-click="{{ tipOff }}" style="position:relative;flex:1 1 auto;min-height:0;overflow:auto;background:var(--c-frame);">
+    <div style="position:relative;width:100%;">
+      <img src="{{ roomBg }}" alt="" style="display:block;width:100%;height:auto;pointer-events:none;">
 
-    <img src="assets/room-scene.png" alt="" style="position:absolute;left:5%;top:24%;width:94%;height:auto;pointer-events:none;">
-    <img src="assets/room-detail.png" alt="" style="position:absolute;left:2%;top:54%;width:30%;height:auto;pointer-events:none;">
+      <sc-if value="{{ isEveningRoom }}" hint-placeholder-val="{{ true }}">
+        <div style="position:absolute;left:var(--hot-bed-l);top:var(--hot-bed-t);width:var(--hot-bed-w);aspect-ratio:1;border-radius:var(--r-full);background:var(--hot-glow);pointer-events:none;"></div>
+        <button sc-camel-on-click="{{ askSleep }}" title="bed" style-after="content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:100%;height:100%;min-width:88px;min-height:88px;" style="position:absolute;left:var(--hot-bed-l);top:var(--hot-bed-t);width:var(--hot-bed-w);aspect-ratio:1;border-radius:var(--r-full);background:transparent;border:0;padding:0;"></button>
 
-    <div style="position:absolute;left:17%;top:30%;width:29%;aspect-ratio:1;border-radius:var(--r-full);background:var(--c-accent-glow);opacity:.62;pointer-events:none;"></div>
-    <div style="position:absolute;left:9%;top:52%;width:22%;aspect-ratio:1;border-radius:var(--r-full);background:var(--c-accent-glow);opacity:.62;pointer-events:none;"></div>
-
-    <button sc-camel-on-click="{{ askSleep }}" title="bed" style-after="content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:100%;height:100%;min-width:88px;min-height:88px;" style="position:absolute;left:17%;top:30%;width:29%;aspect-ratio:1;border-radius:var(--r-full);background:transparent;border:0;padding:0;"></button>
-
-    <button sc-camel-on-click="{{ openPhone }}" title="phone" style-after="content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:100%;height:100%;min-width:88px;min-height:88px;" style="z-index:6;position:absolute;left:9%;top:52%;width:22%;aspect-ratio:1;border-radius:var(--r-full);background:transparent;border:0;padding:0;animation:{{ buzzAnim }};">
-      <sc-if value="{{ hasUnread }}" hint-placeholder-val="{{ false }}">
-        <span style="position:absolute;left:50%;top:2px;transform:translateX(-50%);min-width:22px;height:22px;border-radius:11px;background:var(--c-accent);color:var(--c-white);font-size:var(--fs-caption);font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 6px;pointer-events:none;animation:pulse 2.2s ease-in-out infinite;">{{ unread }}</span>
+        <div style="position:absolute;left:var(--hot-phone-l);top:var(--hot-phone-t);width:var(--hot-phone-w);aspect-ratio:1;border-radius:var(--r-full);background:var(--hot-glow);pointer-events:none;"></div>
+        <button sc-camel-on-click="{{ openPhone }}" title="phone" style-after="content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:100%;height:100%;min-width:88px;min-height:88px;" style="z-index:6;position:absolute;left:var(--hot-phone-l);top:var(--hot-phone-t);width:var(--hot-phone-w);aspect-ratio:1;border-radius:var(--r-full);background:transparent;border:0;padding:0;animation:{{ buzzAnim }};">
+          <sc-if value="{{ hasUnread }}" hint-placeholder-val="{{ false }}">
+            <span style="position:absolute;left:50%;top:2px;transform:translateX(-50%);min-width:22px;height:22px;border-radius:11px;background:var(--c-accent);color:var(--c-white);font-size:var(--fs-caption);font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 6px;pointer-events:none;animation:pulse 2.2s ease-in-out infinite;">{{ unread }}</span>
+          </sc-if>
+        </button>
       </sc-if>
-    </button>
+
+      <sc-if value="{{ isMorningRoom }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:var(--hot-bag-l);top:var(--hot-bag-t);width:var(--hot-bag-w);aspect-ratio:1;border-radius:var(--r-full);background:var(--hot-glow);pointer-events:none;"></div>
+        <button sc-camel-on-click="{{ askSleep }}" title="backpack" style-after="content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:100%;height:100%;min-width:88px;min-height:88px;" style="position:absolute;left:var(--hot-bag-l);top:var(--hot-bag-t);width:var(--hot-bag-w);aspect-ratio:1;border-radius:var(--r-full);background:transparent;border:0;padding:0;"></button>
+
+        <div style="position:absolute;left:var(--hot-phone-am-l);top:var(--hot-phone-am-t);width:var(--hot-phone-am-w);aspect-ratio:1;border-radius:var(--r-full);background:var(--hot-glow);pointer-events:none;"></div>
+        <button sc-camel-on-click="{{ openPhone }}" title="phone" style-after="content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:100%;height:100%;min-width:88px;min-height:88px;" style="z-index:6;position:absolute;left:var(--hot-phone-am-l);top:var(--hot-phone-am-t);width:var(--hot-phone-am-w);aspect-ratio:1;border-radius:var(--r-full);background:transparent;border:0;padding:0;animation:{{ buzzAnim }};">
+          <sc-if value="{{ hasUnread }}" hint-placeholder-val="{{ false }}">
+            <span style="position:absolute;left:50%;top:2px;transform:translateX(-50%);min-width:22px;height:22px;border-radius:11px;background:var(--c-accent);color:var(--c-white);font-size:var(--fs-caption);font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 6px;pointer-events:none;animation:pulse 2.2s ease-in-out infinite;">{{ unread }}</span>
+          </sc-if>
+        </button>
+      </sc-if>
+    </div>
 
     <div style="position:absolute;inset:0;pointer-events:none;background:var(--c-ink);opacity:{{ nightOpacity }};"></div>
     <div style="position:absolute;inset:0;pointer-events:none;background:var(--c-accent-morning);opacity:{{ morningWash }};mix-blend-mode:soft-light;"></div>
@@ -211,7 +224,7 @@
     <div style="position:relative;z-index:calc(var(--z-modal) + 1);background:var(--c-panel);border:2px solid var(--c-ink);padding:34px 36px;width:min(420px,86%);animation:fadeup var(--dur-fast) var(--ease);">
       <div style="font-size:var(--fs-title);font-weight:600;margin-bottom:24px;color:var(--c-ink);">{{ sleepTitle }}</div>
       <div style="display:flex;gap:12px;">
-        <button sc-camel-on-click="{{ doSleep }}" class="g-btn g-btn-primary g-btn-primary-sm">Sleep</button>
+        <button sc-camel-on-click="{{ doSleep }}" class="g-btn g-btn-primary g-btn-primary-sm">{{ sleepConfirmLabel }}</button>
         <button sc-camel-on-click="{{ cancelSleep }}" class="g-btn g-btn-secondary">Not yet</button>
       </div>
     </div>
@@ -249,12 +262,12 @@
   <div style="flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:auto;">
     <sc-if value="{{ openIsVideo }}" hint-placeholder-val="{{ false }}">
       <div style="width:100%;">
-        <video src="assets/IMG_4471.mp4" controls="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;height:auto;background:var(--c-black);"></video>
+        <video controls="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;height:auto;background:var(--c-black);"><source src="assets/nicole_day0.webm" type="video/webm"><source src="assets/nicole_day0.mp4" type="video/mp4"></video>
         <div style="font-size:var(--fs-md);line-height:1.5;color:var(--c-white-wash);padding:14px 18px 0;">{{ openCaption }}</div>
       </div>
     </sc-if>
     <sc-if value="{{ openIsGarden }}" hint-placeholder-val="{{ false }}">
-      <img sc-camel-on-click="{{ toggleZoom }}" src="assets/nicole-garden.jpg" alt="" style="display:block;width:100%;height:auto;transform:scale({{ zoomScale }});transform-origin:center;transition:transform var(--dur-fast) var(--ease);">
+      <img sc-camel-on-click="{{ toggleZoom }}" src="assets/nicole-garden.webp" alt="" style="display:block;width:100%;height:auto;transform:scale({{ zoomScale }});transform-origin:center;transition:transform var(--dur-fast) var(--ease);">
     </sc-if>
     <sc-if value="{{ openIsCraft }}" hint-placeholder-val="{{ false }}">
       <img sc-camel-on-click="{{ toggleZoom }}" src="assets/nicole-craft.jpg" alt="" style="display:block;width:100%;height:auto;transform:scale({{ zoomScale }});transform-origin:center;transition:transform var(--dur-fast) var(--ease);">
@@ -315,7 +328,7 @@
   </div>
   <div style="flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:auto;">
     <sc-if value="{{ feedImgIsGarden }}" hint-placeholder-val="{{ false }}">
-      <img src="assets/nicole-garden.jpg" alt="" style="display:block;width:100%;height:auto;">
+      <img src="assets/nicole-garden.webp" alt="" style="display:block;width:100%;height:auto;">
     </sc-if>
     <sc-if value="{{ feedImgIsCraft }}" hint-placeholder-val="{{ false }}">
       <img src="assets/nicole-craft.jpg" alt="" style="display:block;width:100%;height:auto;">
@@ -346,10 +359,10 @@
               <img src="assets/nicole-party.jpg" alt="" style="display:block;width:100%;height:100%;object-fit:cover;">
             </sc-if>
             <sc-if value="{{ p.isVideoThumb }}" hint-placeholder-val="{{ false }}">
-              <video src="assets/IMG_4471.mp4" muted="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;height:100%;object-fit:cover;pointer-events:none;"></video>
+              <video muted="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;height:100%;object-fit:cover;pointer-events:none;"><source src="assets/nicole_day0.webm" type="video/webm"><source src="assets/nicole_day0.mp4" type="video/mp4"></video>
             </sc-if>
             <sc-if value="{{ p.isGardenThumb }}" hint-placeholder-val="{{ false }}">
-              <img src="assets/nicole-garden.jpg" alt="" style="display:block;width:100%;height:100%;object-fit:cover;">
+              <img src="assets/nicole-garden.webp" alt="" style="display:block;width:100%;height:100%;object-fit:cover;">
             </sc-if>
             <sc-if value="{{ p.isCraftThumb }}" hint-placeholder-val="{{ false }}">
               <img src="assets/nicole-craft.jpg" alt="" style="display:block;width:100%;height:100%;object-fit:cover;">
@@ -520,11 +533,10 @@
   <sc-if value="{{ onHome }}" hint-placeholder-val="{{ true }}">
     <div style="flex:1;display:flex;flex-direction:column;padding:12px 20px 30px;">
       <div style="display:flex;align-items:center;justify-content:space-between;">
-        <button sc-camel-on-click="{{ backToRoom }}" style="align-self:flex-start;background:var(--c-white-soft);border:0;border-radius:var(--r-pill);padding:8px 14px;min-height:44px;display:flex;align-items:center;gap:6px;text-align:left;color:var(--c-white);font-size:var(--fs-md);font-weight:500;" style-hover="background:var(--c-white-mid);" style-active="background:var(--c-white-mid);">
+        <button sc-camel-on-click="{{ backToRoom }}" style="align-self:flex-start;background:var(--c-white);border:0;border-radius:var(--r-pill);padding:8px 14px;min-height:44px;display:flex;align-items:center;gap:6px;text-align:left;color:var(--c-ink);font-size:var(--fs-md);font-weight:500;box-shadow:0 1px 4px var(--c-ink-shadow);" style-hover="background:var(--c-wash-light);" style-active="background:var(--c-wash-light);">
           <span style="font-size:var(--fs-md);line-height:1;">←</span>
           <span>Close</span>
         </button>
-        <button sc-camel-on-click="{{ backToTitle }}" style="background:transparent;border:0;padding:8px;min-height:44px;color:var(--c-white-dim);font-size:var(--fs-sm);text-align:right;" style-hover="color:var(--c-white);">Save &amp; exit</button>
       </div>
       <div style="flex:1;"></div>
       <div style="display:flex;gap:11px;">
@@ -555,7 +567,7 @@
           <div style="background:var(--c-white);border-radius:14px;overflow:hidden;">
             <sc-for list="{{ threads }}" as="t" hint-placeholder-count="2">
               <button sc-camel-on-click="{{ t.open }}" style="width:100%;background:transparent;border:0;border-bottom:1px solid var(--c-line-soft);padding:14px 16px;display:flex;gap:13px;align-items:center;text-align:left;min-height:44px;">
-                <div style="flex:0 0 46px;width:46px;height:46px;border-radius:23px;background:{{ t.avatarBg }};display:flex;align-items:center;justify-content:center;font-size:17px;">{{ t.glyph }}</div>
+                <img src="{{ t.avatar }}" alt="" style="flex:0 0 46px;display:block;width:46px;height:46px;border-radius:23px;object-fit:cover;background:var(--c-line-soft);">
                 <div style="flex:1;min-width:0;">
                   <div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline;">
                     <span style="font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ t.name }}</span>
@@ -611,7 +623,7 @@
                   <div style="font-size:var(--fs-caption);font-weight:700;color:{{ m.lightWho }};margin-bottom:3px;">{{ m.who }}</div>
                 </sc-if>
                 <sc-if value="{{ m.isVideo }}" hint-placeholder-val="{{ false }}">
-                  <video src="assets/IMG_4471.mp4" controls="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;min-width:210px;max-width:250px;height:auto;border-radius:10px;background:var(--c-ink);"></video>
+                  <video controls="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;min-width:210px;max-width:250px;height:auto;border-radius:10px;background:var(--c-ink);"><source src="assets/nicole_day0.webm" type="video/webm"><source src="assets/nicole_day0.mp4" type="video/mp4"></video>
                   <div style="font-size:var(--fs-caption);color:var(--c-muted);margin-top:5px;">video · 0:15</div>
                   <div style="font-size:var(--fs-md);color:var(--c-ink);margin-top:5px;line-height:1.45;">{{ m.caption }}</div>
                 </sc-if>
@@ -648,10 +660,10 @@
                 </sc-if>
               </div>
               <sc-if value="{{ m.mineFemale }}" hint-placeholder-val="{{ false }}">
-                <img src="assets/avatar-female.png" alt="" style="flex:0 0 32px;display:block;width:32px;height:32px;border-radius:var(--r-lg);object-fit:cover;">
+                <img src="assets/av-player-female.webp" alt="" style="flex:0 0 32px;display:block;width:32px;height:32px;border-radius:var(--r-lg);object-fit:cover;">
               </sc-if>
               <sc-if value="{{ m.mineMale }}" hint-placeholder-val="{{ false }}">
-                <img src="assets/avatar-male.png" alt="" style="flex:0 0 32px;display:block;width:32px;height:32px;border-radius:var(--r-lg);object-fit:cover;">
+                <img src="assets/av-player-male.webp" alt="" style="flex:0 0 32px;display:block;width:32px;height:32px;border-radius:var(--r-lg);object-fit:cover;">
               </sc-if>
             </div>
           </sc-for>
@@ -725,7 +737,7 @@
                 <img src="assets/nicole-party.jpg" alt="" style="display:block;width:100%;height:100%;object-fit:cover;">
               </sc-if>
               <sc-if value="{{ a.isGardenThumb }}" hint-placeholder-val="{{ false }}">
-                <img src="assets/nicole-garden.jpg" alt="" style="display:block;width:100%;height:100%;object-fit:cover;">
+                <img src="assets/nicole-garden.webp" alt="" style="display:block;width:100%;height:100%;object-fit:cover;">
               </sc-if>
               <sc-if value="{{ a.isCraftThumb }}" hint-placeholder-val="{{ false }}">
                 <img src="assets/nicole-craft.jpg" alt="" style="display:block;width:100%;height:100%;object-fit:cover;">
@@ -737,7 +749,7 @@
                 <img src="assets/screenshot-real.png" alt="" style="display:block;width:100%;height:100%;object-fit:cover;object-position:top;">
               </sc-if>
               <sc-if value="{{ a.isVideoThumb }}" hint-placeholder-val="{{ false }}">
-                <video src="assets/IMG_4471.mp4" muted="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;height:100%;object-fit:cover;pointer-events:none;"></video>
+                <video muted="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;height:100%;object-fit:cover;pointer-events:none;"><source src="assets/nicole_day0.webm" type="video/webm"><source src="assets/nicole_day0.mp4" type="video/mp4"></video>
                 <span style="position:absolute;left:7px;bottom:6px;width:0;height:0;border-left:11px solid var(--c-white);border-top:7px solid transparent;border-bottom:7px solid transparent;filter:drop-shadow(0 1px 2px var(--c-black-heavy));"></span>
                 <span style="position:absolute;right:7px;bottom:6px;font-size:10px;font-weight:600;color:var(--c-white);text-shadow:0 1px 2px var(--c-black-strong);font-variant-numeric:tabular-nums;">{{ a.spec }}</span>
               </sc-if>
@@ -823,7 +835,7 @@
                     </sc-if>
                     <sc-if value="{{ p.isGarden }}" hint-placeholder-val="{{ false }}">
                       <button sc-camel-on-click="{{ p.openGarden }}" style="display:block;width:100%;margin-top:10px;padding:0;border:0;background:transparent;">
-                        <img src="assets/nicole-garden.jpg" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);">
+                        <img src="assets/nicole-garden.webp" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);">
                       </button>
                     </sc-if>
                     <sc-if value="{{ p.isCraft }}" hint-placeholder-val="{{ false }}">
@@ -852,10 +864,10 @@
           <div style="height:90px;background:var(--c-panel);"></div>
           <div style="padding:0 18px 18px;">
             <sc-if value="{{ meIsFemale }}" hint-placeholder-val="{{ true }}">
-              <img src="assets/avatar-female.png" alt="" style="display:block;width:72px;height:72px;border-radius:36px;object-fit:cover;border:3px solid var(--c-white);margin-top:-36px;">
+              <img src="assets/av-player-female.webp" alt="" style="display:block;width:72px;height:72px;border-radius:36px;object-fit:cover;border:3px solid var(--c-white);margin-top:-36px;">
             </sc-if>
             <sc-if value="{{ meIsMale }}" hint-placeholder-val="{{ false }}">
-              <img src="assets/avatar-male.png" alt="" style="display:block;width:72px;height:72px;border-radius:36px;object-fit:cover;border:3px solid var(--c-white);margin-top:-36px;">
+              <img src="assets/av-player-male.webp" alt="" style="display:block;width:72px;height:72px;border-radius:36px;object-fit:cover;border:3px solid var(--c-white);margin-top:-36px;">
             </sc-if>
             <div style="font-size:18px;font-weight:600;color:var(--c-ink);margin-top:10px;">{{ myName }}</div>
             <div style="font-size:var(--fs-md);color:var(--c-ink-faint);margin-top:2px;">{{ myHandle }}</div>
@@ -919,7 +931,7 @@
                   <div style="font-size:var(--fs-body);line-height:1.45;color:var(--c-ink);">{{ q.text }}</div>
                   <sc-if value="{{ q.isGarden }}" hint-placeholder-val="{{ false }}">
                     <button sc-camel-on-click="{{ q.openGarden }}" style="display:block;width:100%;margin-top:8px;padding:0;border:0;background:transparent;">
-                      <img src="assets/nicole-garden.jpg" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);">
+                      <img src="assets/nicole-garden.webp" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);">
                     </button>
                   </sc-if>
                   <sc-if value="{{ q.isCraft }}" hint-placeholder-val="{{ false }}">
@@ -964,7 +976,7 @@
             <sc-if value="{{ postHasPhoto }}" hint-placeholder-val="{{ false }}">
               <sc-if value="{{ postIsGarden }}" hint-placeholder-val="{{ false }}">
                 <button sc-camel-on-click="{{ postOpenGarden }}" style="display:block;width:100%;margin-top:12px;padding:0;border:0;background:transparent;">
-                  <img src="assets/nicole-garden.jpg" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);">
+                  <img src="assets/nicole-garden.webp" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);">
                 </button>
               </sc-if>
               <sc-if value="{{ postIsCraft }}" hint-placeholder-val="{{ false }}">
@@ -1028,13 +1040,13 @@
                 <img src="assets/nicole-party.jpg" alt="" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);">
               </sc-if>
               <sc-if value="{{ pickIsGarden }}" hint-placeholder-val="{{ false }}">
-                <img src="assets/nicole-garden.jpg" alt="" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);">
+                <img src="assets/nicole-garden.webp" alt="" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);">
               </sc-if>
               <sc-if value="{{ pickIsCraft }}" hint-placeholder-val="{{ false }}">
                 <img src="assets/nicole-craft.jpg" alt="" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);">
               </sc-if>
               <sc-if value="{{ pickIsVideo }}" hint-placeholder-val="{{ false }}">
-                <video src="assets/IMG_4471.mp4" muted="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);background:var(--c-wash-alt);pointer-events:none;"></video>
+                <video muted="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);background:var(--c-wash-alt);pointer-events:none;"><source src="assets/nicole_day0.webm" type="video/webm"><source src="assets/nicole_day0.mp4" type="video/mp4"></video>
               </sc-if>
               <div style="font-size:var(--fs-body);color:var(--c-ink);margin-top:12px;overflow-wrap:anywhere;">{{ pickName }}</div>
               <div style="font-size:var(--fs-sm);color:var(--c-ink-heavy);margin-top:4px;">{{ pickMeta }}</div>
@@ -1056,13 +1068,13 @@
                       <img src="assets/nicole-party.jpg" alt="" style="display:block;width:96px;height:66px;object-fit:cover;border:1px solid var(--c-panel);">
                     </sc-if>
                     <sc-if value="{{ h.isGardenHit }}" hint-placeholder-val="{{ false }}">
-                      <img src="assets/nicole-garden.jpg" alt="" style="display:block;width:96px;height:66px;object-fit:cover;border:1px solid var(--c-panel);">
+                      <img src="assets/nicole-garden.webp" alt="" style="display:block;width:96px;height:66px;object-fit:cover;border:1px solid var(--c-panel);">
                     </sc-if>
                     <sc-if value="{{ h.isCraftHit }}" hint-placeholder-val="{{ false }}">
                       <img src="assets/nicole-craft.jpg" alt="" style="display:block;width:96px;height:66px;object-fit:cover;border:1px solid var(--c-panel);">
                     </sc-if>
                     <sc-if value="{{ h.isVideo }}" hint-placeholder-val="{{ false }}">
-                      <video src="assets/IMG_4471.mp4" muted="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:96px;height:66px;object-fit:cover;background:var(--c-white);border:1px solid var(--c-panel);pointer-events:none;"></video>
+                      <video muted="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:96px;height:66px;object-fit:cover;background:var(--c-white);border:1px solid var(--c-panel);pointer-events:none;"><source src="assets/nicole_day0.webm" type="video/webm"><source src="assets/nicole_day0.mp4" type="video/mp4"></video>
                     </sc-if>
                     <div style="flex:1;min-width:0;">
                       <div style="font-size:var(--fs-body);color:var(--c-ink);line-height:1.4;">{{ h.source }}</div>
@@ -1106,13 +1118,13 @@
                 <img src="assets/nicole-party.jpg" alt="" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);">
               </sc-if>
               <sc-if value="{{ aiPickIsGarden }}" hint-placeholder-val="{{ false }}">
-                <img src="assets/nicole-garden.jpg" alt="" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);">
+                <img src="assets/nicole-garden.webp" alt="" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);">
               </sc-if>
               <sc-if value="{{ aiPickIsCraft }}" hint-placeholder-val="{{ false }}">
                 <img src="assets/nicole-craft.jpg" alt="" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);">
               </sc-if>
               <sc-if value="{{ aiPickIsVideo }}" hint-placeholder-val="{{ false }}">
-                <video src="assets/IMG_4471.mp4" muted="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);background:var(--c-wash-alt);pointer-events:none;"></video>
+                <video muted="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);background:var(--c-wash-alt);pointer-events:none;"><source src="assets/nicole_day0.webm" type="video/webm"><source src="assets/nicole_day0.mp4" type="video/mp4"></video>
               </sc-if>
               <sc-if value="{{ aiPickIsAudio }}" hint-placeholder-val="{{ false }}">
                 <div style="width:100%;max-width:200px;height:110px;border-radius:var(--r-sm);background:var(--c-wash-alt);display:flex;align-items:center;justify-content:center;"><div style="width:70%;height:22px;background:repeating-linear-gradient(90deg,var(--c-ink-dim) 0 2px,transparent 2px 6px);"></div></div>
@@ -1228,6 +1240,8 @@
   </div>
   <div style="font-size:16px;line-height:1.55;color:var(--c-muted);margin-top:20px;max-width:40ch;">{{ dmCloseLine }}</div>
   <div style="font-size:16px;line-height:1.55;color:var(--c-muted);margin-top:14px;max-width:40ch;">{{ groupStandingLine }}</div>
+
+  <img src="{{ endCardImage }}" alt="" style="display:block;width:100%;height:auto;margin-top:28px;object-fit:cover;">
   </div>
   <div style="flex:0 0 auto;padding:14px var(--space-screen-x) 20px;background:var(--c-frame);border-top:1px solid var(--c-ink-hair);">
     <button sc-camel-on-click="{{ nextSection }}" class="g-btn g-btn-footer">Continue</button>
@@ -1242,6 +1256,8 @@
   <sc-if value="{{ writeBackHasText }}" hint-placeholder-val="{{ false }}">
     <div style="border-left:2px solid var(--c-accent);padding:6px 0 6px 18px;font-size:20px;line-height:1.55;color:var(--c-ink);text-wrap:pretty;">{{ writeBackText }}</div>
   </sc-if>
+
+  <img src="{{ endCardImage }}" alt="" style="display:block;width:100%;height:auto;margin-top:28px;object-fit:cover;">
   </div>
   <div style="flex:0 0 auto;padding:14px var(--space-screen-x) 20px;background:var(--c-frame);border-top:1px solid var(--c-ink-hair);">
     <button sc-camel-on-click="{{ nextSection }}" class="g-btn g-btn-footer">Continue</button>
@@ -1272,6 +1288,8 @@
       <div style="height:10px;background:var(--c-panel);"><div style="height:10px;background:var(--c-accent);width:{{ reactingBar }};"></div></div>
     </div>
   </div>
+
+  <img src="{{ endCardImage }}" alt="" style="display:block;width:100%;height:auto;margin-top:28px;object-fit:cover;">
   </div>
   <div style="flex:0 0 auto;padding:14px var(--space-screen-x) 20px;background:var(--c-frame);border-top:1px solid var(--c-ink-hair);">
     <button sc-camel-on-click="{{ nextSection }}" class="g-btn g-btn-footer">Continue</button>
@@ -1289,6 +1307,8 @@
       <div style="font-size:21px;line-height:1.55;color:var(--c-ink);max-width:48ch;text-wrap:pretty;">{{ o.text }}</div>
     </sc-for>
   </div>
+
+  <img src="{{ endCardImage }}" alt="" style="display:block;width:100%;height:auto;margin-top:28px;object-fit:cover;">
   </div>
   <div style="flex:0 0 auto;padding:14px var(--space-screen-x) 20px;background:var(--c-frame);border-top:1px solid var(--c-ink-hair);">
     <button sc-camel-on-click="{{ nextSection }}" class="g-btn g-btn-footer">Continue</button>
@@ -1310,6 +1330,8 @@
   </div>
   <p style="font-size:var(--fs-lead);line-height:1.55;margin:0 0 10px;color:var(--c-ink);max-width:52ch;">{{ siftLine }}</p>
   <div style="font-size:var(--fs-sm);color:var(--c-muted);">SIFT by Mike Caulfield, CC BY 4.0.</div>
+
+  <img src="{{ endCardImage }}" alt="" style="display:block;width:100%;height:auto;margin-top:28px;object-fit:cover;">
   </div>
   <div style="flex:0 0 auto;padding:14px var(--space-screen-x) 20px;background:var(--c-frame);border-top:1px solid var(--c-ink-hair);">
     <button sc-camel-on-click="{{ nextSection }}" class="g-btn g-btn-footer">Continue</button>
@@ -1322,6 +1344,8 @@
   <div style="flex:1;min-height:0;overflow-y:auto;padding:80px var(--space-screen-x) 20px;">
   <div style="height:2px;background:var(--c-accent);width:96px;margin-bottom:30px;"></div>
   <div style="font-size:38px;font-weight:600;line-height:1.3;color:var(--c-ink);max-width:30ch;text-wrap:pretty;">{{ finalCard }}</div>
+
+  <img src="{{ endCardImage }}" alt="" style="display:block;width:100%;height:auto;margin-top:28px;object-fit:cover;">
   </div>
   <div style="flex:0 0 auto;padding:14px var(--space-screen-x) 20px;background:var(--c-frame);border-top:1px solid var(--c-ink-hair);">
     <sc-if value="{{ replayShown }}" hint-placeholder-val="{{ false }}">
@@ -1336,6 +1360,8 @@
   <div style="flex:1;min-height:0;overflow-y:auto;padding:80px var(--space-screen-x) 20px;">
   <div style="font-size:var(--fs-title);line-height:1.6;color:var(--c-ink);max-width:40ch;margin-bottom:22px;text-wrap:pretty;">Some of what you saw this week was true. Some of it wasn't.</div>
   <div style="font-size:var(--fs-title);line-height:1.6;color:var(--c-muted);max-width:40ch;">The game isn't going to tell you which.</div>
+
+  <img src="{{ endCardImage }}" alt="" style="display:block;width:100%;height:auto;margin-top:28px;object-fit:cover;">
   </div>
   <div style="flex:0 0 auto;padding:14px var(--space-screen-x) 20px;background:var(--c-frame);border-top:1px solid var(--c-ink-hair);">
     <button sc-camel-on-click="{{ restart }}" class="g-btn g-btn-footer">Play again</button>

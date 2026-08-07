@@ -31,6 +31,16 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     };
   },
 
+  // Room backdrop by calendar day / phase (webp art encodes time of day).
+  roomBgFor(day, phase) {
+    if (day === 1) return 'assets/room_night.webp';       // Monday
+    if (day === 2) return 'assets/room_main.webp';        // Tuesday
+    if (day === 3 && phase === 'morning') return 'assets/room_morning.webp';
+    if (day === 3) return 'assets/room_night.webp';      // Wednesday night / clip
+    if (day === 4) return 'assets/room_main.webp';        // Thursday
+    return 'assets/room_main.webp';
+  },
+
   clamp(v) { return Math.max(0, Math.min(100, v)); },
 
   // Resolve a --c-* token to its computed value (needed when JS must parse hex).
@@ -58,10 +68,10 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
   faceOf(who) {
     return window.__R({
-      Nicole: 'assets/av-nicole.png', Hanna: 'assets/av-hanna.png', Lea: 'assets/av-lea.png',
-      Nele: 'assets/av-nele.png', Benito: 'assets/av-benito.png', Mia: 'assets/av-mia.png',
-      Tim: 'assets/av-hanna.png'
-    }[who] || 'assets/av-mia.png');
+      Nicole: 'assets/av-nicole.webp', Hanna: 'assets/av-hanna.webp', Lea: 'assets/av-lea.webp',
+      Nele: 'assets/av-nele.webp', Benito: 'assets/av-benito.webp', Mia: 'assets/av-mia.webp',
+      Tim: 'assets/av-hanna.webp'
+    }[who] || 'assets/av-mia.webp');
   },
 
   preview(list) {

@@ -36,7 +36,7 @@ class Component extends DCLogic {
     playerName: 'Alex', nameDraft: '', playerAvatar: null,
     dmCloseTyping: false, dmCloseExtra: null, dmCloseReady: false, replayShown: false,
     dmGhostTyping: false, ghostTypedToday: false, onReadCharged: false,
-    shotOpen: null, sawFake: false, sawReal: false, reportOpen: false, reportChoice: null, reportedWrong: false, tip: null,
+    shotOpen: null, sawFake: false, sawReal: false, reportOpen: false, reportChoice: null, reportedWrong: false,     tip: null,
     profMenuOpen: false, reportReasonOpen: false, reportToast: false, reportedAccounts: {}, reportedFake: false,
     saved: [], toast: false, feedImg: null,
     recOpen: false, recPhase: 'intro', recIdx: 0, recBusy: false, recLevel: 0, hasRecording: false, recTrying: false, recAttempts: 0,

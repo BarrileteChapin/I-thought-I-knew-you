@@ -11,8 +11,6 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     });
     const acc = this.props.accent || this.cssColor('accent');
     const morning = st.day === 3 && st.phase === 'morning';
-    const nightBase = morning ? 0 : ([0, 0.05, 0.11, 0.17, 0.24][st.day - 1] || 0.1);
-    const night = Math.min(0.4, nightBase * (this.props.nightIntensity ?? 1));
     const lampDim = morning ? 0 : (st.day === 4 ? 0.45 : 1);
 
     const dmNew = st.dm.filter(m => !m.mine && !m.sys && m.today).length;
@@ -156,7 +154,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         { label: 'Compression signature', value: 'consistent', pct: '97%' },
         { label: 'Metadata', value: 'intact', pct: '99%' }
       ] },
-      'nicole_garden.jpg': { score: 8, len: '1 image', hint: true, rows: [
+      'nicole_garden.webp': { score: 8, len: '1 image', hint: true, rows: [
         { label: 'Generation artefacts', value: 'detected', pct: '88%' },
         { label: 'Pixel-level consistency', value: 'irregular', pct: '24%' },
         { label: 'Compression signature', value: 'inconsistent', pct: '19%' },
@@ -181,15 +179,15 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const verdictOf = (n) => n >= 85 ? 'Authentic' : n >= 40 ? 'Inconclusive' : 'Likely generated';
     const NAME = this.name();
     const A_ = [
-      { handle: '@n.krueger', name: 'Nicole K.', img: 'assets/av-nicole.png', fake: true },
-      { handle: '@nicole_kruger', name: 'Nicole Kruger', img: 'assets/av-nicole.png', real: true },
-      { handle: '@nele.b', name: 'Nele B', img: 'assets/av-nele.png' },
-      { handle: '@mia.h', name: 'Mia H', img: 'assets/av-mia.png' },
-      { handle: '@lea.m', name: 'Lea M', img: 'assets/av-lea.png' },
-      { handle: '@hanna.k', name: 'Hanna K', img: 'assets/av-hanna.png' },
-      { handle: '@benito_', name: 'Benito', img: 'assets/av-benito.png' }
+      { handle: '@n.krueger', name: 'Nicole K.', img: 'assets/av-nicole.webp', fake: true },
+      { handle: '@nicole_kruger', name: 'Nicole Kruger', img: 'assets/av-nicole.webp', real: true },
+      { handle: '@nele.b', name: 'Nele B', img: 'assets/av-nele.webp' },
+      { handle: '@mia.h', name: 'Mia H', img: 'assets/av-mia.webp' },
+      { handle: '@lea.m', name: 'Lea M', img: 'assets/av-lea.webp' },
+      { handle: '@hanna.k', name: 'Hanna K', img: 'assets/av-hanna.webp' },
+      { handle: '@benito_', name: 'Benito', img: 'assets/av-benito.webp' }
     ];
-    const av = h => window.__R((A_.find(x => x.handle === h) || {}).img || 'assets/av-mia.png');
+    const av = h => window.__R((A_.find(x => x.handle === h) || {}).img || 'assets/av-mia.webp');
     const nm = h => (A_.find(x => x.handle === h) || {}).name || h;
     const P = (id, handle, ago, text, extra) => Object.assign({
       id, handle, ago, text, name: nm(handle), avatar: av(handle), likes: 0, replies: 0
@@ -317,23 +315,23 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         '· fake gate day>=3:', st.day >= 3, '· real removed:', st.reported);
     }
     const PROFILES = {
-      '@nicole_kruger': { handle: '@nicole_kruger', name: 'Nicole Kruger', img: 'assets/av-nicole.png',
+      '@nicole_kruger': { handle: '@nicole_kruger', name: 'Nicole Kruger', img: 'assets/av-nicole.webp',
         bio: 'not everything is about you 🖤', posts: '52', followers: '349', following: '42',
         joined: 'Joined September 2022', dead: st.reported },
-      '@n.krueger': { handle: '@n.krueger', name: 'Nicole K.', img: 'assets/av-nicole.png',
+      '@n.krueger': { handle: '@n.krueger', name: 'Nicole K.', img: 'assets/av-nicole.webp',
         bio: 'not everything is about you 🖤', posts: '6', followers: '42', following: '12',
         joined: 'Joined this week' },
-      '@nele.b': { handle: '@nele.b', name: 'Nele B', img: 'assets/av-nele.png', bio: 'here for the food', posts: '208', followers: '190', following: '204', joined: 'Joined March 2022' },
-      '@mia.h': { handle: '@mia.h', name: 'Mia H', img: 'assets/av-mia.png', bio: 'cedar street', posts: '340', followers: '277', following: '250', joined: 'Joined June 2021' },
-      '@hanna.k': { handle: '@hanna.k', name: 'Hanna K', img: 'assets/av-hanna.png', bio: 'you had to be there', posts: '511', followers: '302', following: '333', joined: 'Joined January 2022' },
-      '@lea.m': { handle: '@lea.m', name: 'Lea M', img: 'assets/av-lea.png', bio: '', posts: '96', followers: '141', following: '160', joined: 'Joined April 2022' },
-      '@benito_': { handle: '@benito_', name: 'Benito', img: 'assets/av-benito.png', bio: '', posts: '64', followers: '150', following: '88', joined: 'Joined November 2021' }
+      '@nele.b': { handle: '@nele.b', name: 'Nele B', img: 'assets/av-nele.webp', bio: 'here for the food', posts: '208', followers: '190', following: '204', joined: 'Joined March 2022' },
+      '@mia.h': { handle: '@mia.h', name: 'Mia H', img: 'assets/av-mia.webp', bio: 'cedar street', posts: '340', followers: '277', following: '250', joined: 'Joined June 2021' },
+      '@hanna.k': { handle: '@hanna.k', name: 'Hanna K', img: 'assets/av-hanna.webp', bio: 'you had to be there', posts: '511', followers: '302', following: '333', joined: 'Joined January 2022' },
+      '@lea.m': { handle: '@lea.m', name: 'Lea M', img: 'assets/av-lea.webp', bio: '', posts: '96', followers: '141', following: '160', joined: 'Joined April 2022' },
+      '@benito_': { handle: '@benito_', name: 'Benito', img: 'assets/av-benito.webp', bio: '', posts: '64', followers: '150', following: '88', joined: 'Joined November 2021' }
     };
     const socTab = st.socTab || 'feed';
     const prof = st.socProfileKey ? PROFILES[st.socProfileKey] : null;
     const openPost = st.socPostId ? feedPosts.find(p => p.id === st.socPostId) : null;
     const NAME_HITS = {
-      'nicole_garden.jpg': [{ source: 'social · @n.krueger', date: 'Posted today', kind: 'garden', goto: 'f5' }],
+      'nicole_garden.webp': [{ source: 'social · @n.krueger', date: 'Posted today', kind: 'garden', goto: 'f5' }],
       'nicole_craft.jpg': [{ source: 'social · @n.krueger', date: 'Posted today', kind: 'craft', goto: 'f6' }],
       'nicole_party_repost.jpg': [{ source: 'social · @nicole_kruger', date: 'Posted 14 July, last year', quote: 'laura' + "'" + 's birthday 🎂', kind: 'image', goto: 'old10' }]
     };
@@ -344,14 +342,17 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const s = st.stats;
     const dayClutter = st.day;
     const savedGame = st.screen === 'title' ? this.readSavedGame() : null;
+    const endCard = this.finalCard(st, s);
 
     return {
       colors: C,
       isTitle: st.screen === 'title', isRoom: st.screen === 'room' || st.screen === 'phone', isPhone: st.screen === 'phone',
       onHome: st.dev === null, onApp: st.dev !== null,
-      screenBg: st.dev === null ? C.accent : C.white,
-      statusColor: st.dev === null ? C.white : C.ink,
-      homeBarColor: st.dev === null ? C.whiteFaint : C.inkMuted,
+      screenBg: st.dev === null
+        ? 'center / cover no-repeat url("assets/class_10b.webp"), var(--c-accent)'
+        : C.white,
+      statusColor: C.ink,
+      homeBarColor: C.inkMuted,
       goHome: () => this.setState({ dev: null, threadOpen: null }),
       apps: [
         { key: 'chats', label: 'Message', icon: 'assets/icons/app-chats.svg', badge: st.unread > 0 ? st.unread : 0 },
@@ -392,9 +393,9 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         this.setState({ showNewPill: false });
       },
       threads: [
-        { key: 'group', name: '10b 🍕', glyph: '🍕', avatarBg: C.lineSoft, sub: d.threadSub,
+        { key: 'group', name: '10b 🍕', avatar: 'assets/class_10b.webp', sub: d.threadSub,
           preview: this.preview(st.chat), unread: st.groupUnread, hasUnread: st.groupUnread > 0 },
-        { key: 'dm', name: 'Nicole', glyph: 'N', avatarBg: C.accentWash, sub: tier === 'gone' ? 'last seen Wednesday' : 'online',
+        { key: 'dm', name: 'Nicole', avatar: 'assets/av-nicole.webp', sub: tier === 'gone' ? 'last seen Wednesday' : 'online',
           preview: this.preview(st.dm), unread: dmNew, hasUnread: dmNew > 0 }
       ].map(t => Object.assign(t, {
         open: () => {
@@ -429,7 +430,10 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       })),
       isFinal: st.screen === 'final',
       clockLabel: (this.props.showClock ?? true) ? this.fmt(st.min) : '',
-      dayName: d.dayName.toUpperCase(), nightOpacity: night, morningWash: morning ? 0.8 : 0,
+      dayName: d.dayName.toUpperCase(), nightOpacity: 0, morningWash: 0,
+      roomBg: this.roomBgFor(st.day, st.phase),
+      isMorningRoom: st.day === 3 && st.phase === 'morning',
+      isEveningRoom: !(st.day === 3 && st.phase === 'morning'),
       dayStrip: ['Mon', 'Tue', 'Wed', 'Thu'].map((label, i) => ({
         label,
         op: i + 1 === st.day ? 1 : i + 1 < st.day ? 0.4 : 0.15,
@@ -443,7 +447,12 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       buzzAnim: st.unread > 0 ? 'buzz .55s ease-in-out infinite' : 'none',
       photoUp: st.photoUp, photoBg: st.photoUp ? C.ink : C.panel,
       confirmSleepOpen: st.confirmSleep,
-      sleepTitle: st.day === 4 ? 'That' + "'" + 's the week. Go to sleep?' : 'Go to sleep?',
+      sleepTitle: st.day === 4
+        ? 'That' + "'" + 's the week. Go to sleep?'
+        : (st.day === 3 && st.phase === 'morning')
+          ? 'Go to school?'
+          : 'Go to sleep?',
+      sleepConfirmLabel: (st.day === 3 && st.phase === 'morning') ? 'Go' : 'Sleep',
       threadTitle: st.tab === 'group' ? '10b 🍕' : 'Nicole',
       threadSub: st.tab === 'group' ? d.threadSub : (tier === 'gone' ? 'last seen Wednesday' : tier === 'low' ? 'typing…' : 'online'),
       sharedLine: 'Shared in ' + st.sharedCount + ' chats.',
@@ -580,7 +589,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       toastOn: st.toast,
       feedImgOpen: !!st.feedImg,
       feedImgIsGarden: st.feedImg === 'garden', feedImgIsCraft: st.feedImg === 'craft', feedImgIsParty: st.feedImg === 'party',
-      feedImgName: { garden: 'nicole_garden.jpg', craft: 'nicole_craft.jpg', party: 'nicole_party_repost.jpg' }[st.feedImg] || '',
+      feedImgName: { garden: 'nicole_garden.webp', craft: 'nicole_craft.jpg', party: 'nicole_party_repost.jpg' }[st.feedImg] || '',
       closeFeedImg: () => this.setState({ feedImg: null }),
       saveFeedImg: () => { if (st.feedImg) this.saveImage(st.feedImg); },
       openIsAudio: openRow.kind === 'audio', openIsShot: openRow.kind === 'shot',
@@ -652,7 +661,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       openReportReason: () => this.openReportReason(),
       chooseReasonImpersonation: () => this.chooseReasonImpersonation(), chooseReasonHarassment: () => this.chooseReasonHarassment(), chooseReasonOther: () => this.chooseReasonOther(),
       profName: prof ? prof.name : '', profHandle: prof ? prof.handle : '',
-      profBio: prof ? prof.bio : '', profAvatar: window.__R((prof && (prof.img || prof.avatar)) || 'assets/av-mia.png'),
+      profBio: prof ? prof.bio : '', profAvatar: window.__R((prof && (prof.img || prof.avatar)) || 'assets/av-mia.webp'),
       profPosts: prof ? prof.posts : '', profFollowers: prof ? prof.followers : '',
       profFollowing: prof ? prof.following : '', profJoined: prof ? prof.joined : '',
       profPostList: prof ? feedPosts.filter(p => p.handle === prof.handle).map(p => ({
@@ -664,7 +673,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       })) : [],
       postName: openPost ? openPost.name : '', postHandle: openPost ? openPost.handle : '',
       postAgo: openPost ? openPost.ago : '', postText: openPost ? (openPost.text || '[photo]') : '',
-      postAvatar: window.__R((openPost && (openPost.avatar || av(openPost.handle))) || 'assets/av-nicole.png'),
+      postAvatar: window.__R((openPost && (openPost.avatar || av(openPost.handle))) || 'assets/av-nicole.webp'),
       postHasPhoto: !!(openPost && (openPost.photo || openPost.garden || openPost.craft)), postDated: (openPost && openPost.dated) || '',
       postOpenProfile: () => { if (!openPost) return; this.setState({ socProfileKey: openPost.handle, socPostId: null, socTab: 'feed' }); if (openPost.handle === '@n.krueger') { this.setState({ sawFake: true }); this.maybeCompare('fake'); } if (openPost.handle === '@nicole_kruger' && !st.reported) { this.setState({ sawReal: true }); this.maybeCompare('real'); } },
       postIsGarden: !!(openPost && openPost.garden), postIsCraft: !!(openPost && openPost.craft), postIsParty: !!(openPost && openPost.photo),
@@ -840,7 +849,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       siftLine: (s.sift.investigate + s.sift.coverage + s.sift.trace) === 0
         ? 'You didn' + "'" + 't check anything this week. Almost nobody does. That' + "'" + 's what the week was built on.'
         : 'These four moves have a name. They' + "'" + 're called SIFT, and they work on anything, not just this.',
-      finalCard: this.finalCard(st, s),
+      finalCard: endCard.text,
+      endCardImage: endCard.image || 'assets/nicole_sad_bg.webp',
       replayShown: st.replayShown,
       playReal: () => this.playBuf('real'), playSplice: () => this.playBuf('splice'),
       recOpen: st.recOpen, recIntro: st.recPhase === 'intro', recFailed: st.recPhase === 'failed',
@@ -915,7 +925,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       })),
       barsShown: st.day >= 1 ? 1 : 0,
 
-      openPhone: () => {
+      openPhone: (e) => {
+        if (e && e.stopPropagation) e.stopPropagation();
         this.setState({ dev: null, threadOpen: null, screen: 'phone' });
         if (tier === 'gone' && !st.ghostTypedToday) {
           this.setState({ ghostTypedToday: true });
@@ -938,7 +949,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       tabGroup: () => this.setState({ tab: 'group', openedGroup: true }),
       tabDm: () => this.setState({ tab: 'dm' }),
       flipPhoto: () => this.setState({ photoUp: !st.photoUp }),
-      askSleep: () => {
+      askSleep: (e) => {
+        if (e && e.stopPropagation) e.stopPropagation();
         const s0 = this.state;
         if (s0.day === 4 && s0.writeStatus === null) {
           this.setPhase('finalMessage');

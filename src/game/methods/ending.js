@@ -117,10 +117,24 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
   finalCard(st, s) {
     const checks = s.sift.investigate + s.sift.coverage + s.sift.trace;
-    if (st.final.post === 'support' && checks >= 3) return 'She checked it. She learned that from you.';
-    if (checks >= 4 && st.group < 40) return 'Being right isn' + "'" + 't a resource. Being reliably right is.';
-    if (checks >= 2 && st.final.post !== 'support' && s.dmAnswered > 0) return 'You knew by Tuesday. It changed nothing.';
-    if (s.dmAnswered > 0 && st.final.post !== 'support') return 'She knew. Nobody else did.';
-    return 'I thought I knew you, ' + this.name() + '.';
+    // Swap these paths when per-result art is ready.
+    const img1 = 'assets/nicole_sad_bg.webp';
+    const img2 = 'assets/nicole_sad_bg.webp';
+    const img3 = 'assets/nicole_sad_bg.webp';
+    const img4 = 'assets/nicole_sad_bg.webp';
+    const img5 = 'assets/nicole_sad_bg.webp';
+    if (st.final.post === 'support' && checks >= 3) {
+      return { text: 'She checked it. She learned that from you.', image: img1 };
+    }
+    if (checks >= 4 && st.group < 40) {
+      return { text: 'Being right isn' + "'" + 't a resource. Being reliably right is.', image: img2 };
+    }
+    if (checks >= 2 && st.final.post !== 'support' && s.dmAnswered > 0) {
+      return { text: 'You knew by Tuesday. It changed nothing.', image: img3 };
+    }
+    if (s.dmAnswered > 0 && st.final.post !== 'support') {
+      return { text: 'She knew. Nobody else did.', image: img4 };
+    }
+    return { text: 'I thought I knew you, ' + this.name() + '.', image: img5 };
   }
 });

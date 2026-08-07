@@ -137,6 +137,22 @@
   /* Space */
   --space-screen-x: 22px;
 
+  /* Room hotspots (% of room image box — tune against assets/room_main.webp) */
+  --hot-glow: rgba(14, 156, 255, 0.3);
+  --hot-bed-l: 25%;
+  --hot-bed-t: 37.5%;
+  --hot-bed-w: 28%;
+  --hot-phone-l: 9.5%;
+  --hot-phone-t: 54.5%;
+  --hot-phone-w: 25%;
+  /* Wednesday morning — backpack + phone (room_morning.webp) */
+  --hot-bag-l: -4.5%;
+  --hot-bag-t: 59.5%;
+  --hot-bag-w: 25%;
+  --hot-phone-am-l: 61%;
+  --hot-phone-am-t: 50%;
+  --hot-phone-am-w: 25%;
+
   /* Brand / action */
   --c-accent: #1B4FE0;
   --c-accent-soft: rgba(27, 79, 224, .1);

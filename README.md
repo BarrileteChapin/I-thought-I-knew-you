@@ -196,6 +196,7 @@ Convert the template to native JSX only as a deliberate, separate migration.
   - z-index: `--z-*`
   - motion: `--ease*`, `--dur-*`
   - space: `--space-screen-x`
+  - room hotspots: `--hot-bed-*`, `--hot-phone-*`, `--hot-bag-*` (Wed morning)
 - `styles/game.css`: game shell resets, keyframes, scrollbar
 - Inline styles in the template still use these tokens for the visual system.
 
@@ -212,7 +213,7 @@ Use paths such as:
 
 ```text
 assets/nicole-party.jpg
-assets/av-nicole.png
+assets/av-nicole.webp
 assets/icons/app-chats.svg
 assets/icons/icon-back.svg
 ```
