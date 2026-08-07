@@ -1,6 +1,8 @@
 window.GameMethods = Object.assign(window.GameMethods || {}, {
   componentDidMount() {
-    this._bye = () => this.wipeAudio();
+    // Belt-and-braces if initial state raced localStorage.
+    if (this.state.screen === 'cinematic' && this.hasSavedGame()) this.skipCinematic();
+    this._bye = () => { this.saveGame(); this.wipeAudio(); };
     window.addEventListener('pagehide', this._bye);
     this._keys = (e) => {
       const t = e.target;
@@ -36,6 +38,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     window.removeEventListener('pagehide', this._bye);
     window.removeEventListener('keydown', this._keys);
     window.removeEventListener('beforeunload', this._bye);
+    clearTimeout(this._saveTimer);
+    this.saveGame();
     this.wipeAudio();
     clearTimeout(this._n1); clearTimeout(this._n2);
     clearTimeout(this._msgToastHide); clearTimeout(this._msgToastClear);
@@ -50,6 +54,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   },
 
   componentDidUpdate() {
+    this.scheduleSave();
     if (this._scrollToPost && this.state.dev === 'social') {
       const want = this._scrollToPost;
       requestAnimationFrame(() => {
