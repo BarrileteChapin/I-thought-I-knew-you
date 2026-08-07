@@ -33,7 +33,14 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
   clamp(v) { return Math.max(0, Math.min(100, v)); },
 
-  barColor(v, hex) {
+  // Resolve a --c-* token to its computed value (needed when JS must parse hex).
+  cssColor(token) {
+    const name = token.startsWith('--') ? token : '--c-' + String(token).replace(/[A-Z]/g, (ch) => '-' + ch.toLowerCase());
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  },
+
+  barColor(v, token) {
+    const hex = (token && token[0] === '#') ? token : this.cssColor(token || 'accent');
     const grey = [138, 110, 122];
     const full = [parseInt(hex.slice(1, 3), 16), parseInt(hex.slice(3, 5), 16), parseInt(hex.slice(5, 7), 16)];
     const t = Math.max(0, Math.min(1, v / 75));

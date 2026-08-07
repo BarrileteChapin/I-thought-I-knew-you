@@ -1,7 +1,15 @@
 window.GameMethods = Object.assign(window.GameMethods || {}, {
   renderVals() {
     const st = this.state, d = this.day();
-    const acc = this.props.accent || '#1B4FE0';
+    // Map camelCase token → var(--c-token). Source of truth is styles/design-system.css.
+    const C = new Proxy({}, {
+      get(_t, key) {
+        if (typeof key !== 'string') return undefined;
+        const css = '--c-' + key.replace(/[A-Z]/g, (ch) => '-' + ch.toLowerCase());
+        return 'var(' + css + ')';
+      }
+    });
+    const acc = this.props.accent || this.cssColor('accent');
     const morning = st.day === 3 && st.phase === 'morning';
     const nightBase = morning ? 0 : ([0, 0.05, 0.11, 0.17, 0.24][st.day - 1] || 0.1);
     const night = Math.min(0.4, nightBase * (this.props.nightIntensity ?? 1));
@@ -14,11 +22,11 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       isNewMark: st.newMarkAt !== null && i === st.newMarkAt,
       caption: (m.caption || '').split('{name}').join(this.name()), dur: m.dur || '0:14',
       justify: m.mine ? 'flex-end' : 'flex-start',
-      bg: m.sys ? 'transparent' : (m.mine ? 'rgba(27,79,224,.1)' : '#E4E4E4'),
-      rule: m.sys ? '2px solid #6B6B6B' : (m.mine ? '2px solid #1B4FE0' : '0'),
+      bg: m.sys ? 'transparent' : (m.mine ? C.accentSoft : C.panel),
+      rule: m.sys ? '2px solid ' + C.muted : (m.mine ? '2px solid ' + C.accent : '0'),
       showWho: !m.mine && !m.sys,
-      whoColor: m.who === 'Nicole' ? '#1B4FE0' : '#6B6B6B',
-      textColor: m.sys ? '#6B6B6B' : '#111111',
+      whoColor: m.who === 'Nicole' ? C.accent : C.muted,
+      textColor: m.sys ? C.muted : C.ink,
       isSys: !!m.sys, rowDisplay: m.sys ? 'none' : 'flex',
       mineFemale: !!m.mine && st.playerAvatar === 'female', mineMale: !!m.mine && st.playerAvatar === 'male',
       theirs: !m.mine && !m.sys, avatar: this.faceOf(m.who),
@@ -26,9 +34,9 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       isShot: m.kind === 'shot', isProfileShot: m.shot === 'profile', isCommentShot: m.shot === 'comment',
       openShot: () => { this.setState({ shotOpen: 'fake', sawFake: true }); this.maybeCompare('fake'); },
       openPhoto: () => this.setState({ shotOpen: 'photo' }),
-      lightBg: m.sys ? '#EDE9E1' : (m.mine ? '#D5DEFA' : '#FFFFFF'),
-      lightWho: '#1B4FE0',
-      lightText: m.sys ? '#6B6B6B' : '#111111',
+      lightBg: m.sys ? C.washWarm : (m.mine ? C.accentWash : C.white),
+      lightWho: C.accent,
+      lightText: m.sys ? C.muted : C.ink,
       radius: m.mine ? '14px 14px 4px 14px' : '14px 14px 14px 4px',
       isText: !m.kind, tick: m.mine && !m.old ? (m.unsent ? '✓' : '✓✓') : '',
       play: () => { if (m.audio) this.playBuf(m.audio); }
@@ -72,7 +80,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     }
     const phoneActions = acts.map(a => ({
       label: a.label, used: !!st.used[a.id], op: st.used[a.id] ? 0.45 : 1,
-      bg: st.used[a.id] ? '#E8E8E8' : 'rgba(27,79,224,.05)',
+      bg: st.used[a.id] ? C.frame : C.accentFaint,
       run: () => { if (!st.used[a.id]) this.doAction(a); }
     }));
 
@@ -337,17 +345,18 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const dayClutter = st.day;
 
     return {
+      colors: C,
       isTitle: st.screen === 'title', isRoom: st.screen === 'room' || st.screen === 'phone', isPhone: st.screen === 'phone',
       onHome: st.dev === null, onApp: st.dev !== null,
-      screenBg: st.dev === null ? '#1B4FE0' : '#FFFFFF',
-      statusColor: st.dev === null ? '#FFFFFF' : '#111111',
-      homeBarColor: st.dev === null ? 'rgba(255,255,255,.65)' : 'rgba(17,17,17,.35)',
+      screenBg: st.dev === null ? C.accent : C.white,
+      statusColor: st.dev === null ? C.white : C.ink,
+      homeBarColor: st.dev === null ? C.whiteFaint : C.inkMuted,
       goHome: () => this.setState({ dev: null, threadOpen: null }),
       apps: [
-        { key: 'chats', label: 'Message', tile: '#111111', badge: st.unread > 0 ? st.unread : 0 },
-        { key: 'gallery', label: 'Photo Gallery', tile: '#111111', badge: 0 },
-        { key: 'fact', label: 'Fact Checker', tile: '#111111', badge: 0 },
-        { key: 'social', label: 'Social Media', tile: '#111111', badge: 0 }
+        { key: 'chats', label: 'Message', tile: C.ink, badge: st.unread > 0 ? st.unread : 0 },
+        { key: 'gallery', label: 'Photo Gallery', tile: C.ink, badge: 0 },
+        { key: 'fact', label: 'Fact Checker', tile: C.ink, badge: 0 },
+        { key: 'social', label: 'Social Media', tile: C.ink, badge: 0 }
       ].map(a => ({
         label: a.label, badge: a.badge,
         isChats: a.key === 'chats', isGallery: a.key === 'gallery',
@@ -384,9 +393,9 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         this.setState({ showNewPill: false });
       },
       threads: [
-        { key: 'group', name: '10b 🍕', glyph: '🍕', avatarBg: '#EEEEEE', sub: d.threadSub,
+        { key: 'group', name: '10b 🍕', glyph: '🍕', avatarBg: C.lineSoft, sub: d.threadSub,
           preview: this.preview(st.chat), unread: st.groupUnread, hasUnread: st.groupUnread > 0 },
-        { key: 'dm', name: 'Nicole', glyph: 'N', avatarBg: '#D5DEFA', sub: tier === 'gone' ? 'last seen Wednesday' : 'online',
+        { key: 'dm', name: 'Nicole', glyph: 'N', avatarBg: C.accentWash, sub: tier === 'gone' ? 'last seen Wednesday' : 'online',
           preview: this.preview(st.dm), unread: dmNew, hasUnread: dmNew > 0 }
       ].map(t => Object.assign(t, {
         open: () => {
@@ -405,14 +414,14 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         }
       })),
       navTabs: [
-        { key: 'chats', tile: '#1B4FE0', label: 'Message', badge: st.unread > 0 ? st.unread : 0, dot: false, flash: st.chatFlash },
-        { key: 'gallery', tile: '#1B4FE0', label: 'Gallery', badge: 0, dot: st.galleryNew },
-        { key: 'fact', tile: '#1B4FE0', label: 'Fact Check', badge: 0, dot: false },
-        { key: 'social', tile: '#1B4FE0', label: 'Social', badge: 0, dot: false }
+        { key: 'chats', tile: C.accent, label: 'Message', badge: st.unread > 0 ? st.unread : 0, dot: false, flash: st.chatFlash },
+        { key: 'gallery', tile: C.accent, label: 'Gallery', badge: 0, dot: st.galleryNew },
+        { key: 'fact', tile: C.accent, label: 'Fact Check', badge: 0, dot: false },
+        { key: 'social', tile: C.accent, label: 'Social', badge: 0, dot: false }
       ].map(n => ({
         label: n.label, badge: n.badge, dot: n.dot,
-        swatch: st.dev === n.key ? n.tile : 'rgba(17,17,17,.16)',
-        color: n.flash ? '#E01B1B' : (st.dev === n.key ? '#111111' : 'rgba(17,17,17,.5)'),
+        swatch: st.dev === n.key ? n.tile : C.inkGhost,
+        color: n.flash ? C.danger : (st.dev === n.key ? C.ink : C.inkFaint),
         go: () => this.setState({
           dev: n.key,
           tool: n.key === 'gallery' ? 'player' : n.key === 'social' ? 'social' : n.key === 'fact' ? (this.state.tool === 'ai' ? 'ai' : 'search') : this.state.tool,
@@ -425,7 +434,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       dayStrip: ['Mon', 'Tue', 'Wed', 'Thu'].map((label, i) => ({
         label,
         op: i + 1 === st.day ? 1 : i + 1 < st.day ? 0.4 : 0.15,
-        rule: i + 1 === st.day ? '2px solid #1B4FE0' : '2px solid transparent'
+        rule: i + 1 === st.day ? '2px solid ' + C.accent : '2px solid transparent'
       })),
       anyReason: st.reason || '', anyReasonOp: (st.flashSam || st.flashGroup) && st.reason ? 1 : 0,
       lampGlow: 0.55 * lampDim, lampDesk: 0.4 * lampDim, lampFloor: 0.3 * lampDim, lampWall: 0.26 * lampDim,
@@ -433,7 +442,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       unread: st.unread, hasUnread: st.unread > 0, dmUnread: st.tab !== 'dm' && st.dm.length > 0,
       dmUnreadCount: dmNew,
       buzzAnim: st.unread > 0 ? 'buzz .55s ease-in-out infinite' : 'none',
-      photoUp: st.photoUp, photoBg: st.photoUp ? '#111111' : '#E4E4E4',
+      photoUp: st.photoUp, photoBg: st.photoUp ? C.ink : C.panel,
       confirmSleepOpen: st.confirmSleep,
       sleepTitle: st.day === 4 ? 'That' + "'" + 's the week. Go to sleep?' : 'Go to sleep?',
       threadTitle: st.tab === 'group' ? '10b 🍕' : 'Nicole',
@@ -442,8 +451,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       memberLine: st.tab === 'group'
         ? (st.day >= 3 ? this.name() + ', Hanna, Mia, Lea, Benito…'
                        : this.name() + ', Nicole, Hanna, Mia, Lea, Benito…') : '',
-      tabGroupBg: st.tab === 'group' ? 'rgba(242,177,92,.10)' : 'transparent',
-      tabDmBg: st.tab === 'dm' ? 'rgba(242,177,92,.10)' : 'transparent',
+      tabGroupBg: st.tab === 'group' ? C.warmSoft : 'transparent',
+      tabDmBg: st.tab === 'dm' ? C.warmSoft : 'transparent',
       samBar: (st.samDead ? 100 : Math.max(0, st.sam)) + '%', groupBar: st.group + '%', samGone: false,
       shotOpen: st.shotOpen, shotIsFake: st.shotOpen === 'fake', shotIsReal: st.shotOpen === 'real', shotIsPhoto: st.shotOpen === 'photo',
       photoShotCaption: 'Sent by Hanna, ' + this.fmt(this.allDays()[2].start) + '. ' + this.allDays()[2].deskTitle,
@@ -454,7 +463,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       dmGhostTyping: st.tab === 'dm' && st.dmGhostTyping,
       dmSilenceLine: st.tab === 'dm' && tier === 'gone'
         ? (st.day <= 4 ? 'She hasn' + "'" + 't opened this since Wednesday.' : 'Still nothing.') : '',
-      samColor: st.samDead ? 'rgba(17,17,17,.35)' : this.barColor(st.sam, '#1B4FE0'), groupColor: this.barColor(st.group, '#1B4FE0'),
+      samColor: st.samDead ? C.inkMuted : this.barColor(st.sam, 'accent'), groupColor: this.barColor(st.group, 'accent'),
       samOpacity: st.flashSam ? 1 : (st.samDead ? 0.55 : 0.9),
       tipSamOpen: st.tip === 'sam', tipGroupOpen: st.tip === 'group',
       tipOpen: st.tip !== null,
@@ -487,9 +496,9 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       deskLabel: d.deskLabel, deskTitle: d.deskTitle, browserUrl: d.url, deskHasPhoto: st.day === 2,
       onSearch: st.dev === 'fact' && st.tool === 'search', onAi: st.dev === 'fact' && st.tool === 'ai',
       onFactTab: st.dev === 'fact',
-      segSearchBg: st.tool === 'search' ? '#FFFFFF' : 'transparent',
-      segAiBg: st.tool === 'ai' ? '#FFFFFF' : 'transparent',
-      segSelfBg: st.tool === 'self' ? '#FFFFFF' : 'transparent',
+      segSearchBg: st.tool === 'search' ? C.white : 'transparent',
+      segAiBg: st.tool === 'ai' ? C.white : 'transparent',
+      segSelfBg: st.tool === 'self' ? C.white : 'transparent',
       segSelfWeight: st.tool === 'self' ? 600 : 400,
       onSelf: st.dev === 'fact' && st.tool === 'self',
       toolSelf: () => this.setState({ tool: 'self' }),
@@ -594,9 +603,9 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
           hasThumb: !!a.thumb, noThumb: !a.thumb
         };
       }),
-      tabPlayerBg: st.tool === 'player' ? 'rgba(27,79,224,.1)' : 'transparent',
-      tabSearchBg: st.tool === 'search' ? 'rgba(27,79,224,.1)' : 'transparent',
-      tabSocialBg: st.tool === 'social' ? 'rgba(27,79,224,.1)' : 'transparent',
+      tabPlayerBg: st.tool === 'player' ? C.accentSoft : 'transparent',
+      tabSearchBg: st.tool === 'search' ? C.accentSoft : 'transparent',
+      tabSocialBg: st.tool === 'social' ? C.accentSoft : 'transparent',
       onSocial: st.dev === 'social',
       toolSocial: () => this.setState({ tool: 'social' }),
       socNav: [
@@ -607,7 +616,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       ].map(n => ({
         d: n.d,
         off: n.key === 'search' || n.key === 'messages',
-        rule: socTab === n.key ? '#1B4FE0' : 'transparent',
+        rule: socTab === n.key ? C.accent : 'transparent',
         op: (n.key === 'search' || n.key === 'messages') ? 0.35 : (socTab === n.key ? 1 : 0.4),
         go: () => { if (n.key !== 'search' && n.key !== 'messages') this.setState({ socTab: n.key, socProfileKey: null, socPostId: null }); }
       })),
@@ -668,14 +677,14 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         ago: ['4h', '3h', '2h'][i] || '1h', likes: [2, 1, 4, 3][i] || 1
       })),
       backToFeed: () => this.setState({ socProfileKey: null, socPostId: null, socTab: 'feed' }),
-      tabAiBg: st.tool === 'ai' ? 'rgba(27,79,224,.1)' : 'transparent',
+      tabAiBg: st.tool === 'ai' ? C.accentSoft : 'transparent',
       aiDead: false, aiOp: 1,
       playerChecks, aiChecks,
       mediaLen: st.day === 1 ? '0:15' : st.day === 4 ? '0:22' : '—',
       scrubPct: st.day === 1 || st.day === 4 ? '38%' : '0%',
       scrubLabel: st.day === 1 ? '0:06' : st.day === 4 ? '0:08' : '—',
-      dropBorder: st.dragItem ? '#1B4FE0' : '#6B6B6B',
-      dropBg: st.dragItem ? 'rgba(27,79,224,.05)' : 'transparent',
+      dropBorder: st.dragItem ? C.accent : C.muted,
+      dropBg: st.dragItem ? C.accentFaint : 'transparent',
       noPick: st.pickIdx === null, hasPick: st.pickIdx !== null,
       pickName: pickRow ? pickRow.name : '', pickMeta: pickRow ? pickRow.meta : '',
       pickIsImage: !!pickRow && pickRow.kind === 'image' && !pickRow.savedKind,
@@ -746,7 +755,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
           disabled: st.pickerMode === 'ai' ? false : !ok,
           op: (st.pickerMode === 'ai' || ok) ? 1 : 0.4,
           cursor: (st.pickerMode === 'ai' || ok) ? 'pointer' : 'default',
-          hover: (st.pickerMode === 'ai' || ok) ? 'background:#E8E8E8;' : '',
+          hover: (st.pickerMode === 'ai' || ok) ? ('background:' + C.frame + ';') : '',
           right: st.pickerMode === 'ai' ? '' : (ok ? (st.searched[r.name] ? 'searched' : '') : 'Images and video only'),
           disabledForMode: st.pickerMode === 'ai' ? false : !ok,
           choose: () => {
@@ -810,12 +819,12 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       dmCloseMsgs: st.dm.slice(-8).map((m, k) => ({
         id: k, who: m.who, text: (m.text || m.caption || '').split('{name}').join(this.name()),
         justify: m.mine ? 'flex-end' : 'flex-start',
-        bg: m.sys ? 'transparent' : (m.mine ? 'rgba(17,17,17,.14)' : '#E4E4E4'),
-        rule: m.mine ? '2px solid #1B4FE0' : '0',
-        showWho: !m.mine && !m.sys, whoColor: m.who === 'Nicole' ? '#1B4FE0' : '#1B4FE0'
+        bg: m.sys ? 'transparent' : (m.mine ? C.inkSoft : C.panel),
+        rule: m.mine ? '2px solid ' + C.accent : '0',
+        showWho: !m.mine && !m.sys, whoColor: m.who === 'Nicole' ? C.accent : C.accent
       })).concat(st.dmCloseExtra ? [{
         id: 999, who: 'Nicole', text: st.dmCloseExtra.text, justify: 'flex-start',
-        bg: '#E4E4E4', rule: '0', showWho: true, whoColor: '#1B4FE0'
+        bg: C.panel, rule: '0', showWho: true, whoColor: C.accent
       }] : []),
       dmCloseTyping: st.dmCloseTyping, dmCloseReady: st.dmCloseReady,
       dmCloseLine: (st.samDead ? 'locked' : st.sam < 35 ? 'low' : 'high') === 'locked' ? 'She hasn' + "'" + 't opened this since Wednesday.'
@@ -845,7 +854,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       recLine: st.recPhase === 'record' ? this.REC_LINES[st.recIdx] : '',
       recProgress: 'Line ' + (st.recIdx + 1) + ' of ' + this.REC_LINES.length,
       recBtnLabel: st.recBusy ? 'stop' : 'hold',
-      recBtnBg: st.recBusy ? '#1B4FE0' : '#1B4FE0',
+      recBtnBg: st.recBusy ? C.accent : C.accent,
       recLevel: (st.recBusy ? st.recLevel : 0) + '%',
       recAllow: () => this.recAllow(), recToggle: () => this.recToggle(),
       recDecline: () => {
@@ -865,8 +874,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       pickFemale: () => this.setState({ playerAvatar: 'female' }),
       pickMale: () => this.setState({ playerAvatar: 'male' }),
       noAvatar: !st.playerAvatar, enterOp: st.playerAvatar ? 1 : 0.45,
-      femaleRing: st.playerAvatar === 'female' ? '0 0 0 3px #1B4FE0' : 'none',
-      maleRing: st.playerAvatar === 'male' ? '0 0 0 3px #1B4FE0' : 'none',
+      femaleRing: st.playerAvatar === 'female' ? '0 0 0 3px ' + C.accent : 'none',
+      maleRing: st.playerAvatar === 'male' ? '0 0 0 3px ' + C.accent : 'none',
       femaleLift: st.playerAvatar === 'female' ? '-2px' : '0px',
       maleLift: st.playerAvatar === 'male' ? '-2px' : '0px',
       meIsFemale: st.playerAvatar !== 'male', meIsMale: st.playerAvatar === 'male',
@@ -883,8 +892,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       introLines: this.BACKSTORY.slice(0, st.introLine).map(t => ({ text: t })),
       introRef: this.introRef, introTyping: st.introTyping,
       introTypingJustify: (this.P_LOG[st.introMsg] || {}).mine ? 'flex-end' : 'flex-start',
-      introTypingBg: (this.P_LOG[st.introMsg] || {}).mine ? 'rgba(17,17,17,.14)' : '#E4E4E4',
-      introTypingRule: (this.P_LOG[st.introMsg] || {}).mine ? '2px solid #1B4FE0' : '0',
+      introTypingBg: (this.P_LOG[st.introMsg] || {}).mine ? C.inkSoft : C.panel,
+      introTypingRule: (this.P_LOG[st.introMsg] || {}).mine ? '2px solid ' + C.accent : '0',
       introMsgs: this.P_LOG.slice(0, st.introMsg).map((m, i) => ({
         id: i, who: m.who, text: ((m.text || m.caption || '…')).split('{name}').join(this.name()),
         isVoice: m.kind === 'voice', isTextOnly: m.kind !== 'voice', dur: m.dur || '0:10',
@@ -892,12 +901,12 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       mineFemale: !!m.mine && st.playerAvatar === 'female', mineMale: !!m.mine && st.playerAvatar === 'male',
         theirs: !m.mine && !m.sys, avatar: this.faceOf(m.who),
         justify: m.mine ? 'flex-end' : 'flex-start',
-        bg: m.mine ? 'rgba(17,17,17,.14)' : '#E4E4E4',
-        rule: m.mine ? '2px solid #1B4FE0' : '0',
-        showWho: !m.mine && !m.sys, whoColor: m.who === 'Nicole' ? '#1B4FE0' : '#1B4FE0',
-        lightBg: m.sys ? '#EDE9E1' : (m.mine ? '#D5DEFA' : '#FFFFFF'),
-        lightWho: m.who === 'Nicole' ? '#1B4FE0' : '#1B4FE0',
-        lightText: m.sys ? '#6B6B6B' : '#111111',
+        bg: m.mine ? C.inkSoft : C.panel,
+        rule: m.mine ? '2px solid ' + C.accent : '0',
+        showWho: !m.mine && !m.sys, whoColor: m.who === 'Nicole' ? C.accent : C.accent,
+        lightBg: m.sys ? C.washWarm : (m.mine ? C.accentWash : C.white),
+        lightWho: m.who === 'Nicole' ? C.accent : C.accent,
+        lightText: m.sys ? C.muted : C.ink,
         radius: m.mine ? '14px 14px 4px 14px' : '14px 14px 14px 4px'
       })),
       barsShown: st.day >= 1 ? 1 : 0,

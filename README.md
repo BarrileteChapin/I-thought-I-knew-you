@@ -30,7 +30,7 @@ Use these organized files as the editable source:
 - `src/game/methods/`: game behavior grouped by responsibility
 - `src/game/game-logic.js`: state fields and the runtime adapter
 - `src/template/app-template.html`: screen markup and template bindings
-- `styles/`: design-system and game CSS
+- `styles/`: `design-system.css` (tokens + `g-btn-*`) and `game.css` (page reset + motion)
 - `assets/`: media, fonts, and local React vendor files
 
 Treat these as infrastructure or reference files:
@@ -188,12 +188,19 @@ Convert the template to native JSX only as a deliberate, separate migration.
 
 ## Styling
 
-- `styles/design-system.css`: tokens and reusable design-system classes
-- `styles/game.css`: game-specific resets and animations
-- Inline styles in the template are still part of the current visual system.
+- `styles/design-system.css`: design tokens and shared `g-btn-*` classes
+  - color: `--c-*`
+  - type: `--font-*`, `--fs-*`
+  - radius: `--r-*`
+  - z-index: `--z-*`
+  - motion: `--ease*`, `--dur-*`
+  - space: `--space-screen-x`
+- `styles/game.css`: game shell resets, keyframes, scrollbar
+- Inline styles in the template still use these tokens for the visual system.
 
-Preserve the existing visual language unless the design request explicitly asks
-for a redesign. Keep the phone layout usable on narrow screens.
+Retheme from `design-system.css`. Preserve the existing visual language unless the
+design request explicitly asks for a redesign. Keep the phone layout usable on
+narrow screens.
 
 ## Assets
 
