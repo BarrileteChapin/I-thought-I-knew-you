@@ -12,7 +12,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       recOpen: false, recPhase: 'intro', recBusy: false, recLevel: 0, recTrying: false,
       dmGhostTyping: false, introTyping: false, confirmSleep: false, fading: false,
       msgToast: null, msgToastVisible: false, cameraPush: false, dayEnter: false,
-      cinePhase: 'gate', cineIdx: 0, cineActive: false, cineFlash: false
+      cinePhase: 'gate', cineIdx: 0, cineActive: false, cineFlash: false,
+      playingAudioKey: null
     });
   },
 
@@ -49,7 +50,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       screen: 'title', day: 1, min: this.DAYS[1].start, unread: 0, photoUp: true,
       cinePhase: 'gate', cineIdx: 0, cineActive: false, cineMuted: false, cineFlash: false,
       msgToast: null, msgToastVisible: false, cameraPush: false, dayEnter: false,
-      tab: 'group', confirmSleep: false, chat: [], dm: [], sharedCount: 3,
+      tab: 'group', confirmSleep: false, chat: [], dm: [], sharedCount: 3, playingAudioKey: null,
       hints: { 1: [], 2: [], 3: [], 4: [], 5: [] },
       certainty: { 1: 'unchecked', 2: 'unchecked', 3: 'unchecked', 4: 'unchecked', 5: 'unchecked' },
       done: {}, used: {}, loading: null, loadingPct: 0, credibility: 0,

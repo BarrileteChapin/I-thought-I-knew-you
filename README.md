@@ -87,6 +87,7 @@ Common optional message fields:
 - `kind`: `voice`, `video`, `photo`, or `shot`
 - `caption`: media description shown in the conversation
 - `dur`: duration text for a voice message
+- `audioSrc`: relative path to a static audio file for a voice message
 - `slow`: pauses the scripted introduction
 - `stop`: pauses the scripted introduction before recording
 - `old`: marks an older DM-history message

@@ -124,6 +124,7 @@
       "who": "Nicole",
       "kind": "voice",
       "dur": "0:22",
+      "audioSrc": "assets/audios/1-first_audio.wav",
       "caption": "",
       "old": true
     },
@@ -163,6 +164,7 @@
       "who": "Nicole",
       "kind": "voice",
       "dur": "0:09",
+      "audioSrc": "assets/audios/1-second_audio.wav",
       "caption": "",
       "old": true
     },
