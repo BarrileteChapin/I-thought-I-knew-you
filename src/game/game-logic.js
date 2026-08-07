@@ -23,7 +23,7 @@ class Component extends DCLogic {
   state = {
     screen: 'cinematic', day: 1, min: 21 * 60 + 40, unread: 0, photoUp: true,
     cinePhase: 'gate', cineIdx: 0, cineActive: false, cineMuted: false, cineFlash: false,
-    msgToast: null, msgToastVisible: false, cameraPush: false, dayEnter: false,
+    msgToast: null, msgToastVisible: false, socToast: null, socToastVisible: false, cameraPush: false, dayEnter: false,
     tab: 'group', confirmSleep: false, chat: [], dm: [], sharedCount: 3,
     hints: { 1: [], 2: [], 3: [], 4: [], 5: [] }, certainty: { 1: 'unchecked', 2: 'unchecked', 3: 'unchecked', 4: 'unchecked', 5: 'unchecked' },
     done: {}, used: {}, loading: null, loadingPct: 0, credibility: 0,
