@@ -850,11 +850,39 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
        chatSendLabel: st.chatBusy ? '...' : 'Send',
        chatSendDisabled: !!st.chatBusy || !(st.chatDraft || '').trim() || (st.tab === 'dm' ? st.chatDmLeft <= 0 || tier === 'gone' : st.chatGroupLeft <= 0),
        chatSendOpacity: (!!st.chatBusy || !(st.chatDraft || '').trim() || (st.tab === 'dm' ? st.chatDmLeft <= 0 || tier === 'gone' : st.chatGroupLeft <= 0)) ? 0.45 : 1,
-       actionsToggleVisible: phoneActions.length > 0,
-       actionsOpen: !!st.actionsOpen,
-       actionsToggleLabel: st.actionsOpen ? 'Hide actions' : 'Actions',
-       optionsOpen: !!st.actionsOpen && phoneActions.length > 0,
-       toggleActions: () => this.setState(s => ({ actionsOpen: !s.actionsOpen })),
+       chatGuideOpen: !!st.actionsOpen,
+       chatGuideLine1: st.tab === 'dm'
+         ? 'Type your own messages to Nicole — she replies in her own words.'
+         : 'Type your own messages in the group — people reply in their own words.',
+       chatGuideLine2: 'You only get a few messages a day. Use them carefully.',
+       chatGuideLine3: st.tab === 'dm'
+         ? 'What you say can raise or lower how much she trusts you.'
+         : 'What you say can raise or lower how the class sees you — and how Nicole feels about you.',
+       chatGuideExample: (() => {
+         const dmEx = {
+           1: 'Example: “I don’t believe it. What actually happened?”',
+           2: 'Example: “Are you okay? Tim posted a photo of you.”',
+           3: st.phase === 'clip'
+             ? 'Example: “That’s my voice, but I never said that.”'
+             : 'Example: “There’s an account going round with your name on it.”',
+           4: 'Example: “That voice message isn’t you. I can show you why.”'
+         };
+         const groupEx = {
+           1: 'Example: “Has anyone actually checked if this is real?”',
+           2: 'Example: “That’s from last July — this isn’t okay.”',
+           3: st.phase === 'clip'
+             ? 'Example: “I’m not talking in here tonight.”'
+             : 'Example: “Has anyone checked which account is which?”',
+           4: st.apology
+             ? 'Example: “Should we forward her apology to the other groups?”'
+             : 'Example: “That voice note doesn’t sound like her.”'
+         };
+         const ex = (st.tab === 'dm' ? dmEx : groupEx)[st.day];
+         return ex || (st.tab === 'dm'
+           ? 'Example: “Are you okay? I saw what they posted.”'
+           : 'Example: “Has anyone actually checked if this is real?”');
+       })(),
+       tipChatTap: () => this.setState(s => ({ actionsOpen: !s.actionsOpen })),
        onChatDraft: (e) => this.setState({ chatDraft: (e && e.target && e.target.value || '').slice(0, 160) }),
        onChatKey: (e) => { if (e && e.key === 'Enter' && !e.shiftKey) { e.preventDefault && e.preventDefault(); this.sendChatMessage(); } },
        sendChat: () => this.sendChatMessage(),
