@@ -155,6 +155,11 @@
   --hot-phone-am-l: 61%;
   --hot-phone-am-t: 50%;
   --hot-phone-am-w: 25%;
+  /* Message toast above phone (evening vs Wed morning) */
+  --hot-toast-l: 16.5%;
+  --hot-toast-t: 60%;
+  --hot-toast-am-l: 28%;
+  --hot-toast-am-t: 55%;
 
   /* Brand / action */
   --c-accent: #1B4FE0;

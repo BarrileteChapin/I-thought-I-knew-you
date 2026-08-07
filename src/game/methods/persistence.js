@@ -34,6 +34,10 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     }
   },
 
+  hasSavedGame() {
+    return !!this.readSavedGame();
+  },
+
   clearSavedGame() {
     try { localStorage.removeItem(this.SAVE_KEY); } catch (e) {}
   },

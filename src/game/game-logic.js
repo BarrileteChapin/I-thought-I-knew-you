@@ -20,7 +20,11 @@ class Component extends DCLogic {
   nameRef = React.createRef();
 
   state = {
-    screen: 'cinematic', day: 1, min: 21 * 60 + 40, unread: 0, photoUp: true,
+    // Skip opening cinematic when a save already exists (Continue on title).
+    screen: (window.GameMethods && window.GameMethods.hasSavedGame
+      && window.GameMethods.hasSavedGame.call(window.GameMethods))
+      ? 'title' : 'cinematic',
+    day: 1, min: 21 * 60 + 40, unread: 0, photoUp: true,
     cinePhase: 'gate', cineIdx: 0, cineActive: false, cineMuted: false, cineFlash: false,
     msgToast: null, msgToastVisible: false, cameraPush: false, dayEnter: false,
     tab: 'group', confirmSleep: false, chat: [], dm: [], sharedCount: 3,

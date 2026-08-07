@@ -1,5 +1,7 @@
 window.GameMethods = Object.assign(window.GameMethods || {}, {
   componentDidMount() {
+    // Belt-and-braces if initial state raced localStorage.
+    if (this.state.screen === 'cinematic' && this.hasSavedGame()) this.skipCinematic();
     this._bye = () => { this.saveGame(); this.wipeAudio(); };
     window.addEventListener('pagehide', this._bye);
     this._keys = (e) => {
