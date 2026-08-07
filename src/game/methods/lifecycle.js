@@ -39,6 +39,10 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     clearTimeout(this._saveTimer);
     this.saveGame();
     this.wipeAudio();
+    clearTimeout(this._n1); clearTimeout(this._n2);
+    clearTimeout(this._msgToastHide); clearTimeout(this._msgToastClear);
+    clearTimeout(this._camT); clearTimeout(this._cineT);
+    this.stopAmbient();
   },
 
   wipeAudio() {

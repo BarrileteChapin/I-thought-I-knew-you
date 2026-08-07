@@ -29,7 +29,8 @@
         DM_OPTIONS: dmOptions,
         REC_LINES: intro.recordingLines,
         REC_LINES_OLD: intro.recordingLinesOld,
-        DAY_YOU: dayYou
+        DAY_YOU: dayYou,
+        CINE_SCENES: intro.cineScenes
       },
       rules: {
         PUSHBACK: pushback,

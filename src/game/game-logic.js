@@ -11,6 +11,7 @@ class Component extends DCLogic {
   REC_LINES = window.GameData.conversations.REC_LINES;
   REC_LINES_OLD = window.GameData.conversations.REC_LINES_OLD;
   DAY_YOU = window.GameData.conversations.DAY_YOU;
+  CINE_SCENES = window.GameData.conversations.CINE_SCENES;
   PUSHBACK = window.GameData.rules.PUSHBACK;
   VARIANTS = window.GameData.rules.VARIANTS;
 
@@ -19,7 +20,9 @@ class Component extends DCLogic {
   nameRef = React.createRef();
 
   state = {
-    screen: 'title', day: 1, min: 21 * 60 + 40, unread: 0, photoUp: true,
+    screen: 'cinematic', day: 1, min: 21 * 60 + 40, unread: 0, photoUp: true,
+    cinePhase: 'gate', cineIdx: 0, cineActive: false, cineMuted: false, cineFlash: false,
+    msgToast: null, msgToastVisible: false, cameraPush: false, dayEnter: false,
     tab: 'group', confirmSleep: false, chat: [], dm: [], sharedCount: 3,
     hints: { 1: [], 2: [], 3: [], 4: [], 5: [] }, certainty: { 1: 'unchecked', 2: 'unchecked', 3: 'unchecked', 4: 'unchecked', 5: 'unchecked' },
     done: {}, used: {}, loading: null, loadingPct: 0, credibility: 0,

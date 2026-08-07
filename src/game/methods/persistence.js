@@ -10,7 +10,9 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       loading: null, loadingPct: 0,
       aiStage: 'idle', aiStep: 0,
       recOpen: false, recPhase: 'intro', recBusy: false, recLevel: 0, recTrying: false,
-      dmGhostTyping: false, introTyping: false, confirmSleep: false, fading: false
+      dmGhostTyping: false, introTyping: false, confirmSleep: false, fading: false,
+      msgToast: null, msgToastVisible: false, cameraPush: false, dayEnter: false,
+      cinePhase: 'gate', cineIdx: 0, cineActive: false, cineFlash: false
     });
   },
 
@@ -41,6 +43,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   freshGameState(overrides) {
     return Object.assign({
       screen: 'title', day: 1, min: this.DAYS[1].start, unread: 0, photoUp: true,
+      cinePhase: 'gate', cineIdx: 0, cineActive: false, cineMuted: false, cineFlash: false,
+      msgToast: null, msgToastVisible: false, cameraPush: false, dayEnter: false,
       tab: 'group', confirmSleep: false, chat: [], dm: [], sharedCount: 3,
       hints: { 1: [], 2: [], 3: [], 4: [], 5: [] },
       certainty: { 1: 'unchecked', 2: 'unchecked', 3: 'unchecked', 4: 'unchecked', 5: 'unchecked' },
@@ -85,7 +89,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   saveGame() {
     // Don't persist pre-game screens — Start over lands on name entry, and
     // saving there would recreate a Continue slot with leftover/fresh junk.
-    const early = { title: 1, name: 1, howto: 1 };
+    const early = { title: 1, name: 1, howto: 1, cinematic: 1 };
     if (early[this.state.screen]) return;
     try {
       const payload = { v: 1, savedAt: Date.now(), state: this.sanitizeForSave(this.state) };

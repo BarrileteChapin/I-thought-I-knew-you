@@ -344,8 +344,33 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const savedGame = st.screen === 'title' ? this.readSavedGame() : null;
     const endCard = this.finalCard(st, s);
 
+    const cineScene = this.CINE_SCENES[st.cineIdx] || this.CINE_SCENES[0] || {};
+
     return {
-      colors: C,
+      isCinematic: st.screen === 'cinematic',
+      cineGate: st.cinePhase !== 'playing',
+      cinePlaying: st.cinePhase === 'playing',
+      cineImgSrc: cineScene.img,
+      cineImgHeight: cineScene.height,
+      cineObjX: cineScene.objX,
+      cineObjY: cineScene.objY,
+      // cineActive is a tiny state machine: false (just cut, snapped to the
+      // scene's start frame) -> true (panning, in focus) -> 'exit' (still
+      // holding the panned position, but fading/blurring out ahead of the
+      // next cut). Only `true` is fully in-focus; both other stages render
+      // hidden/blurred so the cut itself is never seen.
+      cinePanX: st.cineActive ? cineScene.panXEnd : cineScene.panXStart,
+      cineScale: st.cineActive ? cineScene.scaleEnd : cineScene.scaleStart,
+      cineTransDur: st.cineActive ? ((cineScene.dur || 9000) / 1000 - 0.4) + 's' : '0s',
+      cineImgOp: st.cineActive === true ? 1 : 0,
+      cineImgBlur: st.cineActive === true ? '0px' : '14px',
+      cineCaption: cineScene.caption || '',
+      cineCaptionOp: st.cineActive ? 1 : 0,
+      cineFlashOp: st.cineFlash ? 1 : 0,
+      cineMuteLabel: st.cineMuted ? '🔇' : '🔈',
+      beginCinematic: () => this.beginCinematic(),
+      skipCinematic: () => this.skipCinematic(),
+      toggleCineMute: () => this.toggleCineMute(),
       isTitle: st.screen === 'title', isRoom: st.screen === 'room' || st.screen === 'phone', isPhone: st.screen === 'phone',
       onHome: st.dev === null, onApp: st.dev !== null,
       screenBg: st.dev === null
@@ -445,6 +470,18 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       unread: st.unread, hasUnread: st.unread > 0, dmUnread: st.tab !== 'dm' && st.dm.length > 0,
       dmUnreadCount: dmNew,
       buzzAnim: st.unread > 0 ? 'buzz .55s ease-in-out infinite' : 'none',
+      msgToastShown: !!st.msgToast,
+      msgToastOpacity: st.msgToastVisible ? 1 : 0,
+      msgToastY: st.msgToastVisible ? '0px' : '-14px',
+      msgToastWho: st.msgToast ? st.msgToast.who : '',
+      msgToastText: st.msgToast ? st.msgToast.text : '',
+      msgToastInitial: st.msgToast ? (st.msgToast.kind === 'dm' ? 'N' : '🍕') : '',
+      msgToastDotBg: st.msgToast && st.msgToast.kind === 'dm' ? C.accent : C.ink,
+      sceneScale: st.cameraPush ? 1.045 : 1,
+      pushVignetteOp: st.cameraPush ? 0.32 : 0,
+      dayPanY: st.dayEnter ? '-52px' : '0px',
+      dayPanScale: st.dayEnter ? 1.05 : 1,
+      dayPanOp: st.dayEnter ? 0.55 : 1,
       photoUp: st.photoUp, photoBg: st.photoUp ? C.ink : C.panel,
       confirmSleepOpen: st.confirmSleep,
       sleepTitle: st.day === 4

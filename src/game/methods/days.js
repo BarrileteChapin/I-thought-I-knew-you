@@ -76,7 +76,12 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       dmGhostTyping: false, ghostTypedToday: false, onReadCharged: false,
       shotOpen: null, sawFake: false, sawReal: false, reportOpen: false,
       arrival: Date.now(), confirmSleep: false, sharedCount: shared, reason: '',
-      pushIdx: st.pushIdx + (st.group < 35 ? 1 : 0)
+      pushIdx: st.pushIdx + (st.group < 35 ? 1 : 0),
+      msgToast: null, msgToastVisible: false, cameraPush: false,
+      dayEnter: true
+    }, () => {
+      requestAnimationFrame(() => this.setState({ dayEnter: false }));
+      this.runDayArrival(d.chat, d.dm);
     });
   }
 });
