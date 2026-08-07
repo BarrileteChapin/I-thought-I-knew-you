@@ -78,8 +78,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     }
     const phoneActions = acts.map(a => ({
       label: a.label, used: !!st.used[a.id], op: st.used[a.id] ? 0.45 : 1,
-      bg: st.used[a.id] ? '#E8E8E8' : 'rgba(27,79,224,.05)',
-       run: () => { if (!st.used[a.id]) { this.setState({ actionsOpen: false }); this.doAction(a); } }
+      bg: st.used[a.id] ? C.frame : C.accentFaint,
+      run: () => { if (!st.used[a.id]) this.doAction(a); }
     }));
 
     const mk = c => ({
@@ -401,7 +401,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         const k = st.threadOpen;
         const lastRead = Object.assign({}, st.lastRead);
         if (k) lastRead[k] = (k === 'group' ? st.chat : st.dm).length;
-        this.setState({ threadOpen: null, actionsOpen: false, lastRead, newMarkAt: null, showNewPill: false });
+        this.setState({ threadOpen: null, lastRead, newMarkAt: null, showNewPill: false });
       },
       showNewPill: st.showNewPill,
       onMsgScroll: () => {
@@ -430,7 +430,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
           this._atBottom = true;
           this._lastLen = list.length;
           this.setState({
-            threadOpen: t.key, tab: t.key, actionsOpen: false, showNewPill: false,
+            threadOpen: t.key, tab: t.key, showNewPill: false,
             newMarkAt: typeof read === 'number' && read >= 0 && read < list.length ? read : null,
             openedGroup: t.key === 'group' ? true : this.state.openedGroup,
             groupUnread: t.key === 'group' ? 0 : this.state.groupUnread,
@@ -509,8 +509,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       reportOpen: st.reportOpen,
       reportCancel: () => this.setState({ reportOpen: false }),
       reportNew: () => this.doReport('new'), reportOld: () => this.doReport('old'), reportBoth: () => this.doReport('both'),
-       dmGhostTyping: st.tab === 'dm' && st.dmGhostTyping,
-       chatTyping: st.chatBusy || (st.tab === 'dm' && st.dmGhostTyping),
+      dmGhostTyping: st.tab === 'dm' && st.dmGhostTyping,
       dmSilenceLine: st.tab === 'dm' && tier === 'gone'
         ? (st.day <= 4 ? 'She hasn' + "'" + 't opened this since Wednesday.' : 'Still nothing.') : '',
       samColor: st.samDead ? C.inkMuted : this.barColor(st.sam, 'accent'), groupColor: this.barColor(st.group, 'accent'),
@@ -838,28 +837,11 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       toolPlayer: () => this.setState({ tool: 'player', mediaOpen: null }),
       toolSearch: () => this.setState({ tool: 'search' }),
       toolAi: () => this.setState({ tool: 'ai' }),
-       fading: st.fading,
-       loading: !!st.loading, loadingLabel: st.loading || '', loadingPct: Math.min(100, st.loadingPct) + '%',
-       writeInOpen: st.writeIn && st.threadOpen === 'group',
-       chatComposerOpen: st.threadOpen !== null && !st.writeIn,
-       chatDraft: st.chatDraft || '',
-       chatBusy: !!st.chatBusy,
-       chatStatus: st.llmStatus || '',
-       chatStatusOpen: !!st.llmStatus,
-       chatPlaceholder: st.tab === 'dm' ? 'Message Nicole...' : 'Message the group...',
-       chatBudgetLabel: st.tab === 'dm' ? ('DM messages left: ' + st.chatDmLeft) : ('Group messages left: ' + st.chatGroupLeft),
-       chatSendLabel: st.chatBusy ? '...' : 'Send',
-       chatSendDisabled: !!st.chatBusy || !(st.chatDraft || '').trim() || (st.tab === 'dm' ? st.chatDmLeft <= 0 || tier === 'gone' : st.chatGroupLeft <= 0),
-       chatSendOpacity: (!!st.chatBusy || !(st.chatDraft || '').trim() || (st.tab === 'dm' ? st.chatDmLeft <= 0 || tier === 'gone' : st.chatGroupLeft <= 0)) ? 0.45 : 1,
-       actionsToggleVisible: phoneActions.length > 0,
-       actionsOpen: !!st.actionsOpen,
-       actionsToggleLabel: st.actionsOpen ? 'Hide actions' : 'Actions',
-       optionsOpen: !!st.actionsOpen && phoneActions.length > 0,
-       toggleActions: () => this.setState(s => ({ actionsOpen: !s.actionsOpen })),
-       onChatDraft: (e) => this.setState({ chatDraft: (e && e.target && e.target.value || '').slice(0, 160) }),
-       onChatKey: (e) => { if (e && e.key === 'Enter' && !e.shiftKey) { e.preventDefault && e.preventDefault(); this.sendChatMessage(); } },
-       sendChat: () => this.sendChatMessage(),
-       writeText: st.writeText,
+      fading: st.fading,
+      loading: !!st.loading, loadingLabel: st.loading || '', loadingPct: Math.min(100, st.loadingPct) + '%',
+      writeInOpen: st.writeIn && st.threadOpen === 'group',
+      optionsOpen: !(st.writeIn && st.threadOpen === 'group'),
+      writeText: st.writeText,
       onWrite: (e) => this.setState({ writeText: (e.target.value || '').slice(0, 400) }),
       sendWrite: () => this.sendWrite(),
       deleteWrite: () => this.setState({ writeIn: false, writeStatus: 'deleted', screen: 'room', dev: null, threadOpen: null }),
@@ -985,8 +967,9 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       })),
       barsShown: st.day >= 1 ? 1 : 0,
 
-      openPhone: () => {
-        this.setState({ dev: null, threadOpen: null, actionsOpen: false, screen: 'phone' });
+      openPhone: (e) => {
+        if (e && e.stopPropagation) e.stopPropagation();
+        this.setState({ dev: null, threadOpen: null, screen: 'phone' });
         if (tier === 'gone' && !st.ghostTypedToday) {
           this.setState({ ghostTypedToday: true });
           setTimeout(() => this.setState({ dmGhostTyping: true }), 1400);
@@ -1003,10 +986,10 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
           this.rel(-10, 0, null);
           this.log('— you left her on read');
         }
-        this.setState(s => ({ screen: 'room', actionsOpen: false, ignored: s.screen === 'phone' && s.openedGroup && !s.actedToday }));
+        this.setState(s => ({ screen: 'room', ignored: s.screen === 'phone' && s.openedGroup && !s.actedToday }));
       },
-      tabGroup: () => this.setState({ tab: 'group', actionsOpen: false, openedGroup: true }),
-      tabDm: () => this.setState({ tab: 'dm', actionsOpen: false }),
+      tabGroup: () => this.setState({ tab: 'group', openedGroup: true }),
+      tabDm: () => this.setState({ tab: 'dm' }),
       flipPhoto: () => this.setState({ photoUp: !st.photoUp }),
       askSleep: (e) => {
         if (e && e.stopPropagation) e.stopPropagation();
@@ -1021,24 +1004,14 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       },
       cancelSleep: () => this.setState({ confirmSleep: false }),
       doSleep: () => this.endDay(),
-      restart: () => this.setState({
-        screen: 'title', day: 1, min: this.DAYS[1].start, done: {}, used: {},
-        hints: { 1: [], 2: [], 3: [], 4: [], 5: [] }, certainty: { 1: 'unchecked', 2: 'unchecked', 3: 'unchecked', 4: 'unchecked', 5: 'unchecked' },
-        credibility: 0, credibilityLost: false, voiceSent: false, reason: '',
-        pStage: -1, introLine: 0, introMsg: 0, introTyping: false, introReady: false, samSilent: false,
-        dmCloseTyping: false, dmCloseExtra: null, dmCloseReady: false, variant: Math.floor(Math.random() * 2),
-        replayShown: false, postedWed: false,
-        recOpen: false, recPhase: 'intro', recIdx: 0, recBusy: false, recLevel: 0, hasRecording: false, recTrying: false, recAttempts: 0, recTrying: false, recAttempts: 0,
-        minCheck: 0, minReact: 0, postsWith: 0, postsWithout: 0, dmChances: 0, endStep: 1, gamePhase: 'playing',
-        apology: false, reported: false, clipBack: false, phase: 'evening', sharedCount: 3,
-        profMenuOpen: false, reportReasonOpen: false, reportToast: false, reportedAccounts: {}, reportedFake: false,
-        actedToday: false, openedGroup: false, ignored: false, dmAnsweredToday: false,
-        shareTick: 0, shareHalved: false, fading: false, tool: 'player', socTab: 'feed', socProfileKey: null, socPostId: null, mediaOpen: null, seen: {}, zoom: false, dev: null, threadOpen: null, galleryNew: false, chatFlash: false,
-        writeIn: false, writeText: '', writeStatus: null, chatDraft: '', chatBusy: false, actionsOpen: false, chatGroupLeft: 4, chatDmLeft: 3, llmUsedReplies: [], llmReplySeed: 0,
-        dragItem: null, pickIdx: null, pickerOpen: false, pickerMode: 'search', searched: {}, aiPickIdx: null, aiStage: 'idle', aiStep: 0, actionLog: [], reactionTimes: [],
-        final: { post: null, fwd: null, tell: null }, sam: 50, group: 50, pushIdx: 0, flashSam: false, flashGroup: false, samDead: false,
-        stats: { forwards: 0, reacts: 0, checks: 0, fast: 0, dmAnswered: 0, believed: 0, dismissed: 0, stopped: 0, fastest: null, sift: { investigate: 0, coverage: 0, trace: 0 } }
-      })
+      restart: () => {
+        clearTimeout(this._saveTimer);
+        clearTimeout(this._it);
+        clearTimeout(this._dc);
+        this.clearSavedGame();
+        this.wipeAudio();
+        this.setState(this.freshGameState({ screen: 'title' }));
+      }
     };
   }
 });

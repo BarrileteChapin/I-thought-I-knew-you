@@ -5,15 +5,9 @@
     return response.json();
   }
 
-  async function readText(path) {
-    const response = await fetch(path);
-    if (!response.ok) throw new Error(path + ' returned HTTP ' + response.status);
-    return response.text();
-  }
-
   window.loadGameData = async function () {
     const root = './content/';
-    const [intro, dmOptions, day1, day2, day3, day4, dayYou, pushback, variants, chatContext] = await Promise.all([
+    const [intro, dmOptions, day1, day2, day3, day4, dayYou, pushback, variants] = await Promise.all([
       readJson(root + 'conversations/intro.json'),
       readJson(root + 'conversations/dm-options.json'),
       readJson(root + 'conversations/day-1.json'),
@@ -22,8 +16,7 @@
       readJson(root + 'conversations/day-4.json'),
       readJson(root + 'conversations/day-you.json'),
       readJson(root + 'rules/pushback.json'),
-      readJson(root + 'rules/variants.json'),
-      readText(root + 'chat_context.md')
+      readJson(root + 'rules/variants.json')
     ]);
 
     window.GameData = {
@@ -42,8 +35,7 @@
       rules: {
         PUSHBACK: pushback,
         VARIANTS: variants
-      },
-      chatContext
+      }
     };
 
     return window.GameData;
