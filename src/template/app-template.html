@@ -26,7 +26,7 @@
   <sc-if value="{{ cinePlaying }}" hint-placeholder-val="{{ false }}">
 
     <div style="position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:{{ cineImgHeight }};overflow:hidden;background:#000000;">
-      <img src="{{ cineImgSrc }}" style="width:100%;height:100%;object-fit:cover;object-position:{{ cineObjX }} {{ cineObjY }};transform:translateX({{ cinePanX }}) scale({{ cineScale }});transition:transform {{ cineTransDur }} linear;" />
+      <img src="{{ cineImgSrc }}" style="width:100%;height:100%;object-fit:cover;object-position:{{ cineObjX }} {{ cineObjY }};opacity:{{ cineImgOp }};filter:blur({{ cineImgBlur }});transform:translateX({{ cinePanX }}) scale({{ cineScale }});transition:transform {{ cineTransDur }} linear, opacity .45s ease, filter .45s ease;" />
     </div>
 
     <div style="position:absolute;left:0;right:0;bottom:0;padding:0 30px 34px;display:flex;justify-content:center;opacity:{{ cineCaptionOp }};transition:opacity .7s ease;pointer-events:none;z-index:20;">

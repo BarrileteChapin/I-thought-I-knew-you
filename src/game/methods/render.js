@@ -346,9 +346,16 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       cineImgHeight: cineScene.height,
       cineObjX: cineScene.objX,
       cineObjY: cineScene.objY,
+      // cineActive is a tiny state machine: false (just cut, snapped to the
+      // scene's start frame) -> true (panning, in focus) -> 'exit' (still
+      // holding the panned position, but fading/blurring out ahead of the
+      // next cut). Only `true` is fully in-focus; both other stages render
+      // hidden/blurred so the cut itself is never seen.
       cinePanX: st.cineActive ? cineScene.panXEnd : cineScene.panXStart,
       cineScale: st.cineActive ? cineScene.scaleEnd : cineScene.scaleStart,
-      cineTransDur: ((cineScene.dur || 9000) / 1000 - 0.4) + 's',
+      cineTransDur: st.cineActive ? ((cineScene.dur || 9000) / 1000 - 0.4) + 's' : '0s',
+      cineImgOp: st.cineActive === true ? 1 : 0,
+      cineImgBlur: st.cineActive === true ? '0px' : '14px',
       cineCaption: cineScene.caption || '',
       cineCaptionOp: st.cineActive ? 1 : 0,
       cineFlashOp: st.cineFlash ? 1 : 0,

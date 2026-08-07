@@ -158,19 +158,38 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
   runCinematic() {
     clearTimeout(this._cineT);
+    clearTimeout(this._cineActivateT);
+    clearTimeout(this._cineExitT);
     const scenes = this.CINE_SCENES;
+    const preload = (src) => {
+      if (!src) return;
+      const im = new Image();
+      im.src = src;
+    };
+    // Gives the fade/blur-in something to play over, and a moment for the
+    // (multi-MB) frame to actually finish loading before the camera starts
+    // panning — otherwise the pan can visibly start before the image does.
+    const ENTER_DELAY = 400;
+    // Fade/blur the current frame back out before the next cut, so the swap
+    // itself always happens while the image is hidden (never a hard pop).
+    const EXIT_DELAY = 400;
     const step = (i) => {
       if (i >= scenes.length) { this.finishCinematic(); return; }
-      this.setState({ cineIdx: i, cineActive: false }, () => {
-        requestAnimationFrame(() => this.setState({ cineActive: true }));
-      });
-      this._cineT = setTimeout(() => step(i + 1), scenes[i].dur);
+      const dur = scenes[i].dur || 9000;
+      preload((scenes[i + 1] || {}).img);
+      this.setState({ cineIdx: i, cineActive: false });
+      this._cineActivateT = setTimeout(() => this.setState({ cineActive: true }), ENTER_DELAY);
+      this._cineExitT = setTimeout(() => this.setState({ cineActive: 'exit' }), Math.max(dur - EXIT_DELAY, ENTER_DELAY));
+      this._cineT = setTimeout(() => step(i + 1), dur);
     };
+    preload((scenes[0] || {}).img);
     step(0);
   },
 
   finishCinematic() {
     clearTimeout(this._cineT);
+    clearTimeout(this._cineActivateT);
+    clearTimeout(this._cineExitT);
     this.stopAmbient();
     this.setState({ cineFlash: true });
     this._cineT = setTimeout(() => {
@@ -180,6 +199,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
   skipCinematic() {
     clearTimeout(this._cineT);
+    clearTimeout(this._cineActivateT);
+    clearTimeout(this._cineExitT);
     this.stopAmbient();
     this.setState({ screen: 'title', cinePhase: 'gate', cineIdx: 0, cineActive: false, cineFlash: false });
   },
