@@ -31,9 +31,26 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     };
   },
 
+  // Room backdrop by calendar day / phase (webp art encodes time of day).
+  roomBgFor(day, phase) {
+    if (day === 1) return 'assets/room_night.webp';       // Monday
+    if (day === 2) return 'assets/room_main.webp';        // Tuesday
+    if (day === 3 && phase === 'morning') return 'assets/room_morning.webp';
+    if (day === 3) return 'assets/room_night.webp';      // Wednesday night / clip
+    if (day === 4) return 'assets/room_main.webp';        // Thursday
+    return 'assets/room_main.webp';
+  },
+
   clamp(v) { return Math.max(0, Math.min(100, v)); },
 
-  barColor(v, hex) {
+  // Resolve a --c-* token to its computed value (needed when JS must parse hex).
+  cssColor(token) {
+    const name = token.startsWith('--') ? token : '--c-' + String(token).replace(/[A-Z]/g, (ch) => '-' + ch.toLowerCase());
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  },
+
+  barColor(v, token) {
+    const hex = (token && token[0] === '#') ? token : this.cssColor(token || 'accent');
     const grey = [138, 110, 122];
     const full = [parseInt(hex.slice(1, 3), 16), parseInt(hex.slice(3, 5), 16), parseInt(hex.slice(5, 7), 16)];
     const t = Math.max(0, Math.min(1, v / 75));
@@ -51,10 +68,19 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
   faceOf(who) {
     return window.__R({
-      Nicole: 'assets/av-nicole.png', Hanna: 'assets/av-hanna.png', Lea: 'assets/av-lea.png',
-      Nele: 'assets/av-nele.png', Benito: 'assets/av-benito.png', Mia: 'assets/av-mia.png',
-      Tim: 'assets/av-hanna.png'
-    }[who] || 'assets/av-mia.png');
+      Nicole: 'assets/av-nicole.webp', Hanna: 'assets/av-hanna.webp', Lea: 'assets/av-lea.webp',
+      Nele: 'assets/av-nele.webp', Benito: 'assets/av-benito.webp', Mia: 'assets/av-mia.webp',
+      Tim: 'assets/av-hanna.webp'
+    }[who] || 'assets/av-mia.webp');
+  },
+
+  /* CSS tokens: --c-who-* in styles/design-system.css */
+  whoColorOf(who) {
+    const slug = {
+      Nicole: 'nicole', Hanna: 'hanna', Mia: 'mia', Lea: 'lea',
+      Benito: 'benito', Nele: 'nele', Tim: 'hanna'
+    }[who] || 'default';
+    return 'var(--c-who-' + slug + ')';
   },
 
   preview(list) {

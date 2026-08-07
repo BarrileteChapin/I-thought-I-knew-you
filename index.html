@@ -3,16 +3,26 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#1B4FE0">
+  <meta name="theme-color" id="theme-color" content="#1B4FE0">
   <title>I Thought I Knew You</title>
   <link rel="stylesheet" href="./styles/design-system.css">
   <link rel="stylesheet" href="./styles/game.css">
   <script src="./assets/vendor/react.production.min.js"></script>
   <script src="./assets/vendor/react-dom.production.min.js"></script>
+  <script>
+    (function syncThemeColor() {
+      var meta = document.getElementById('theme-color');
+      if (!meta) return;
+      var accent = getComputedStyle(document.documentElement).getPropertyValue('--c-accent').trim();
+      if (accent) meta.setAttribute('content', accent);
+    }());
+  </script>
   <script src="./src/game/methods/core.js"></script>
   <script src="./src/game/methods/chat-llm.js"></script>
   <script src="./src/game/methods/lifecycle.js"></script>
   <script src="./src/game/methods/audio.js"></script>
+  <script src="./src/game/methods/cinematic.js"></script>
+  <script src="./src/game/methods/notifications.js"></script>
   <script src="./src/game/methods/intro.js"></script>
   <script src="./src/game/methods/relationships.js"></script>
   <script src="./src/game/methods/actions.js"></script>
@@ -35,7 +45,7 @@
       function setError(message) {
         if (loading) {
           loading.textContent = message;
-          loading.style.color = '#8A1C1C';
+          loading.style.color = getComputedStyle(document.documentElement).getPropertyValue('--c-danger-dark').trim() || '#8A1C1C';
         }
         console.error('[game] ' + message);
       }
@@ -60,12 +70,14 @@
         const logicScript = document.createElement('script');
         logicScript.type = 'text/x-dc';
         logicScript.dataset.dcScript = '';
+        const accent = getComputedStyle(document.documentElement).getPropertyValue('--c-accent').trim() || '#1B4FE0';
+        const ink = getComputedStyle(document.documentElement).getPropertyValue('--c-ink').trim() || '#111111';
         logicScript.dataset.props = JSON.stringify({
           accent: {
             editor: 'color',
-            default: '#1B4FE0',
+            default: accent,
             tsType: 'string',
-            options: ['#1B4FE0', '#1B4FE0', '#111111']
+            options: [accent, ink]
           },
           nightIntensity: {
             editor: 'range',
