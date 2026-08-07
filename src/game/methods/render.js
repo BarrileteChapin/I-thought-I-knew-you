@@ -353,14 +353,12 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       homeBarColor: st.dev === null ? C.whiteFaint : C.inkMuted,
       goHome: () => this.setState({ dev: null, threadOpen: null }),
       apps: [
-        { key: 'chats', label: 'Message', tile: C.ink, badge: st.unread > 0 ? st.unread : 0 },
-        { key: 'gallery', label: 'Photo Gallery', tile: C.ink, badge: 0 },
-        { key: 'fact', label: 'Fact Checker', tile: C.ink, badge: 0 },
-        { key: 'social', label: 'Social Media', tile: C.ink, badge: 0 }
+        { key: 'chats', label: 'Message', icon: 'assets/icons/app-chats.svg', badge: st.unread > 0 ? st.unread : 0 },
+        { key: 'gallery', label: 'Photo Gallery', icon: 'assets/icons/app-gallery.svg', badge: 0 },
+        { key: 'fact', label: 'Fact Checker', icon: 'assets/icons/app-fact.svg', badge: 0 },
+        { key: 'social', label: 'Social Media', icon: 'assets/icons/app-social.svg', badge: 0 }
       ].map(a => ({
-        label: a.label, badge: a.badge,
-        isChats: a.key === 'chats', isGallery: a.key === 'gallery',
-        isFact: a.key === 'fact', isSocial: a.key === 'social',
+        label: a.label, badge: a.badge, icon: a.icon,
         go: () => this.setState({
           dev: a.key, threadOpen: null,
           tool: a.key === 'gallery' ? 'player' : a.key === 'social' ? 'social' : a.key === 'fact' ? (this.state.tool === 'ai' ? 'ai' : 'search') : this.state.tool,
@@ -609,12 +607,12 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       onSocial: st.dev === 'social',
       toolSocial: () => this.setState({ tool: 'social' }),
       socNav: [
-        { key: 'feed', d: 'M3 10.5 12 3l9 7.5M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5' },
-        { key: 'search', d: 'M21 21l-4.3-4.3M17 11a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z' },
-        { key: 'messages', d: 'M3 6.5A2.5 2.5 0 0 1 5.5 4h13A2.5 2.5 0 0 1 21 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5v-11ZM3.5 6l8.5 6 8.5-6' },
-        { key: 'profile', d: 'M20 21a8 8 0 1 0-16 0M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z' }
+        { key: 'feed', icon: 'assets/icons/soc-feed.svg' },
+        { key: 'search', icon: 'assets/icons/soc-search.svg' },
+        { key: 'messages', icon: 'assets/icons/soc-messages.svg' },
+        { key: 'profile', icon: 'assets/icons/soc-profile.svg' }
       ].map(n => ({
-        d: n.d,
+        icon: n.icon,
         off: n.key === 'search' || n.key === 'messages',
         rule: socTab === n.key ? C.accent : 'transparent',
         op: (n.key === 'search' || n.key === 'messages') ? 0.35 : (socTab === n.key ? 1 : 0.4),

@@ -212,7 +212,11 @@ Use paths such as:
 ```text
 assets/nicole-party.jpg
 assets/av-nicole.png
+assets/icons/app-chats.svg
+assets/icons/icon-back.svg
 ```
+
+Phone UI icons live under `assets/icons/` (`app-*`, `icon-*`, `soc-*`). Replace a file to swap that icon.
 
 Do not use root-relative paths such as `/assets/nicole-party.jpg`. GitHub Pages
 paths are case-sensitive, so filename casing must match exactly.
