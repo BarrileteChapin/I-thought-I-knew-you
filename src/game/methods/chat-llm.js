@@ -24,10 +24,59 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
   chatTone(text) {
     const t = String(text || '').toLowerCase();
-    if (/\b(check|source|maybe|could|cut|whole|posted|last summer|one year|six fingers|bot|clean|audio|room|breath)\b/.test(t)) return 'questioning';
-    if (/\b(fake|real|pathetic|liar|report|deserve|cancel)\b/.test(t)) return 'pile_on';
-    if (/\b(support|believe|innocent|sorry|defend|leave her alone|not okay)\b/.test(t)) return 'supportive';
+    if (/\b(check|checked|source|maybe|could|cut|whole|posted|last summer|last july|one year|six fingers|bot|clean|audio|room|breath|which is which|actually checked|original|compare|proof|evidence)\b/.test(t)) return 'questioning';
+    if (/\b(support|believe|believed|innocent|sorry|defend|leave her alone|not okay|are you (ok|okay|alright)|i believe|with you|on your side|isn'?t okay|isnt okay)\b/.test(t)) return 'supportive';
+    if (/\b(pathetic|liar|deserve|cancel|shame|exposed|caught|no shame)\b/.test(t)) return 'pile_on';
+    if (/\b(fake|real)\b/.test(t) && /\b(she|her|nicole)\b/.test(t) && !/\b(not|isn'?t|isnt|account)\b/.test(t)) return 'pile_on';
     return 'neutral';
+  },
+
+  // Tally free-text chat for ending / ledger (replaces preset option outcomes).
+  recordChatBehaviour(tab, text) {
+    const tone = this.chatTone(text);
+    const cert = this.state.certainty[this.state.day];
+    this.setState(s => {
+      const stats = JSON.parse(JSON.stringify(s.stats || {}));
+      const chat = Object.assign({
+        dm: 0, group: 0, questioning: 0, pile_on: 0, supportive: 0, neutral: 0
+      }, stats.chat || {});
+      if (tab === 'dm') {
+        chat.dm += 1;
+        stats.dmAnswered = (stats.dmAnswered || 0) + 1;
+      } else {
+        chat.group += 1;
+      }
+      chat[tone] = (chat[tone] || 0) + 1;
+      stats.chat = chat;
+
+      const patch = { stats };
+      if (tab === 'group' && (tone === 'supportive' || tone === 'pile_on')) {
+        if (cert === 'confirmed') patch.postsWith = (s.postsWith || 0) + 1;
+        else {
+          patch.postsWithout = (s.postsWithout || 0) + 1;
+          if (tone === 'supportive') patch.credibilityLost = true;
+        }
+      }
+      if (tab === 'group' && tone === 'supportive') {
+        patch.final = Object.assign({}, s.final, { post: 'support' });
+      }
+      return patch;
+    });
+
+    if (tab === 'dm') {
+      if (tone === 'supportive') this.rel(8, 0, '— you stood with her');
+      else if (tone === 'pile_on') this.rel(-10, 0, '— you turned on her');
+      else if (tone === 'questioning') this.rel(5, 0, '— you asked her');
+      else this.rel(3, 0, '— you answered her');
+    } else if (tone === 'supportive') {
+      if (cert === 'confirmed') this.rel(4, -3, '— you backed her with proof');
+      else this.rel(2, -8, '— you said it without proof');
+    } else if (tone === 'pile_on') {
+      this.rel(-8, 6, '— you joined in');
+    } else if (tone === 'questioning') {
+      this.rel(2, -2, '— you questioned it');
+    }
+    return tone;
   },
 
   chatFocus(text) {
@@ -319,6 +368,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       dmAnsweredToday: tab === 'dm' ? true : st.dmAnsweredToday,
       llmStatus: this._llmReady ? 'Replying...' : 'Model loading; using a fallback if needed'
     }));
+    this.recordChatBehaviour(tab, text);
     this.advance(2);
     if (tab === 'dm') this.setState(s => ({ dm: s.dm.concat([mine]) }));
     else this.setState(s => ({ chat: s.chat.concat([mine]) }));

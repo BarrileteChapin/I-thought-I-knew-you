@@ -327,13 +327,13 @@
       </div>
     </sc-if>
     <sc-if value="{{ openIsGarden }}" hint-placeholder-val="{{ false }}">
-      <img sc-camel-on-click="{{ toggleZoom }}" src="assets/nicole-garden.webp" alt="" style="display:block;width:100%;height:auto;transform:scale({{ zoomScale }});transform-origin:center;transition:transform var(--dur-fast) var(--ease);">
+      <img sc-camel-on-click="{{ toggleZoom }}" src="assets/nicole-garden.webp" alt="" style="display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;background:var(--c-wash-light);transform:scale({{ zoomScale }});transform-origin:center;transition:transform var(--dur-fast) var(--ease);">
     </sc-if>
     <sc-if value="{{ openIsCraft }}" hint-placeholder-val="{{ false }}">
-      <img sc-camel-on-click="{{ toggleZoom }}" src="assets/nicole-craft.jpg" alt="" style="display:block;width:100%;height:auto;transform:scale({{ zoomScale }});transform-origin:center;transition:transform var(--dur-fast) var(--ease);">
+      <img sc-camel-on-click="{{ toggleZoom }}" src="assets/nicole-craft.webp" alt="" style="display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;background:var(--c-wash-light);transform:scale({{ zoomScale }});transform-origin:center;transition:transform var(--dur-fast) var(--ease);">
     </sc-if>
     <sc-if value="{{ openIsImage }}" hint-placeholder-val="{{ false }}">
-      <img sc-camel-on-click="{{ toggleZoom }}" src="assets/nicole-party.jpg" alt="" style="display:block;width:100%;height:auto;transform:scale({{ zoomScale }});transform-origin:center;transition:transform var(--dur-fast) var(--ease);cursor:zoom-in;">
+      <img sc-camel-on-click="{{ toggleZoom }}" src="assets/nicole_party.webp" alt="" style="display:block;width:100%;height:auto;transform:scale({{ zoomScale }});transform-origin:center;transition:transform var(--dur-fast) var(--ease);cursor:zoom-in;">
     </sc-if>
     <sc-if value="{{ openIsShotFake }}" hint-placeholder-val="{{ false }}">
       <img sc-camel-on-click="{{ toggleZoom }}" src="assets/screenshot-fake.webp" alt="" style="display:block;width:100%;height:auto;transform:scale({{ zoomScale }});transform-origin:top center;transition:transform var(--dur-fast) var(--ease);cursor:zoom-in;">
@@ -386,15 +386,15 @@
     <div style="font-size:var(--fs-sm);color:var(--c-white-ghost);">{{ feedImgName }}</div>
     <button sc-camel-on-click="{{ saveFeedImg }}" style="width:44px;height:44px;background:transparent;border:0;padding:0;color:var(--c-white);font-size:20px;line-height:1;display:flex;align-items:center;justify-content:center;">⤓</button>
   </div>
-  <div style="flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:auto;">
+  <div style="flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:auto;padding:0 12px 16px;">
     <sc-if value="{{ feedImgIsGarden }}" hint-placeholder-val="{{ false }}">
-      <img src="assets/nicole-garden.webp" alt="" style="display:block;width:100%;height:auto;">
+      <img src="assets/nicole-garden.webp" alt="" style="display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;background:var(--c-wash-light);border-radius:var(--r-md);">
     </sc-if>
     <sc-if value="{{ feedImgIsCraft }}" hint-placeholder-val="{{ false }}">
-      <img src="assets/nicole-craft.jpg" alt="" style="display:block;width:100%;height:auto;">
+      <img src="assets/nicole-craft.webp" alt="" style="display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;background:var(--c-wash-light);border-radius:var(--r-md);">
     </sc-if>
     <sc-if value="{{ feedImgIsParty }}" hint-placeholder-val="{{ false }}">
-      <img src="assets/nicole-party.jpg" alt="" style="display:block;width:100%;height:auto;">
+      <img src="assets/nicole_party.webp" alt="" style="display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;background:var(--c-wash-light);border-radius:var(--r-md);">
     </sc-if>
   </div>
 </div>
@@ -416,7 +416,7 @@
         <button sc-camel-on-click="{{ p.choose }}" disabled="{{ p.disabled }}" style="width:100%;height:64px;background:var(--c-white);border:0;border-bottom:1px solid var(--c-panel);padding:0 16px;display:flex;gap:12px;align-items:center;text-align:left;opacity:{{ p.op }};cursor:{{ p.cursor }};" style-hover="{{ p.hover }}" style-active="background:var(--c-wash);">
           <div style="flex:0 0 48px;width:48px;height:48px;border-radius:6px;overflow:hidden;background:var(--c-wash-alt);display:flex;align-items:center;justify-content:center;">
             <sc-if value="{{ p.hasThumb }}" hint-placeholder-val="{{ false }}">
-              <img src="assets/nicole-party.jpg" alt="" style="display:block;width:100%;height:100%;object-fit:cover;">
+              <img src="assets/nicole_party.webp" alt="" style="display:block;width:100%;height:100%;object-fit:cover;">
             </sc-if>
             <sc-if value="{{ p.isVideoThumb }}" hint-placeholder-val="{{ false }}">
               <video muted="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;height:100%;object-fit:cover;pointer-events:none;"><source src="assets/nicole_day0.webm" type="video/webm"><source src="assets/nicole_day0.mp4" type="video/mp4"></video>
@@ -425,7 +425,7 @@
               <img src="assets/nicole-garden.webp" alt="" style="display:block;width:100%;height:100%;object-fit:cover;">
             </sc-if>
             <sc-if value="{{ p.isCraftThumb }}" hint-placeholder-val="{{ false }}">
-              <img src="assets/nicole-craft.jpg" alt="" style="display:block;width:100%;height:100%;object-fit:cover;">
+              <img src="assets/nicole-craft.webp" alt="" style="display:block;width:100%;height:100%;object-fit:cover;">
             </sc-if>
             <sc-if value="{{ p.noThumb }}" hint-placeholder-val="{{ true }}">
               <span style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--c-ink-dim);">{{ p.kindLabel }}</span>
@@ -492,7 +492,7 @@
     </sc-if>
     <sc-if value="{{ shotIsPhoto }}" hint-placeholder-val="{{ false }}">
       <div style="padding:0;">
-        <img src="assets/nicole-party.jpg" alt="" style="display:block;width:100%;height:auto;">
+        <img src="assets/nicole_party.webp" alt="" style="display:block;width:100%;height:auto;">
         <div style="padding:16px 20px;font-size:var(--fs-sm);color:var(--c-muted);line-height:1.5;">{{ photoShotCaption }}</div>
       </div>
     </sc-if>
@@ -697,7 +697,7 @@
                 </sc-if>
                 <sc-if value="{{ m.isPhoto }}" hint-placeholder-val="{{ false }}">
                   <button sc-camel-on-click="{{ m.openPhoto }}" style="display:block;width:210px;padding:0;border:0;background:transparent;cursor:zoom-in;">
-                    <img src="assets/nicole-party.jpg" alt="" style="display:block;width:100%;height:auto;border-radius:10px;">
+                    <img src="assets/nicole_party.webp" alt="" style="display:block;width:100%;height:auto;border-radius:10px;">
                   </button>
                 </sc-if>
                 <sc-if value="{{ m.isTypedShot }}" hint-placeholder-val="{{ false }}">
@@ -813,13 +813,13 @@
           <sc-if value="{{ a.isTile }}" hint-placeholder-val="{{ true }}">
             <button sc-camel-on-click="{{ a.open }}" draggable="{{ a.draggable }}" sc-camel-on-drag-start="{{ a.drag }}" style="position:relative;aspect-ratio:1;padding:0;border:0;background:var(--c-wash-alt);overflow:hidden;display:block;">
               <sc-if value="{{ a.hasThumb }}" hint-placeholder-val="{{ false }}">
-                <img src="assets/nicole-party.jpg" alt="" style="display:block;width:100%;height:100%;object-fit:cover;">
+                <img src="assets/nicole_party.webp" alt="" style="display:block;width:100%;height:100%;object-fit:cover;">
               </sc-if>
               <sc-if value="{{ a.isGardenThumb }}" hint-placeholder-val="{{ false }}">
                 <img src="assets/nicole-garden.webp" alt="" style="display:block;width:100%;height:100%;object-fit:cover;">
               </sc-if>
               <sc-if value="{{ a.isCraftThumb }}" hint-placeholder-val="{{ false }}">
-                <img src="assets/nicole-craft.jpg" alt="" style="display:block;width:100%;height:100%;object-fit:cover;">
+                <img src="assets/nicole-craft.webp" alt="" style="display:block;width:100%;height:100%;object-fit:cover;">
               </sc-if>
               <sc-if value="{{ a.isShotFake }}" hint-placeholder-val="{{ false }}">
                 <img src="assets/screenshot-fake.webp" alt="" style="display:block;width:100%;height:100%;object-fit:cover;object-position:top;">
@@ -901,7 +901,7 @@
                   </button>
                     <sc-if value="{{ p.hasPhoto }}" hint-placeholder-val="{{ false }}">
                       <button sc-camel-on-click="{{ p.openParty }}" style="display:block;width:100%;margin-top:10px;padding:0;border:0;background:transparent;">
-                        <img src="assets/nicole-party.jpg" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);">
+                        <img src="assets/nicole_party.webp" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);">
                       </button>
                     </sc-if>
                     <sc-if value="{{ p.hasPhoto }}" hint-placeholder-val="{{ false }}">
@@ -909,17 +909,17 @@
                     </sc-if>
                     <sc-if value="{{ p.isSunset }}" hint-placeholder-val="{{ false }}">
                       <button sc-camel-on-click="{{ p.openParty }}" style="display:block;width:100%;margin-top:10px;padding:0;border:0;background:transparent;">
-                        <img src="assets/nicole-party.jpg" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);height:180px;object-fit:cover;">
+                        <img src="assets/nicole_party.webp" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);height:180px;object-fit:cover;">
                       </button>
                     </sc-if>
                     <sc-if value="{{ p.isGarden }}" hint-placeholder-val="{{ false }}">
                       <button sc-camel-on-click="{{ p.openGarden }}" style="display:block;width:100%;margin-top:10px;padding:0;border:0;background:transparent;">
-                        <img src="assets/nicole-garden.webp" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);">
+                        <img src="assets/nicole-garden.webp" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);background:var(--c-wash-light);">
                       </button>
                     </sc-if>
                     <sc-if value="{{ p.isCraft }}" hint-placeholder-val="{{ false }}">
                       <button sc-camel-on-click="{{ p.openCraft }}" style="display:block;width:100%;margin-top:10px;padding:0;border:0;background:transparent;">
-                        <img src="assets/nicole-craft.jpg" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);">
+                        <img src="assets/nicole-craft.webp" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);background:var(--c-wash-light);">
                       </button>
                     </sc-if>
                   <button sc-camel-on-click="{{ p.openPost }}" disabled="{{ p.inert }}" style="display:block;width:100%;background:transparent;border:0;padding:0;text-align:left;color:inherit;opacity:1;cursor:{{ p.cursor }};">
@@ -1010,17 +1010,17 @@
                   <div style="font-size:var(--fs-body);line-height:1.45;color:var(--c-ink);">{{ q.text }}</div>
                   <sc-if value="{{ q.isGarden }}" hint-placeholder-val="{{ false }}">
                     <button sc-camel-on-click="{{ q.openGarden }}" style="display:block;width:100%;margin-top:8px;padding:0;border:0;background:transparent;">
-                      <img src="assets/nicole-garden.webp" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);">
+                      <img src="assets/nicole-garden.webp" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);background:var(--c-wash-light);">
                     </button>
                   </sc-if>
                   <sc-if value="{{ q.isCraft }}" hint-placeholder-val="{{ false }}">
                     <button sc-camel-on-click="{{ q.openCraft }}" style="display:block;width:100%;margin-top:8px;padding:0;border:0;background:transparent;">
-                      <img src="assets/nicole-craft.jpg" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);">
+                      <img src="assets/nicole-craft.webp" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);background:var(--c-wash-light);">
                     </button>
                   </sc-if>
                   <sc-if value="{{ q.hasPhoto }}" hint-placeholder-val="{{ false }}">
                     <button sc-camel-on-click="{{ q.openParty }}" style="display:block;width:100%;margin-top:8px;padding:0;border:0;background:transparent;">
-                      <img src="assets/nicole-party.jpg" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);">
+                      <img src="assets/nicole_party.webp" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);">
                     </button>
                     <div style="font-size:var(--fs-caption);color:var(--c-ink-dim);margin-top:6px;">{{ q.dated }}</div>
                   </sc-if>
@@ -1055,17 +1055,17 @@
             <sc-if value="{{ postHasPhoto }}" hint-placeholder-val="{{ false }}">
               <sc-if value="{{ postIsGarden }}" hint-placeholder-val="{{ false }}">
                 <button sc-camel-on-click="{{ postOpenGarden }}" style="display:block;width:100%;margin-top:12px;padding:0;border:0;background:transparent;">
-                  <img src="assets/nicole-garden.webp" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);">
+                  <img src="assets/nicole-garden.webp" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);background:var(--c-wash-light);">
                 </button>
               </sc-if>
               <sc-if value="{{ postIsCraft }}" hint-placeholder-val="{{ false }}">
                 <button sc-camel-on-click="{{ postOpenCraft }}" style="display:block;width:100%;margin-top:12px;padding:0;border:0;background:transparent;">
-                  <img src="assets/nicole-craft.jpg" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);">
+                  <img src="assets/nicole-craft.webp" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);background:var(--c-wash-light);">
                 </button>
               </sc-if>
               <sc-if value="{{ postIsParty }}" hint-placeholder-val="{{ false }}">
                 <button sc-camel-on-click="{{ postOpenParty }}" style="display:block;width:100%;margin-top:12px;padding:0;border:0;background:transparent;">
-                  <img src="assets/nicole-party.jpg" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);">
+                  <img src="assets/nicole_party.webp" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);">
                 </button>
               </sc-if>
               <div style="font-size:var(--fs-caption);color:var(--c-ink-dim);margin-top:6px;">{{ postDated }}</div>
@@ -1116,13 +1116,13 @@
           <div style="display:flex;flex-direction:column;gap:20px;">
             <div style="max-width:100%;">
               <sc-if value="{{ pickIsImage }}" hint-placeholder-val="{{ false }}">
-                <img src="assets/nicole-party.jpg" alt="" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);">
+                <img src="assets/nicole_party.webp" alt="" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);">
               </sc-if>
               <sc-if value="{{ pickIsGarden }}" hint-placeholder-val="{{ false }}">
                 <img src="assets/nicole-garden.webp" alt="" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);">
               </sc-if>
               <sc-if value="{{ pickIsCraft }}" hint-placeholder-val="{{ false }}">
-                <img src="assets/nicole-craft.jpg" alt="" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);">
+                <img src="assets/nicole-craft.webp" alt="" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);">
               </sc-if>
               <sc-if value="{{ pickIsVideo }}" hint-placeholder-val="{{ false }}">
                 <video muted="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);background:var(--c-wash-alt);pointer-events:none;"><source src="assets/nicole_day0.webm" type="video/webm"><source src="assets/nicole_day0.mp4" type="video/mp4"></video>
@@ -1144,13 +1144,13 @@
                 <sc-for list="{{ searchHits }}" as="h" hint-placeholder-count="1">
                   <button sc-camel-on-click="{{ h.open }}" style="width:100%;background:var(--c-white);border:0;padding:16px 18px;display:flex;gap:18px;align-items:center;text-align:left;" style-hover="background:var(--c-wash-cream);">
                     <sc-if value="{{ h.hasThumb }}" hint-placeholder-val="{{ false }}">
-                      <img src="assets/nicole-party.jpg" alt="" style="display:block;width:96px;height:66px;object-fit:cover;border:1px solid var(--c-panel);">
+                      <img src="assets/nicole_party.webp" alt="" style="display:block;width:96px;height:66px;object-fit:cover;border:1px solid var(--c-panel);">
                     </sc-if>
                     <sc-if value="{{ h.isGardenHit }}" hint-placeholder-val="{{ false }}">
                       <img src="assets/nicole-garden.webp" alt="" style="display:block;width:96px;height:66px;object-fit:cover;border:1px solid var(--c-panel);">
                     </sc-if>
                     <sc-if value="{{ h.isCraftHit }}" hint-placeholder-val="{{ false }}">
-                      <img src="assets/nicole-craft.jpg" alt="" style="display:block;width:96px;height:66px;object-fit:cover;border:1px solid var(--c-panel);">
+                      <img src="assets/nicole-craft.webp" alt="" style="display:block;width:96px;height:66px;object-fit:cover;border:1px solid var(--c-panel);">
                     </sc-if>
                     <sc-if value="{{ h.isVideo }}" hint-placeholder-val="{{ false }}">
                       <video muted="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:96px;height:66px;object-fit:cover;background:var(--c-white);border:1px solid var(--c-panel);pointer-events:none;"><source src="assets/nicole_day0.webm" type="video/webm"><source src="assets/nicole_day0.mp4" type="video/mp4"></video>
@@ -1194,13 +1194,13 @@
           <div style="display:flex;flex-direction:column;gap:20px;max-width:100%;">
             <div style="max-width:100%;">
               <sc-if value="{{ aiPickIsImage }}" hint-placeholder-val="{{ false }}">
-                <img src="assets/nicole-party.jpg" alt="" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);">
+                <img src="assets/nicole_party.webp" alt="" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);">
               </sc-if>
               <sc-if value="{{ aiPickIsGarden }}" hint-placeholder-val="{{ false }}">
                 <img src="assets/nicole-garden.webp" alt="" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);">
               </sc-if>
               <sc-if value="{{ aiPickIsCraft }}" hint-placeholder-val="{{ false }}">
-                <img src="assets/nicole-craft.jpg" alt="" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);">
+                <img src="assets/nicole-craft.webp" alt="" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);">
               </sc-if>
               <sc-if value="{{ aiPickIsVideo }}" hint-placeholder-val="{{ false }}">
                 <video muted="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);background:var(--c-wash-alt);pointer-events:none;"><source src="assets/nicole_day0.webm" type="video/webm"><source src="assets/nicole_day0.mp4" type="video/mp4"></video>
@@ -1409,7 +1409,7 @@
     </sc-for>
   </div>
   <p style="font-size:var(--fs-lead);line-height:1.55;margin:0 0 10px;color:var(--c-ink);max-width:52ch;">{{ siftLine }}</p>
-  <div style="font-size:var(--fs-sm);color:var(--c-muted);">SIFT by Mike Caulfield, CC BY 4.0.</div>
+  <a href="https://www.smu.ca/webfiles/SIFT_Method_final.pdf" target="_blank" rel="noopener noreferrer" style="font-size:var(--fs-sm);color:var(--c-muted);text-decoration:underline;text-underline-offset:2px;">SIFT by Mike Caulfield, CC BY 4.0.</a>
   </div>
   <div style="flex:0 0 auto;padding:14px var(--space-screen-x) 20px;background:var(--c-frame);border-top:1px solid var(--c-ink-hair);">
     <div class="g-btn-footer-row">

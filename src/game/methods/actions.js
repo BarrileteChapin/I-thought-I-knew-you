@@ -30,7 +30,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
   saveImage(kind) {
     const meta = {
-      garden: { name: 'nicole_garden.webp', from: '@n.krueger' },
+      garden: { name: 'nicole_garden.jpg', from: '@n.krueger' },
       craft: { name: 'nicole_craft.jpg', from: '@n.krueger' },
       party: { name: 'nicole_party_repost.jpg', from: '@nicole_kruger' }
     }[kind];
