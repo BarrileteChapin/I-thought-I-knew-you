@@ -1,8 +1,10 @@
 window.GameMethods = Object.assign(window.GameMethods || {}, {
   componentDidMount() {
-    // Belt-and-braces if initial state raced localStorage.
-    if (this.state.screen === 'cinematic' && this.hasSavedGame()) this.skipCinematic();
-    this._bye = () => { this.saveGame(); this.wipeAudio(); };
+    if (this.LLM_CHAT_ENABLED) {
+      console.log('[chat-llm] preloading chat model');
+      this.ensureLlm(false);
+    }
+    this._bye = () => this.wipeAudio();
     window.addEventListener('pagehide', this._bye);
     this._keys = (e) => {
       const t = e.target;
@@ -35,6 +37,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   },
 
   componentWillUnmount() {
+    this._chatGeneration = (this._chatGeneration || 0) + 1;
     window.removeEventListener('pagehide', this._bye);
     window.removeEventListener('keydown', this._keys);
     window.removeEventListener('beforeunload', this._bye);
