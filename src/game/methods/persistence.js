@@ -78,6 +78,11 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     return 'Day ' + saved.day + ': ' + d.dayName + ' ' + timeWord;
   },
 
+  savedPlayerName(saved) {
+    if (!saved) return '';
+    return (saved.playerName || '').trim() || 'Alex';
+  },
+
   continueGame() {
     const saved = this.readSavedGame();
     if (!saved) return;
@@ -86,6 +91,9 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
   startOver() {
     this.clearSavedGame();
-    this.start();
+    this.setState({ screen: 'name', nameDraft: '' }, () => {
+      const el = this.nameRef.current;
+      if (el) el.focus();
+    });
   }
 });

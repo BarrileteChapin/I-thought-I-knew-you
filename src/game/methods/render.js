@@ -860,6 +860,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
       start: () => this.setState({ screen: 'name', nameDraft: '' }, () => { const el = this.nameRef.current; if (el) el.focus(); }),
       hasSave: !!savedGame,
+      savePlayerName: this.savedPlayerName(savedGame),
       saveProgressLabel: this.describeSave(savedGame),
       continueGame: () => this.continueGame(),
       startOver: () => this.startOver(),
