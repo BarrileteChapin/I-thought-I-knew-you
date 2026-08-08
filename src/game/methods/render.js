@@ -17,11 +17,19 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const msgsRaw = st.tab === 'group' ? st.chat : st.dm;
     const msgs = msgsRaw.map((m, i) => {
       const audioKey = st.tab + ':' + i;
+      const cloneSource = m.audio === 'clone' ? st.cloneAudioSrc : null;
+      const useSpliceFallback = m.audio === 'clone' && !cloneSource && st.ttsStatus === 'failed' && !!this._splice;
+      const playbackMessage = cloneSource
+        ? Object.assign({}, m, { audioSrc: cloneSource })
+        : useSpliceFallback ? Object.assign({}, m, { audio: 'splice' }) : m;
+      const voiceUnavailable = m.audio === 'clone' && !cloneSource && !useSpliceFallback;
       const isPlaying = m.kind === 'voice' && st.playingAudioKey === audioKey;
+      const duration = m.audio === 'clone' && st.cloneAudioDuration
+        ? this.audioDurationLabel(st.cloneAudioDuration) : (m.dur || '0:14');
       return {
         id: i, who: m.who, text: ((m.text || m.caption || '…')).split('{name}').join(this.name()),
         isNewMark: st.newMarkAt !== null && i === st.newMarkAt,
-        caption: (m.caption || '').split('{name}').join(this.name()), dur: m.dur || '0:14',
+        caption: (m.caption || '').split('{name}').join(this.name()), dur: duration,
         justify: m.mine ? 'flex-end' : 'flex-start',
         bg: m.sys ? 'transparent' : (m.mine ? C.accentSoft : C.panel),
         rule: m.sys ? '2px solid ' + C.muted : (m.mine ? '2px solid ' + C.accent : '0'),
@@ -41,8 +49,12 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         radius: m.mine ? '14px 14px 4px 14px' : '14px 14px 14px 4px',
         isText: !m.kind, tick: m.mine && !m.old ? (m.unsent ? '✓' : '✓✓') : '',
         isPlaying, isStopped: !isPlaying,
-        voiceLabel: isPlaying ? 'Stop voice note' : 'Play voice note',
-        togglePlay: () => this.toggleChatAudio(audioKey, m)
+        voiceUnavailable,
+        voiceOpacity: voiceUnavailable ? 0.55 : 1,
+        voiceLabel: voiceUnavailable
+          ? (st.ttsStatus === 'failed' ? 'Voice unavailable' : 'Preparing cloned voice')
+          : isPlaying ? 'Stop voice note' : 'Play voice note',
+        togglePlay: () => { if (!voiceUnavailable) this.toggleChatAudio(audioKey, playbackMessage); }
       };
     });
 
@@ -513,6 +525,12 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       threadTitle: st.tab === 'group' ? '10b 🍕' : 'Nicole',
       threadSub: st.tab === 'group' ? d.threadSub : (tier === 'gone' ? 'last seen Wednesday' : tier === 'low' ? 'typing…' : 'online'),
       sharedLine: 'Shared in ' + st.sharedCount + ' chats.',
+      showTtsStatus: st.day === 3 && st.phase === 'clip' && st.ttsStatus !== 'idle' && st.ttsStatus !== 'ready',
+      ttsStatusLabel: st.ttsStatus === 'loading'
+        ? 'Preparing your voice clone… ' + st.ttsProgress + '%'
+        : st.ttsStatus === 'cloning' ? 'Learning your voice…'
+          : st.ttsStatus === 'generating' ? 'Generating the voice note…'
+            : 'The cloned voice is unavailable. Playing the local fallback when possible.',
       memberLine: st.tab === 'group'
         ? (st.day >= 3 ? this.name() + ', Hanna, Mia, Lea, Benito…'
                        : this.name() + ', Nicole, Hanna, Mia, Lea, Benito…') : '',

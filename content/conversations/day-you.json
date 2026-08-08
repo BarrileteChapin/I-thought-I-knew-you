@@ -7,7 +7,7 @@
   "deskTitle": "clip_you.m4a",
   "url": "file:///downloads/clip_you.m4a",
   "name": "The clip of you",
-  "truth": "Your words, cut the way hers were. If you sent a voice message it is your actual voice, spliced. If you never sent one it is a screenshot of something you typed, cropped to end where it suits.",
+  "truth": "A generated clone of your voice says something you never recorded. It uses the voice note you sent on Sunday as its reference, but the words are new.",
   "tell": "the same check you had all week — asking for the whole thing",
   "fake": true,
   "volunteer": "now you know. it takes four minutes and it never comes off.",
@@ -17,7 +17,8 @@
       "who": "Nicole",
       "kind": "voice",
       "dur": "0:09",
-      "audio": "splice",
+      "audio": "clone",
+      "ttsText": "I think Nicole is just jealous of her ex-Nele. She loves gossiping as well.",
       "caption": ""
     },
     {
@@ -38,7 +39,7 @@
       "label": "Listen again, slowly",
       "effect": "hint",
       "sift": "coverage",
-      "result": "One phrase ends mid-word. It does not end — it stops."
+      "result": "The phrasing is too clean. There are no breaths or hesitations where your real voice note has them."
     },
     {
       "id": "d4cmp",
@@ -48,7 +49,7 @@
       "label": "Compare it to the original",
       "effect": "confirm",
       "sift": "trace",
-      "result": "Your voice note from Sunday is still in the group. Same words. Different order."
+      "result": "Your voice note from Sunday is still in the group. The voice resembles yours, but none of these words are in that recording."
     },
     {
       "id": "d4when",

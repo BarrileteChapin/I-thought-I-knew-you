@@ -53,6 +53,13 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   wipeAudio() {
     try { if (this._stream) this._stream.getTracks().forEach(t => t.stop()); } catch (e) {}
     this.stopAudio(false);
+    this._ttsRun = (this._ttsRun || 0) + 1;
+    this._ttsPreparePromise = null;
+    this._ttsGeneratePromise = null;
+    this._ttsVoice = null;
+    try { if (this._tts) this._tts.destroy(); } catch (e) {}
+    try { if (this._ttsAudioUrl) URL.revokeObjectURL(this._ttsAudioUrl); } catch (e) {}
+    this._tts = null; this._ttsAudioUrl = null;
     this.clips = [];
     this._stream = null; this._rec = null; this._real = null; this._splice = null;
   },
