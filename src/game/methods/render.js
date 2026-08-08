@@ -96,7 +96,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const itemName = { 1: 'IMG_4471.mp4', 2: 'nicole_party.jpg', 3: 'clip_you.m4a', 4: 'voice_nicole.m4a' }[st.day];
     const all = this.allDays();
     const rows = [
-      { day: 1, item: 1, kind: 'video', who: 'Hanna', spec: '0:15', caption: 'Nicole, filmed at a party: “…she' + "'" + 's honestly the most pathetic person in our year.”' },
+      { day: 1, item: 1, kind: 'video', who: 'Hanna', spec: '0:07', caption: 'Nicole, filmed at a party: “…she' + "'" + 's honestly the most pathetic person in our year.”' },
       { day: 2, item: 2, kind: 'image', who: 'Hanna', spec: '1024 × 1024' },
       { day: 3, item: 3, kind: 'shot', name: 'screenshot_2847.png', who: 'Hanna', spec: 'image' },
       { day: 3, item: 5, gate: st.clipBack, kind: 'audio', name: 'clip_you.m4a', who: 'Nicole', when: 'Wednesday, 10:15pm', spec: '0:09' },
@@ -142,7 +142,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       5: []
     };
     const AI = {
-      'IMG_4471.mp4': { score: 96, len: '0:15 of video', rows: [
+      'IMG_4471.mp4': { score: 96, len: '0:07 of video', rows: [
         { label: 'Generation artefacts', value: 'none detected', pct: '4%' },
         { label: 'Frame consistency', value: 'consistent', pct: '96%' },
         { label: 'Compression signature', value: 'consistent', pct: '93%' },
@@ -644,7 +644,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       openNoChecks: !(openRow.day === st.day && openItemChecks.length),
       closeMedia: () => this.setState({ mediaOpen: null }),
       archive: [
-        { day: 1, kind: 'video', note: 'Forwarded by Hanna. 15 seconds.' },
+        { day: 1, kind: 'video', note: 'Forwarded by Hanna. 7 seconds.' },
         { day: 2, kind: 'photo', thumb: true, note: 'Posted by Hanna.' },
         { day: 3, kind: 'shot', name: 'screenshot_2847.png', note: 'Sent by Hanna.' },
         { day: 4, kind: 'audio', note: st.voiceSent ? 'Sent to you by Nicole. 14 seconds.' : 'Sent to you by Nicole. A screenshot of something you typed.' },
@@ -735,7 +735,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       tabAiBg: st.tool === 'ai' ? C.accentSoft : 'transparent',
       aiDead: false, aiOp: 1,
       playerChecks, aiChecks,
-      mediaLen: st.day === 1 ? '0:15' : st.day === 4 ? '0:22' : '—',
+      mediaLen: st.day === 1 ? '0:07' : st.day === 4 ? '0:22' : '—',
       scrubPct: st.day === 1 || st.day === 4 ? '38%' : '0%',
       scrubLabel: st.day === 1 ? '0:06' : st.day === 4 ? '0:08' : '—',
       dropBorder: st.dragItem ? C.accent : C.muted,
@@ -953,7 +953,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         ? 'You didn' + "'" + 't check anything this week. Almost nobody does. That' + "'" + 's what the week was built on.'
         : 'These four moves have a name. They' + "'" + 're called SIFT, and they work on anything, not just this.',
       finalCard: endCard.text,
-      endCardImage: endCard.image || 'assets/nicole_sad_bg.webp',
+      endCardImage: endCard.image || 'assets/ending_default.webp',
+      endCardCaptionMod: (endCard.text || '').length <= 42 ? 'is-short' : '',
       replayShown: st.replayShown,
       playReal: () => this.playBuf('real'), playSplice: () => this.playBuf('splice'),
       recOpen: st.recOpen, recIntro: st.recPhase === 'intro', recFailed: st.recPhase === 'failed',

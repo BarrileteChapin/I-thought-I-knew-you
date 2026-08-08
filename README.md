@@ -223,6 +223,12 @@ assets/nicole-party.jpg
 assets/av-nicole.webp
 assets/icons/app-chats.svg
 assets/icons/icon-back.svg
+assets/icons/icon-close.svg
+assets/icons/icon-download.svg
+assets/icons/icon-like.svg
+assets/icons/icon-more.svg
+assets/icons/icon-reply.svg
+assets/icons/icon-share.svg
 ```
 
 Phone UI icons live under `assets/icons/` (`app-*`, `icon-*`, `soc-*`). Replace a file to swap that icon.
