@@ -85,6 +85,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     }, () => {
       requestAnimationFrame(() => this.setState({ dayEnter: false }));
       this.runDayArrival(d.chat, d.dm);
+      if (n === 3 && ph === 'clip') this.generateDay3Voice();
     });
   }
 });

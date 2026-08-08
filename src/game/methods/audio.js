@@ -1,3 +1,5 @@
+const DAY3_CLONE_TEXT = 'I think Nicole is just jealous of her ex-Nele. She loves gossiping as well.';
+
 window.GameMethods = Object.assign(window.GameMethods || {}, {
   openRecorder() { this.setState({ recOpen: true, recPhase: 'intro', recIdx: 0, recBusy: false, recLevel: 0 }); },
 
@@ -95,6 +97,83 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     }), () => { if (inIntro) this._it = setTimeout(() => this.introStep(), 800); });
     if (!inIntro) this.advance(1);
     this.log('— you sent your own voice');
+    this.prepareVoiceClone();
+  },
+
+  prepareVoiceClone() {
+    if (!this._real || !window.PocketTtsAdapter) return;
+    if (this._ttsPreparePromise) return this._ttsPreparePromise;
+    const run = (this._ttsRun || 0) + 1;
+    this._ttsRun = run;
+    this.setState({ ttsStatus: 'loading', ttsProgress: 0 });
+    this._ttsPreparePromise = (async () => {
+      try {
+        if (!this._tts) this._tts = new window.PocketTtsAdapter();
+        if (!this._tts.ready) {
+          await this._tts.load((info) => {
+            if (run !== this._ttsRun || !info || !info.total) return;
+            const progress = Math.max(0, Math.min(100, Math.round(info.loaded * 100 / info.total)));
+            this.setState({ ttsStatus: 'loading', ttsProgress: progress });
+          });
+          console.info('[tts] model loaded', {
+            language: this._tts.language,
+            sampleRate: this._tts.sampleRate,
+            voiceCloning: this._tts.voiceCloning,
+          });
+        }
+        if (run !== this._ttsRun) return;
+        this.setState({ ttsStatus: 'cloning', ttsProgress: 100 });
+        this._ttsVoice = await this._tts.cloneVoice(this._real.getChannelData(0), this._real.sampleRate);
+        if (run !== this._ttsRun) return;
+        this.setState({ ttsStatus: 'ready' });
+        if (this.state.day === 3 && this.state.phase === 'clip') this.generateDay3Voice();
+      } catch (e) {
+        if (run === this._ttsRun) this.setState({ ttsStatus: 'failed', ttsProgress: 0 });
+        console.warn('[tts] voice clone unavailable', e);
+      }
+    })().finally(() => {
+      if (this._ttsPreparePromise) this._ttsPreparePromise = null;
+    });
+    return this._ttsPreparePromise;
+  },
+
+  generateDay3Voice() {
+    if (this._ttsGeneratePromise) return this._ttsGeneratePromise;
+    if (this.state.cloneAudioSrc) return null;
+    if (!this._ttsVoice) {
+      this.prepareVoiceClone();
+      return null;
+    }
+    const run = this._ttsRun || 0;
+    this.setState({ ttsStatus: 'generating' });
+    this._ttsGeneratePromise = (async () => {
+      try {
+        const chunks = [];
+        const clip = (this.DAY_YOU.dm || []).find((message) => message.audio === 'clone');
+        const text = (clip && clip.ttsText) || DAY3_CLONE_TEXT;
+        const metrics = await this._tts.generate(text, this._ttsVoice, (chunk) => chunks.push(chunk.slice()));
+        if (!chunks.length || run !== this._ttsRun) throw new Error('Pocket TTS returned no audio');
+        const blob = window.PocketTtsAudio.chunksToWavBlob(chunks, this._tts.sampleRate);
+        if (this._ttsAudioUrl) URL.revokeObjectURL(this._ttsAudioUrl);
+        this._ttsAudioUrl = URL.createObjectURL(blob);
+        this.setState({
+          cloneAudioSrc: this._ttsAudioUrl,
+          cloneAudioDuration: metrics.audioDuration || 0,
+          ttsStatus: 'ready',
+        });
+      } catch (e) {
+        if (run === this._ttsRun) this.setState({ ttsStatus: 'failed' });
+        console.warn('[tts] Day 3 generation failed', e);
+      }
+    })().finally(() => {
+      if (this._ttsGeneratePromise) this._ttsGeneratePromise = null;
+    });
+    return this._ttsGeneratePromise;
+  },
+
+  audioDurationLabel(seconds) {
+    const total = Math.max(0, Math.round(Number(seconds) || 0));
+    return '0:' + String(total).padStart(2, '0');
   },
 
   toggleChatAudio(key, message) {
@@ -103,7 +182,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       return;
     }
     if (message.audioSrc) this.playFile(message.audioSrc, key);
-    else if (message.audio) this.playBuf(message.audio, key);
+    else if (message.audio && message.audio !== 'clone') this.playBuf(message.audio, key);
   },
 
   stopAudio(updateState) {
@@ -179,6 +258,6 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
   deleteRecording() {
     this.wipeAudio();
-    this.setState({ hasRecording: false });
+    this.setState({ hasRecording: false, ttsStatus: 'idle', ttsProgress: 0, cloneAudioSrc: null, cloneAudioDuration: 0 });
   }
 });

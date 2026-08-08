@@ -56,6 +56,24 @@ The app does not use Vite or a package build step.
 
 All method files must be loaded by `index.html` before the runtime is loaded.
 
+### Local Pocket TTS Adapter
+
+The Day 3 cloned-voice path uses the project-owned browser adapter under
+`src/tts/`. It does not install or import `pocket-tts-js`. The adapter runs
+ONNX inference in a Web Worker and loads only the ONNX Runtime Web module plus
+the configured model bundle.
+
+`index.html` points to a pinned public quantized bundle derived from Kyutai's
+official model in `KevinAHM/pocket-tts-onnx`. The bundle contains the exported
+`english_2026-04` files, including `bundle.json`, `tokenizer.model`, the four
+quantized inference graphs, and `mimi_encoder_int8.onnx`. Do not commit the
+approximately 146 MB quantized model files to this repository. Replace the
+URL with a self-hosted mirror only if required by deployment or policy.
+
+The current empty configuration intentionally keeps the game playable without
+model downloads. When the adapter cannot load or generate, Day 3 falls back to
+the locally spliced recording.
+
 ## Content Editing
 
 Content editors should normally work only in `content/`.
