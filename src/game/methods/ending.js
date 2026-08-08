@@ -141,50 +141,33 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     ];
   },
 
+  endingCards() {
+    const img = 'assets/ending_default.webp';
+    return [
+      { text: 'You waited for the truth. Then you spoke it aloud. She heard you twice.', image: img },
+      { text: 'You told the truth to the room. The room grew quieter around you.', image: img },
+      { text: 'You were the only one who knew. And you kept it between the two of you.', image: img },
+      { text: 'A few words in the dark. None in the light.', image: img },
+      { text: 'You found the crack in their story. You let them keep telling it.', image: img },
+      { text: 'I thought I knew you, ' + this.name() + '.', image: img }
+    ];
+  },
+
   finalCard(st, s) {
+    const cards = this.endingCards();
     const { checks, dmCount, publiclySupported, nicoleHigh, groupOk } = this.endingSignals(st, s);
-    // Placeholder art until per-result images exist.
-    const img = 'assets/nicole_sad_bg.webp';
 
     // 1 — investigated, stood up in public, kept Nicole, class still mostly ok
-    if (checks >= 4 && publiclySupported && nicoleHigh && groupOk) {
-      return {
-        text: 'You waited for the truth. Then you spoke it aloud. She heard you twice.',
-        image: img
-      };
-    }
+    if (checks >= 4 && publiclySupported && nicoleHigh && groupOk) return cards[0];
     // 2 — investigated, stood up in public, kept Nicole, but the class cooled on you
-    if (checks >= 4 && publiclySupported && nicoleHigh) {
-      return {
-        text: 'You told the truth to the room. The room grew quieter around you.',
-        image: img
-      };
-    }
+    if (checks >= 4 && publiclySupported && nicoleHigh) return cards[1];
     // 3 — investigated enough, stayed private: lots of DMs, Nicole still trusts you
-    if (checks >= 2 && !publiclySupported && dmCount >= 3 && nicoleHigh) {
-      return {
-        text: 'You were the only one who knew. And you kept it between the two of you.',
-        image: img
-      };
-    }
+    if (checks >= 2 && !publiclySupported && dmCount >= 3 && nicoleHigh) return cards[2];
     // 4 — investigated enough, some private contact, little public courage
-    if (checks >= 2 && !publiclySupported && dmCount >= 1) {
-      return {
-        text: 'A few words in the dark. None in the light.',
-        image: img
-      };
-    }
+    if (checks >= 2 && !publiclySupported && dmCount >= 1) return cards[3];
     // 5 — investigated, but did not turn that into care (public or private)
-    if (checks >= 2) {
-      return {
-        text: 'You found the crack in their story. You let them keep telling it.',
-        image: img
-      };
-    }
+    if (checks >= 2) return cards[4];
     // 6 — else / little investigation
-    return {
-      text: 'I thought I knew you, ' + this.name() + '.',
-      image: img
-    };
+    return cards[5];
   }
 });
