@@ -32,13 +32,16 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   },
 
   // Room backdrop by calendar day / phase (webp art encodes time of day).
-  roomBgFor(day, phase) {
-    if (day === 1) return 'assets/room_night.webp';       // Monday
-    if (day === 2) return 'assets/room_main.webp';        // Tuesday
-    if (day === 3 && phase === 'morning') return 'assets/room_morning.webp';
-    if (day === 3) return 'assets/room_night.webp';      // Wednesday night / clip
-    if (day === 4) return 'assets/room_main.webp';        // Thursday
-    return 'assets/room_main.webp';
+  // Until the phone is opened once that day, use the *_first still.
+  roomBgFor(day, phase, phoneOpened) {
+    let base = 'assets/room_main.webp';
+    if (day === 1) base = 'assets/room_night.webp';       // Monday
+    else if (day === 2) base = 'assets/room_main.webp';  // Tuesday
+    else if (day === 3 && phase === 'morning') base = 'assets/room_morning.webp';
+    else if (day === 3) base = 'assets/room_night.webp'; // Wednesday night / clip
+    else if (day === 4) base = 'assets/room_main.webp';  // Thursday
+    if (phoneOpened) return base;
+    return base.replace(/\.webp$/, '_first.webp');
   },
 
   clamp(v) { return Math.max(0, Math.min(100, v)); },

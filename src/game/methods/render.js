@@ -462,7 +462,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       isFinal: st.screen === 'final',
       clockLabel: (this.props.showClock ?? true) ? this.fmt(st.min) : '',
       dayName: d.dayName.toUpperCase(), nightOpacity: 0, morningWash: 0,
-      roomBg: this.roomBgFor(st.day, st.phase),
+      roomBg: this.roomBgFor(st.day, st.phase, !!st.phoneOpenedToday),
+      roomHotspotsOpen: !!st.phoneOpenedToday,
       isMorningRoom: st.day === 3 && st.phase === 'morning',
       isEveningRoom: !(st.day === 3 && st.phase === 'morning'),
       dayStrip: ['Mon', 'Tue', 'Wed', 'Thu'].map((label, i) => ({
@@ -1031,7 +1032,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       barsShown: st.day >= 1 ? 1 : 0,
 
       openPhone: () => {
-        this.setState({ dev: null, threadOpen: null, actionsOpen: false, screen: 'phone' });
+        this.setState({ dev: null, threadOpen: null, actionsOpen: false, screen: 'phone', phoneOpenedToday: true });
         if (tier === 'gone' && !st.ghostTypedToday) {
           this.setState({ ghostTypedToday: true });
           setTimeout(() => this.setState({ dmGhostTyping: true }), 1400);
@@ -1058,7 +1059,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         const s0 = this.state;
         if (s0.day === 4 && s0.writeStatus === null) {
           this.setPhase('finalMessage');
-          this.setState({ screen: 'phone', dev: 'chats', threadOpen: 'group', writeIn: true, min: 23 * 60 + 20, unread: 0 });
+          this.setState({ screen: 'phone', dev: 'chats', threadOpen: 'group', writeIn: true, min: 23 * 60 + 20, unread: 0, phoneOpenedToday: true });
           return;
         }
         console.log('[bed] confirm on day ' + s0.day + ', writeStatus=' + s0.writeStatus);
@@ -1077,7 +1078,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         minCheck: 0, minReact: 0, postsWith: 0, postsWithout: 0, dmChances: 0, endStep: 1, gamePhase: 'playing',
         apology: false, reported: false, clipBack: false, phase: 'evening', sharedCount: 3,
         profMenuOpen: false, reportReasonOpen: false, reportToast: false, reportedAccounts: {}, reportedFake: false,
-        actedToday: false, openedGroup: false, ignored: false, dmAnsweredToday: false,
+        actedToday: false, openedGroup: false, ignored: false, dmAnsweredToday: false, phoneOpenedToday: false,
         shareTick: 0, shareHalved: false, fading: false, tool: 'player', socTab: 'feed', socProfileKey: null, socPostId: null, mediaOpen: null, seen: {}, zoom: false, dev: null, threadOpen: null, galleryNew: false, chatFlash: false,
         writeIn: false, writeText: '', writeStatus: null, chatDraft: '', chatBusy: false, actionsOpen: false, chatGroupLeft: 4, chatDmLeft: 3, llmUsedReplies: [], llmReplySeed: 0,
         dragItem: null, pickIdx: null, pickerOpen: false, pickerMode: 'search', searched: {}, aiPickIdx: null, aiStage: 'idle', aiStep: 0, actionLog: [], reactionTimes: [],
