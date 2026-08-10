@@ -10,6 +10,13 @@
   <script src="./assets/vendor/react.production.min.js"></script>
   <script src="./assets/vendor/react-dom.production.min.js"></script>
   <script>
+    // Public, pinned quantized bundle derived from Kyutai's Pocket TTS model.
+    // Replace this with a self-hosted mirror if the deployment needs one.
+    window.POCKET_TTS_MODEL_BASE_URL = window.POCKET_TTS_MODEL_BASE_URL
+      || 'https://huggingface.co/KevinAHM/pocket-tts-onnx/resolve/58a6d00cf13d239b6748cb0769f35c580a8f606c/onnx';
+  </script>
+  <script type="module" src="./src/tts/adapter.js"></script>
+  <script>
     (function syncThemeColor() {
       var meta = document.getElementById('theme-color');
       if (!meta) return;
