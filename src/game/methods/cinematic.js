@@ -192,9 +192,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     clearTimeout(this._cineExitT);
     this.stopAmbient();
     this.setState({ cineFlash: true });
-    this._cineT = setTimeout(() => {
-      this.setState({ screen: 'title', cinePhase: 'gate', cineIdx: 0, cineActive: false, cineFlash: false });
-    }, 380);
+    this._cineT = setTimeout(() => this.enterIntroChat(), 380);
   },
 
   skipCinematic() {
@@ -202,7 +200,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     clearTimeout(this._cineActivateT);
     clearTimeout(this._cineExitT);
     this.stopAmbient();
-    this.setState({ screen: 'title', cinePhase: 'gate', cineIdx: 0, cineActive: false, cineFlash: false });
+    this.enterIntroChat();
   },
 
   toggleCineMute() {

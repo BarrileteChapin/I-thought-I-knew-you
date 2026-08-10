@@ -212,37 +212,37 @@
       "img": "assets/cinematic/school.jpg",
       "height": "210px", "objX": "44%", "objY": "54%",
       "panXStart": "8px", "panXEnd": "-8px", "scaleStart": 1.05, "scaleEnd": 1.1,
-      "caption": "You've walked past this building basically every day for years.", "dur": 6750
+      "caption": "Four years in the same class. Same people, same group chat, running almost the whole time.", "dur": 6750
     },
     {
       "img": "assets/cinematic/hallway.jpg",
       "height": "300px", "objX": "62%", "objY": "40%",
       "panXStart": "10px", "panXEnd": "-10px", "scaleStart": 1.06, "scaleEnd": 1.1,
-      "caption": "Same familiar faces in your friend group.", "dur": 7500
+      "caption": "Same familiar faces in your year. The chat never really stops.", "dur": 7500
     },
     {
       "img": "assets/cinematic/nicole.jpg",
       "height": "300px", "objX": "32%", "objY": "32%",
       "panXStart": "-6px", "panXEnd": "6px", "scaleStart": 1.04, "scaleEnd": 1.1,
-      "caption": "Nicole's the one person you don't have to explain yourself to. Your best friend.", "dur": 9000
+      "caption": "Nicole's been your best friend since year 7. You walk home together most days.", "dur": 9000
     },
     {
       "img": "assets/cinematic/benito.jpg",
       "height": "520px", "objX": "19%", "objY": "26%",
       "panXStart": "4px", "panXEnd": "0px", "scaleStart": 1.03, "scaleEnd": 1.0,
-      "caption": "Her ex, Benito. Still around. Nobody really brings it up anymore.", "dur": 6000
+      "caption": "Her ex Benito is in 10b too. Eight months together, over six months ago. It was bad for a while. It isn't really anymore.", "dur": 7000
     },
     {
       "img": "assets/cinematic/walking.jpg",
       "height": "340px", "objX": "50%", "objY": "44%",
       "panXStart": "0px", "panXEnd": "0px", "scaleStart": 1.02, "scaleEnd": 1.1,
-      "caption": "Most days you two cut through the park together, just talking.", "dur": 9750
+      "caption": "Most days you two cut through the park together, just talking.", "dur": 8000
     },
     {
       "img": "assets/cinematic/bedroom.jpg",
       "height": "340px", "objX": "49%", "objY": "58%",
       "panXStart": "0px", "panXEnd": "0px", "scaleStart": 1.0, "scaleEnd": 1.35,
-      "caption": "Then one Sunday night, your phone buzzes, and makes you question everything...", "dur": 8250
+      "caption": "It's Sunday evening. You're on your phone, and the chat is working out what everyone's doing next week.", "dur": 8250
     }
   ]
 }

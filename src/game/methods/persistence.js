@@ -56,7 +56,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       certainty: { 1: 'unchecked', 2: 'unchecked', 3: 'unchecked', 4: 'unchecked', 5: 'unchecked' },
       done: {}, used: {}, loading: null, loadingPct: 0, credibility: 0,
       credibilityLost: false, actedToday: false, openedGroup: false, ignored: false,
-      dmAnsweredToday: false, shareTick: 0, shareHalved: false, fading: false,
+      dmAnsweredToday: false, phoneOpenedToday: false, shareTick: 0, shareHalved: false, fading: false,
       tool: 'player', socTab: 'feed', socProfileKey: null, socPostId: null,
       mediaOpen: null, seen: {}, zoom: false, dev: null, threadOpen: null,
       galleryNew: false, chatFlash: false,
@@ -115,8 +115,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     clearTimeout(this._it); clearTimeout(this._dc);
     if (st.screen === 'daycard') {
       this.startDay(st.pendingDay, st.cardPhase);
-    } else if (st.screen === 'introtext' && !st.introReady) {
-      this.runIntro();
+    } else if (st.screen === 'cinematic') {
+      this.beginCinematic();
     } else if (st.screen === 'introchat') {
       this._it = setTimeout(() => this.introStep(), 500);
     } else if (st.screen === 'end' && !st.dmCloseReady) {

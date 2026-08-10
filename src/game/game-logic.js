@@ -21,10 +21,7 @@ class Component extends DCLogic {
   LLM_CHAT_ENABLED = true;
 
   state = {
-    // Skip opening cinematic when a save already exists (Continue on title).
-    screen: (window.GameMethods && window.GameMethods.hasSavedGame
-      && window.GameMethods.hasSavedGame.call(window.GameMethods))
-      ? 'title' : 'cinematic',
+    screen: 'title',
     day: 1, min: 21 * 60 + 40, unread: 0, photoUp: true,
     cinePhase: 'gate', cineIdx: 0, cineActive: false, cineMuted: false, cineFlash: false,
     msgToast: null, msgToastVisible: false, cameraPush: false, dayEnter: false,
@@ -32,7 +29,7 @@ class Component extends DCLogic {
     hints: { 1: [], 2: [], 3: [], 4: [], 5: [] }, certainty: { 1: 'unchecked', 2: 'unchecked', 3: 'unchecked', 4: 'unchecked', 5: 'unchecked' },
     done: {}, used: {}, loading: null, loadingPct: 0, credibility: 0,
     credibilityLost: false, actedToday: false, openedGroup: false, ignored: false,
-    dmAnsweredToday: false, shareTick: 0, shareHalved: false, fading: false,
+    dmAnsweredToday: false, phoneOpenedToday: false, shareTick: 0, shareHalved: false, fading: false,
     tool: 'player', socTab: 'feed', socProfileKey: null, socPostId: null, mediaOpen: null, seen: {}, zoom: false, dev: null, threadOpen: null, galleryNew: false, chatFlash: false,
     lastRead: { group: 0, dm: 0 }, newMarkAt: null, showNewPill: false,
     writeIn: false, writeText: '', writeStatus: null, chatDraft: '', chatBusy: false, llmStatus: '', actionsOpen: false, chatGroupLeft: 4, chatDmLeft: 3, llmUsedReplies: [], llmReplySeed: 0,
