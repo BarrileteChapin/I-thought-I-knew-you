@@ -1,4 +1,4 @@
-const DAY3_CLONE_TEXT = 'I think Nicole is just jealous of her ex-Nele. She loves gossiping as well.';
+const DAY3_CLONE_TEXT = 'I think Nicole is just jealous of Nele. She loves gossiping as well.';
 
 window.GameMethods = Object.assign(window.GameMethods || {}, {
   openRecorder() { this.setState({ recOpen: true, recPhase: 'intro', recIdx: 0, recBusy: false, recLevel: 0 }); },
