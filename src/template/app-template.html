@@ -1027,7 +1027,9 @@
             <div style="display:flex;flex-direction:column;">
               <sc-for list="{{ profPostList }}" as="q" hint-placeholder-count="3">
                 <div data-post="{{ q.id }}" style="border-bottom:1px solid var(--c-panel);padding:14px 18px;">
-                  <div style="font-size:var(--fs-body);line-height:1.45;color:var(--c-ink);">{{ q.text }}</div>
+                  <button sc-camel-on-click="{{ q.openPost }}" style="display:block;width:100%;background:transparent;border:0;padding:0;text-align:left;">
+                    <div style="font-size:var(--fs-body);line-height:1.45;color:var(--c-ink);">{{ q.text }}</div>
+                  </button>
                   <sc-if value="{{ q.isGarden }}" hint-placeholder-val="{{ false }}">
                     <button sc-camel-on-click="{{ q.openGarden }}" style="display:block;width:100%;margin-top:8px;padding:0;border:0;background:transparent;">
                       <img src="assets/nicole-garden.webp" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);background:var(--c-wash-light);">
@@ -1039,17 +1041,17 @@
                     </button>
                   </sc-if>
                   <sc-if value="{{ q.hasPhoto }}" hint-placeholder-val="{{ false }}">
-                    <button sc-camel-on-click="{{ q.openParty }}" style="display:block;width:100%;margin-top:8px;padding:0;border:0;background:transparent;">
+                    <button sc-camel-on-click="{{ q.openPost }}" style="display:block;width:100%;margin-top:8px;padding:0;border:0;background:transparent;">
                       <img src="assets/nicole_party.webp" alt="" style="display:block;width:100%;height:auto;border-radius:var(--r-md);">
                     </button>
                     <div style="font-size:var(--fs-caption);color:var(--c-ink-dim);margin-top:6px;">{{ q.dated }}</div>
                   </sc-if>
                   <div style="font-size:var(--fs-sm);color:var(--c-ink-faint);margin-top:6px;">{{ q.ago }}</div>
-                  <div style="display:flex;gap:20px;margin-top:10px;font-size:var(--fs-sm);color:var(--c-ink-faint);align-items:center;">
+                  <button sc-camel-on-click="{{ q.openPost }}" style="display:flex;gap:20px;margin-top:10px;font-size:var(--fs-sm);color:var(--c-ink-faint);align-items:center;background:transparent;border:0;padding:0;text-align:left;">
                     <span style="display:flex;align-items:center;gap:5px;"><img src="assets/icons/icon-like.svg" alt="" width="14" height="14" style="display:block;">{{ q.likes }}</span>
                     <span style="display:flex;align-items:center;gap:5px;"><img src="assets/icons/icon-reply.svg" alt="" width="14" height="14" style="display:block;">{{ q.replies }}</span>
                     <span style="display:flex;align-items:center;"><img src="assets/icons/icon-share.svg" alt="" width="14" height="14" style="display:block;"></span>
-                  </div>
+                  </button>
                 </div>
               </sc-for>
             </div>

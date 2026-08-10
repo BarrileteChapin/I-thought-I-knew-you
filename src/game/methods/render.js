@@ -744,13 +744,14 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       profBio: prof ? prof.bio : '', profAvatar: window.__R((prof && (prof.img || prof.avatar)) || 'assets/av-mia.webp'),
       profPosts: prof ? prof.posts : '', profFollowers: prof ? prof.followers : '',
       profFollowing: prof ? prof.following : '', profJoined: prof ? prof.joined : '',
-      profEmail: prof ? prof.email : '', profAccountAge: prof ? prof.accountAge : '',
-      profPostList: prof ? feedPosts.filter(p => p.handle === prof.handle).map(p => ({
-        id: p.id, text: p.text || '[photo]', ago: p.ago, likes: p.likes, replies: p.replies,
-        hasPhoto: !!p.photo, isGarden: !!p.garden, isCraft: !!p.craft, dated: p.dated || '',
-        openGarden: () => this.setState({ feedImg: 'garden' }),
-        openCraft: () => this.setState({ feedImg: 'craft' }),
-        openParty: () => this.setState({ feedImg: 'party' })
+       profEmail: prof ? prof.email : '', profAccountAge: prof ? prof.accountAge : '',
+       profPostList: prof ? feedPosts.filter(p => p.handle === prof.handle).map(p => ({
+         id: p.id, text: p.text || '[photo]', ago: p.ago, likes: p.likes, replies: p.replies,
+         hasPhoto: !!p.photo, isGarden: !!p.garden, isCraft: !!p.craft, dated: p.dated || '',
+         openPost: () => this.setState({ socPostId: p.id, socProfileKey: null, socInfoOpen: false, socTab: 'feed' }),
+         openGarden: () => this.setState({ feedImg: 'garden' }),
+         openCraft: () => this.setState({ feedImg: 'craft' }),
+         openParty: () => this.setState({ feedImg: 'party' })
       })) : [],
       postName: openPost ? openPost.name : '', postHandle: openPost ? openPost.handle : '',
       postAgo: openPost ? openPost.ago : '', postText: openPost ? (openPost.text || '[photo]') : '',
