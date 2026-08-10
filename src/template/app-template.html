@@ -517,7 +517,7 @@
 
     <sc-if value="{{ recIntro }}" hint-placeholder-val="{{ true }}">
       <div style="padding:0 20px;">
-        <div style="font-size:var(--fs-body);line-height:1.6;color:var(--c-ink);margin-bottom:22px;">This records on your device and never leaves it. Nothing is uploaded. You can delete it at any time.</div>
+        <div style="font-size:var(--fs-body);line-height:1.6;color:var(--c-ink);margin-bottom:22px;">This records on your device and never leaves it. Nothing is uploaded.</div>
         <button sc-camel-on-click="{{ recAllow }}" disabled="{{ recTrying }}" class="g-btn g-btn-primary-block" style="opacity:{{ recTryOp }};">{{ recAskLabel }}</button>
       </div>
     </sc-if>
@@ -557,10 +557,6 @@
     </sc-if>
   </div>
 </div>
-</sc-if>
-
-<sc-if value="{{ hasRecording }}" hint-placeholder-val="{{ false }}">
-<button sc-camel-on-click="{{ deleteRecording }}" style="position:absolute;right:16px;bottom:16px;z-index:70;background:var(--c-white-bloom);color:var(--c-muted);border:1px solid var(--c-line);padding:9px 13px;font-size:var(--fs-caption);text-align:left;" style-hover="color:var(--c-ink);border-color:var(--c-accent);">Delete my recording</button>
 </sc-if>
 
 <sc-if value="{{ isPhone }}" hint-placeholder-val="{{ false }}">

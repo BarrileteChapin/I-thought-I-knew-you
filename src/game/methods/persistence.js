@@ -81,7 +81,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       reportedAccounts: {}, reportedFake: false,
       saved: [], toast: false, feedImg: null,
       recOpen: false, recPhase: 'intro', recIdx: 0, recBusy: false, recLevel: 0,
-      hasRecording: false, recTrying: false, recAttempts: 0,
+      recTrying: false, recAttempts: 0,
       minCheck: 0, minReact: 0, postsWith: 0, postsWithout: 0, dmChances: 0,
       endStep: 1, gamePhase: 'playing', postedWed: false,
       stats: {

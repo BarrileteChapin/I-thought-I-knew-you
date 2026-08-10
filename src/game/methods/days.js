@@ -10,7 +10,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     this.setState({ confirmSleep: false, fading: true });
     this.rel(dSam, dGroup, endReason);
     setTimeout(() => {
-      if (this.state.sam < 20) this.setState({ samDead: true, samSilent: true, sam: 0 });
+      if (this.state.sam < 16) this.setState({ samDead: true, samSilent: true, sam: 0 });
       const d = this.state.day;
       if (d === 3 && this.state.phase === 'morning') this.showDayCard(3, 'clip');
       else if (d === 4) this.enterEnding();

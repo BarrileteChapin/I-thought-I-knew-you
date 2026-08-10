@@ -92,7 +92,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     this._stream = null;
     const inIntro = this.state.screen === 'introchat';
     this.setState(s => ({
-      recOpen: false, recPhase: 'intro', recBusy: false, voiceSent: true, hasRecording: true,
+      recOpen: false, recPhase: 'intro', recBusy: false, voiceSent: true,
       chat: inIntro ? s.chat : s.chat.concat([{ who: 'You', mine: true, kind: 'voice', dur: '0:10', audio: 'real', caption: 'You, reading it out.' }])
     }), () => { if (inIntro) this._it = setTimeout(() => this.introStep(), 800); });
     if (!inIntro) this.advance(1);
@@ -254,10 +254,6 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       if (this._bufferSource === source) this._bufferSource = null;
       if (this.state.playingAudioKey === key) this.setState({ playingAudioKey: null });
     }
-  },
-
-  deleteRecording() {
-    this.wipeAudio();
-    this.setState({ hasRecording: false, ttsStatus: 'idle', ttsProgress: 0, cloneAudioSrc: null, cloneAudioDuration: 0 });
   }
+
 });

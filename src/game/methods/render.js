@@ -1006,9 +1006,6 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         this.setState(s2 => ({ recOpen: false, recPhase: 'intro', voiceSent: false, used: Object.assign({}, s2.used, { sendvoice: true }) }),
           () => { if (inIntro) this._it = setTimeout(() => this.introStep(), 500); });
       },
-      hasRecording: st.hasRecording, deleteRecording: () => this.deleteRecording(),
-
-
       start: () => this.setState({ screen: 'name', nameDraft: '' }, () => { const el = this.nameRef.current; if (el) el.focus(); }),
       hasSave: !!savedGame,
       savePlayerName: this.savedPlayerName(savedGame),
@@ -1103,7 +1100,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         pStage: -1, introLine: 0, introMsg: 0, introTyping: false, introReady: false, samSilent: false,
         dmCloseTyping: false, dmCloseExtra: null, dmCloseReady: false, variant: Math.floor(Math.random() * 2),
         replayShown: false, postedWed: false,
-        recOpen: false, recPhase: 'intro', recIdx: 0, recBusy: false, recLevel: 0, hasRecording: false, recTrying: false, recAttempts: 0, recTrying: false, recAttempts: 0,
+        recOpen: false, recPhase: 'intro', recIdx: 0, recBusy: false, recLevel: 0, recTrying: false, recAttempts: 0, recTrying: false, recAttempts: 0,
         minCheck: 0, minReact: 0, postsWith: 0, postsWithout: 0, dmChances: 0, endStep: 1, gamePhase: 'playing',
         apology: false, reported: false, clipBack: false, phase: 'evening', sharedCount: 3,
         profMenuOpen: false, reportReasonOpen: false, reportToast: false, reportedAccounts: {}, reportedFake: false,

@@ -255,6 +255,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       if (pc.sift) stats.sift[pc.sift]++;
       stats.checks++;
       if (!st.reactedToday) stats.stopped++;
+      if (pc.thread === 'dm') stats.dmAnswered++;
       const who = pc.result.split(':')[0];
       const body = pc.result.split(': ').slice(1).join(': ');
       const said = { who: 'You', mine: true, text: pc.say || pc.label };
@@ -266,7 +267,10 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       }
       this.setState({ done });
       setTimeout(() => { this.bumpHint(pc.item || this.state.day, pc.effect, pc.id); this.advance(pc.cost); this.log('— you asked around'); }, 0);
-      this.setState(Object.assign({}, patch, { stats, chat, dm, used, credibility, actedToday: true, ignored: false, unread: 0 }));
+      this.setState(Object.assign({}, patch, {
+        stats, chat, dm, used, credibility, actedToday: true, ignored: false, unread: 0,
+        dmAnsweredToday: pc.thread === 'dm' ? true : st.dmAnsweredToday
+      }));
       return;
     }
 
