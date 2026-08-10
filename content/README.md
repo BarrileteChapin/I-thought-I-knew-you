@@ -28,6 +28,10 @@ message is a voice note, video, screenshot, or timed message. Static voice notes
 can use `"audioSrc"` with a relative path such as
 `"assets/audios/example.wav"`.
 
+The Day 3 cloned voice is generated at runtime by the local browser adapter.
+Its source message uses `"audio": "clone"` and a `"ttsText"` value rather than
+an asset path.
+
 Day files also contain investigation checks. Each check has a stable `id`, a
 player-facing `label`, a time `cost`, and a `result`. Keep IDs unchanged when
 only editing wording.

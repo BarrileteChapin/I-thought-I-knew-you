@@ -17,11 +17,19 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const msgsRaw = st.tab === 'group' ? st.chat : st.dm;
     const msgs = msgsRaw.map((m, i) => {
       const audioKey = st.tab + ':' + i;
+      const cloneSource = m.audio === 'clone' ? st.cloneAudioSrc : null;
+      const useSpliceFallback = m.audio === 'clone' && !cloneSource && st.ttsStatus === 'failed' && !!this._splice;
+      const playbackMessage = cloneSource
+        ? Object.assign({}, m, { audioSrc: cloneSource })
+        : useSpliceFallback ? Object.assign({}, m, { audio: 'splice' }) : m;
+      const voiceUnavailable = m.audio === 'clone' && !cloneSource && !useSpliceFallback;
       const isPlaying = m.kind === 'voice' && st.playingAudioKey === audioKey;
+      const duration = m.audio === 'clone' && st.cloneAudioDuration
+        ? this.audioDurationLabel(st.cloneAudioDuration) : (m.dur || '0:14');
       return {
         id: i, who: m.who, text: ((m.text || m.caption || '…')).split('{name}').join(this.name()),
         isNewMark: st.newMarkAt !== null && i === st.newMarkAt,
-        caption: (m.caption || '').split('{name}').join(this.name()), dur: m.dur || '0:14',
+        caption: (m.caption || '').split('{name}').join(this.name()), dur: duration,
         justify: m.mine ? 'flex-end' : 'flex-start',
         bg: m.sys ? 'transparent' : (m.mine ? C.accentSoft : C.panel),
         rule: m.sys ? '2px solid ' + C.muted : (m.mine ? '2px solid ' + C.accent : '0'),
@@ -41,8 +49,12 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         radius: m.mine ? '14px 14px 4px 14px' : '14px 14px 14px 4px',
         isText: !m.kind, tick: m.mine && !m.old ? (m.unsent ? '✓' : '✓✓') : '',
         isPlaying, isStopped: !isPlaying,
-        voiceLabel: isPlaying ? 'Stop voice note' : 'Play voice note',
-        togglePlay: () => this.toggleChatAudio(audioKey, m)
+        voiceUnavailable,
+        voiceOpacity: voiceUnavailable ? 0.55 : 1,
+        voiceLabel: voiceUnavailable
+          ? (st.ttsStatus === 'failed' ? 'Voice unavailable' : 'Preparing cloned voice')
+          : isPlaying ? 'Stop voice note' : 'Play voice note',
+        togglePlay: () => { if (!voiceUnavailable) this.toggleChatAudio(audioKey, playbackMessage); }
       };
     });
 
@@ -102,7 +114,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const itemName = { 1: 'IMG_4471.mp4', 2: 'nicole_party.jpg', 3: 'clip_you.m4a', 4: 'voice_nicole.m4a' }[st.day];
     const all = this.allDays();
     const rows = [
-      { day: 1, item: 1, kind: 'video', who: 'Hanna', spec: '0:15', caption: 'Nicole, filmed at a party: “…she' + "'" + 's honestly the most pathetic person in our year.”' },
+      { day: 1, item: 1, kind: 'video', who: 'Hanna', spec: '0:07', caption: 'Nicole, filmed at a party: “…she' + "'" + 's honestly the most pathetic person in our year.”' },
       { day: 2, item: 2, kind: 'image', who: 'Hanna', spec: '1024 × 1024' },
       { day: 3, item: 3, kind: 'shot', name: 'screenshot_2847.png', who: 'Hanna', spec: 'image' },
       { day: 3, item: 5, gate: st.clipBack, kind: 'audio', name: 'clip_you.m4a', who: 'Nicole', when: 'Wednesday, 10:15pm', spec: '0:09' },
@@ -148,7 +160,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       5: []
     };
     const AI = {
-      'IMG_4471.mp4': { score: 96, len: '0:15 of video', rows: [
+      'IMG_4471.mp4': { score: 96, len: '0:07 of video', rows: [
         { label: 'Generation artefacts', value: 'none detected', pct: '4%' },
         { label: 'Frame consistency', value: 'consistent', pct: '96%' },
         { label: 'Compression signature', value: 'consistent', pct: '93%' },
@@ -473,7 +485,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       isFinal: st.screen === 'final',
       clockLabel: (this.props.showClock ?? true) ? this.fmt(st.min) : '',
       dayName: d.dayName.toUpperCase(), nightOpacity: 0, morningWash: 0,
-      roomBg: this.roomBgFor(st.day, st.phase),
+      roomBg: this.roomBgFor(st.day, st.phase, !!st.phoneOpenedToday),
+      roomHotspotsOpen: !!st.phoneOpenedToday,
       isMorningRoom: st.day === 3 && st.phase === 'morning',
       isEveningRoom: !(st.day === 3 && st.phase === 'morning'),
       dayStrip: ['Mon', 'Tue', 'Wed', 'Thu'].map((label, i) => ({
@@ -513,6 +526,12 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       threadTitle: st.tab === 'group' ? '10b 🍕' : 'Nicole',
       threadSub: st.tab === 'group' ? d.threadSub : (tier === 'gone' ? 'last seen Wednesday' : tier === 'low' ? 'typing…' : 'online'),
       sharedLine: 'Shared in ' + st.sharedCount + ' chats.',
+      showTtsStatus: st.day === 3 && st.phase === 'clip' && st.ttsStatus !== 'idle' && st.ttsStatus !== 'ready',
+      ttsStatusLabel: st.ttsStatus === 'loading'
+        ? 'Preparing your voice clone… ' + st.ttsProgress + '%'
+        : st.ttsStatus === 'cloning' ? 'Learning your voice…'
+          : st.ttsStatus === 'generating' ? 'Generating the voice note…'
+            : 'The cloned voice is unavailable. Playing the local fallback when possible.',
       memberLine: st.tab === 'group'
         ? (st.day >= 3 ? this.name() + ', Hanna, Mia, Lea, Benito…'
                        : this.name() + ', Nicole, Hanna, Mia, Lea, Benito…') : '',
@@ -655,7 +674,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       openNoChecks: !(openRow.day === st.day && openItemChecks.length),
       closeMedia: () => this.setState({ mediaOpen: null }),
       archive: [
-        { day: 1, kind: 'video', note: 'Forwarded by Hanna. 15 seconds.' },
+        { day: 1, kind: 'video', note: 'Forwarded by Hanna. 7 seconds.' },
         { day: 2, kind: 'photo', thumb: true, note: 'Posted by Hanna.' },
         { day: 3, kind: 'shot', name: 'screenshot_2847.png', note: 'Sent by Hanna.' },
         { day: 4, kind: 'audio', note: st.voiceSent ? 'Sent to you by Nicole. 14 seconds.' : 'Sent to you by Nicole. A screenshot of something you typed.' },
@@ -746,7 +765,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       tabAiBg: st.tool === 'ai' ? C.accentSoft : 'transparent',
       aiDead: false, aiOp: 1,
       playerChecks, aiChecks,
-      mediaLen: st.day === 1 ? '0:15' : st.day === 4 ? '0:22' : '—',
+      mediaLen: st.day === 1 ? '0:07' : st.day === 4 ? '0:22' : '—',
       scrubPct: st.day === 1 || st.day === 4 ? '38%' : '0%',
       scrubLabel: st.day === 1 ? '0:06' : st.day === 4 ? '0:08' : '—',
       dropBorder: st.dragItem ? C.accent : C.muted,
@@ -964,7 +983,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         ? 'You didn' + "'" + 't check anything this week. Almost nobody does. That' + "'" + 's what the week was built on.'
         : 'These four moves have a name. They' + "'" + 're called SIFT, and they work on anything, not just this.',
       finalCard: endCard.text,
-      endCardImage: endCard.image || 'assets/nicole_sad_bg.webp',
+      endCardImage: endCard.image || 'assets/ending_default.webp',
+      endCardCaptionMod: (endCard.text || '').length <= 42 ? 'is-short' : '',
       replayShown: st.replayShown,
       playReal: () => this.playBuf('real'), playSplice: () => this.playBuf('splice'),
       recOpen: st.recOpen, recIntro: st.recPhase === 'intro', recFailed: st.recPhase === 'failed',
@@ -1041,7 +1061,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       barsShown: st.day >= 1 ? 1 : 0,
 
       openPhone: () => {
-        this.setState({ dev: null, threadOpen: null, actionsOpen: false, screen: 'phone' });
+        this.setState({ dev: null, threadOpen: null, actionsOpen: false, screen: 'phone', phoneOpenedToday: true });
         if (tier === 'gone' && !st.ghostTypedToday) {
           this.setState({ ghostTypedToday: true });
           setTimeout(() => this.setState({ dmGhostTyping: true }), 1400);
@@ -1068,7 +1088,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         const s0 = this.state;
         if (s0.day === 4 && s0.writeStatus === null) {
           this.setPhase('finalMessage');
-          this.setState({ screen: 'phone', dev: 'chats', threadOpen: 'group', writeIn: true, min: 23 * 60 + 20, unread: 0 });
+          this.setState({ screen: 'phone', dev: 'chats', threadOpen: 'group', writeIn: true, min: 23 * 60 + 20, unread: 0, phoneOpenedToday: true });
           return;
         }
         console.log('[bed] confirm on day ' + s0.day + ', writeStatus=' + s0.writeStatus);
@@ -1087,7 +1107,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         minCheck: 0, minReact: 0, postsWith: 0, postsWithout: 0, dmChances: 0, endStep: 1, gamePhase: 'playing',
         apology: false, reported: false, clipBack: false, phase: 'evening', sharedCount: 3,
         profMenuOpen: false, reportReasonOpen: false, reportToast: false, reportedAccounts: {}, reportedFake: false,
-        actedToday: false, openedGroup: false, ignored: false, dmAnsweredToday: false,
+        actedToday: false, openedGroup: false, ignored: false, dmAnsweredToday: false, phoneOpenedToday: false,
         shareTick: 0, shareHalved: false, fading: false, tool: 'player', socTab: 'feed', socProfileKey: null, socPostId: null, mediaOpen: null, seen: {}, zoom: false, dev: null, threadOpen: null, galleryNew: false, chatFlash: false,
         writeIn: false, writeText: '', writeStatus: null, chatDraft: '', chatBusy: false, actionsOpen: false, chatGroupLeft: 4, chatDmLeft: 3, llmUsedReplies: [], llmReplySeed: 0,
         dragItem: null, pickIdx: null, pickerOpen: false, pickerMode: 'search', searched: {}, aiPickIdx: null, aiStage: 'idle', aiStep: 0, actionLog: [], reactionTimes: [],

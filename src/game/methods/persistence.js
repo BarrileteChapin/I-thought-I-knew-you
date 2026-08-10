@@ -13,7 +13,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       dmGhostTyping: false, introTyping: false, confirmSleep: false, fading: false,
       msgToast: null, msgToastVisible: false, cameraPush: false, dayEnter: false,
       cinePhase: 'gate', cineIdx: 0, cineActive: false, cineFlash: false,
-      playingAudioKey: null
+      playingAudioKey: null, ttsStatus: 'idle', ttsProgress: 0, cloneAudioSrc: null, cloneAudioDuration: 0
     });
   },
 
@@ -51,11 +51,12 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       cinePhase: 'gate', cineIdx: 0, cineActive: false, cineMuted: false, cineFlash: false,
       msgToast: null, msgToastVisible: false, cameraPush: false, dayEnter: false,
       tab: 'group', confirmSleep: false, chat: [], dm: [], sharedCount: 3, playingAudioKey: null,
+      ttsStatus: 'idle', ttsProgress: 0, cloneAudioSrc: null, cloneAudioDuration: 0,
       hints: { 1: [], 2: [], 3: [], 4: [], 5: [] },
       certainty: { 1: 'unchecked', 2: 'unchecked', 3: 'unchecked', 4: 'unchecked', 5: 'unchecked' },
       done: {}, used: {}, loading: null, loadingPct: 0, credibility: 0,
       credibilityLost: false, actedToday: false, openedGroup: false, ignored: false,
-      dmAnsweredToday: false, shareTick: 0, shareHalved: false, fading: false,
+      dmAnsweredToday: false, phoneOpenedToday: false, shareTick: 0, shareHalved: false, fading: false,
       tool: 'player', socTab: 'feed', socProfileKey: null, socPostId: null,
       mediaOpen: null, seen: {}, zoom: false, dev: null, threadOpen: null,
       galleryNew: false, chatFlash: false,
@@ -114,8 +115,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     clearTimeout(this._it); clearTimeout(this._dc);
     if (st.screen === 'daycard') {
       this.startDay(st.pendingDay, st.cardPhase);
-    } else if (st.screen === 'introtext' && !st.introReady) {
-      this.runIntro();
+    } else if (st.screen === 'cinematic') {
+      this.beginCinematic();
     } else if (st.screen === 'introchat') {
       this._it = setTimeout(() => this.introStep(), 500);
     } else if (st.screen === 'end' && !st.dmCloseReady) {

@@ -10,6 +10,13 @@
   <script src="./assets/vendor/react.production.min.js"></script>
   <script src="./assets/vendor/react-dom.production.min.js"></script>
   <script>
+    // Public, pinned quantized bundle derived from Kyutai's Pocket TTS model.
+    // Replace this with a self-hosted mirror if the deployment needs one.
+    window.POCKET_TTS_MODEL_BASE_URL = window.POCKET_TTS_MODEL_BASE_URL
+      || 'https://huggingface.co/KevinAHM/pocket-tts-onnx/resolve/58a6d00cf13d239b6748cb0769f35c580a8f606c/onnx';
+  </script>
+  <script type="module" src="./src/tts/adapter.js"></script>
+  <script>
     (function syncThemeColor() {
       var meta = document.getElementById('theme-color');
       if (!meta) return;
@@ -38,6 +45,18 @@
   </script>
 </head>
 <body>
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute;overflow:hidden">
+    <defs>
+      <filter id="g-ink-displace" x="-12%" y="-12%" width="124%" height="124%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" seed="4" result="noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="16" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="g-ink-displace-soft" x="-12%" y="-12%" width="124%" height="124%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.055" numOctaves="2" seed="9" result="noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="9" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>
+  </svg>
   <div id="app-loading" role="status">Loading...</div>
   <script>
     (async function bootOrganizedGame() {

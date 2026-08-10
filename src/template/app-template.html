@@ -3,7 +3,7 @@
 <div style="width:100%;height:100dvh;max-height:100dvh;overflow:hidden;background:var(--c-canvas);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--c-ink);">
 <div style="position:relative;flex:0 0 auto;width:var(--frame-w);max-width:100vw;height:var(--frame-h);max-height:100dvh;background:var(--c-frame);border-radius:var(--r-frame);overflow:hidden;display:flex;flex-direction:column;">
 
-<sc-if value="{{ isCinematic }}" hint-placeholder-val="{{ true }}">
+<sc-if value="{{ isCinematic }}" hint-placeholder-val="{{ false }}">
 <div style="width:100%;height:100%;position:relative;overflow:hidden;background:#000000;">
 
   <svg style="position:absolute;inset:-6%;width:112%;height:112%;z-index:12;opacity:.05;mix-blend-mode:overlay;animation:grainshift 1.2s steps(2) infinite;pointer-events:none;" xmlns="http://www.w3.org/2000/svg">
@@ -13,17 +13,7 @@
 
   <div style="position:absolute;inset:0;z-index:13;pointer-events:none;background:radial-gradient(ellipse at 50% 42%,transparent 42%,rgba(15,8,6,.4) 100%),linear-gradient(rgba(255,178,120,.05),rgba(10,8,20,.14));"></div>
 
-  <sc-if value="{{ cineGate }}" hint-placeholder-val="{{ true }}">
-  <div style="position:absolute;inset:0;z-index:25;background:#111111;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;">
-    <div style="height:2px;background:var(--c-accent);width:56px;margin-bottom:24px;"></div>
-    <div style="font-size:var(--fs-sm);letter-spacing:.18em;text-transform:uppercase;color:var(--c-white-dim);margin-bottom:14px;">Four evenings</div>
-    <div style="font-size:30px;line-height:1.15;font-weight:700;letter-spacing:-.01em;color:var(--c-white);margin-bottom:34px;max-width:26ch;">I Thought<br>I Knew You</div>
-    <button sc-camel-on-click="{{ beginCinematic }}" style="background:var(--c-accent);color:var(--c-white);border:0;padding:15px 30px;font-size:var(--fs-body);font-weight:700;">▶ Begin</button>
-    <button sc-camel-on-click="{{ skipCinematic }}" style="margin-top:18px;background:transparent;border:0;color:var(--c-white-dim);padding:6px;font-size:var(--fs-sm);">Skip intro</button>
-  </div>
-  </sc-if>
-
-  <sc-if value="{{ cinePlaying }}" hint-placeholder-val="{{ false }}">
+  <sc-if value="{{ cinePlaying }}" hint-placeholder-val="{{ true }}">
 
     <div style="position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:{{ cineImgHeight }};overflow:hidden;background:#000000;">
       <img src="{{ cineImgSrc }}" alt="" style="width:100%;height:100%;object-fit:cover;object-position:{{ cineObjX }} {{ cineObjY }};opacity:{{ cineImgOp }};filter:blur({{ cineImgBlur }});transform:translateX({{ cinePanX }}) scale({{ cineScale }});transition:transform {{ cineTransDur }} linear, opacity .45s ease, filter .45s ease;">
@@ -45,7 +35,7 @@
 </div>
 </sc-if>
 
-<sc-if value="{{ isTitle }}" hint-placeholder-val="{{ false }}">
+<sc-if value="{{ isTitle }}" hint-placeholder-val="{{ true }}">
 <div style="width:100%;height:100%;overflow-y:auto;padding:64px var(--space-screen-x);">
   <div style="height:2px;background:var(--c-accent);width:96px;margin-bottom:28px;"></div>
   <div style="font-size:var(--fs-sm);letter-spacing:.18em;text-transform:uppercase;color:var(--c-muted);margin-bottom:18px;">Four evenings</div>
@@ -63,7 +53,7 @@
     </div>
   </sc-if>
   <sc-if value="{{ !hasSave }}" hint-placeholder-val="{{ true }}">
-    <button sc-camel-on-click="{{ start }}" class="g-btn g-btn-primary g-btn-primary-lg">Sunday evening</button>
+    <button sc-camel-on-click="{{ start }}" class="g-btn g-btn-primary g-btn-primary-lg">Start</button>
   </sc-if>
 </div>
 </sc-if>
@@ -185,7 +175,7 @@
 <div style="width:100%;height:100%;display:flex;flex-direction:column;background:var(--c-frame);color:var(--c-ink);transform:translateY({{ dayPanY }}) scale({{ dayPanScale }});opacity:{{ dayPanOp }};transition:transform 1.05s cubic-bezier(.16,.8,.24,1),opacity .8s ease;">
 
   <div style="position:relative;z-index:var(--z-hud);flex:0 0 104px;height:104px;padding:14px 20px 0;display:flex;flex-direction:column;align-items:center;">
-    <button sc-camel-on-click="{{ backToTitle }}" title="Save and return to title" style="position:absolute;left:6px;top:6px;background:transparent;border:0;color:var(--c-ink);opacity:.4;font-size:18px;line-height:1;padding:10px;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;" style-hover="opacity:.7;">←</button>
+    <button sc-camel-on-click="{{ backToTitle }}" title="Save and return to title" style="position:absolute;left:6px;top:6px;background:transparent;border:0;opacity:.4;padding:10px;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;" style-hover="opacity:.7;"><img src="assets/icons/icon-back.svg" alt="" width="18" height="18" style="display:block;"></button>
     <div style="pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:4px;">
       <span style="font-size:var(--fs-caption);color:var(--c-ink);opacity:.5;font-variant-numeric:tabular-nums;">{{ clockLabel }}</span>
       <span style="font-size:22px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--c-ink);line-height:1;">{{ dayName }}</span>
@@ -236,8 +226,10 @@
       <img src="{{ roomBg }}" alt="" style="display:block;width:100%;height:auto;pointer-events:none;">
 
       <sc-if value="{{ isEveningRoom }}" hint-placeholder-val="{{ true }}">
-        <div style="position:absolute;left:var(--hot-bed-l);top:var(--hot-bed-t);width:var(--hot-bed-w);aspect-ratio:1;border-radius:var(--r-full);background:var(--hot-glow);pointer-events:none;"></div>
-        <button sc-camel-on-click="{{ askSleep }}" title="bed" style-after="content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:100%;height:100%;min-width:88px;min-height:88px;" style="position:absolute;left:var(--hot-bed-l);top:var(--hot-bed-t);width:var(--hot-bed-w);aspect-ratio:1;border-radius:var(--r-full);background:transparent;border:0;padding:0;"></button>
+        <sc-if value="{{ roomHotspotsOpen }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;left:var(--hot-bed-l);top:var(--hot-bed-t);width:var(--hot-bed-w);aspect-ratio:1;border-radius:var(--r-full);background:var(--hot-glow);pointer-events:none;"></div>
+          <button sc-camel-on-click="{{ askSleep }}" title="bed" style-after="content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:100%;height:100%;min-width:88px;min-height:88px;" style="position:absolute;left:var(--hot-bed-l);top:var(--hot-bed-t);width:var(--hot-bed-w);aspect-ratio:1;border-radius:var(--r-full);background:transparent;border:0;padding:0;"></button>
+        </sc-if>
 
         <div style="position:absolute;left:var(--hot-phone-l);top:var(--hot-phone-t);width:var(--hot-phone-w);aspect-ratio:1;border-radius:var(--r-full);background:var(--hot-glow);pointer-events:none;"></div>
         <button sc-camel-on-click="{{ openPhone }}" title="phone" style-after="content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:100%;height:100%;min-width:88px;min-height:88px;" style="z-index:6;position:absolute;left:var(--hot-phone-l);top:var(--hot-phone-t);width:var(--hot-phone-w);aspect-ratio:1;border-radius:var(--r-full);background:transparent;border:0;padding:0;animation:{{ buzzAnim }};">
@@ -248,8 +240,10 @@
       </sc-if>
 
       <sc-if value="{{ isMorningRoom }}" hint-placeholder-val="{{ false }}">
-        <div style="position:absolute;left:var(--hot-bag-l);top:var(--hot-bag-t);width:var(--hot-bag-w);aspect-ratio:1;border-radius:var(--r-full);background:var(--hot-glow);pointer-events:none;"></div>
-        <button sc-camel-on-click="{{ askSleep }}" title="backpack" style-after="content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:100%;height:100%;min-width:88px;min-height:88px;" style="position:absolute;left:var(--hot-bag-l);top:var(--hot-bag-t);width:var(--hot-bag-w);aspect-ratio:1;border-radius:var(--r-full);background:transparent;border:0;padding:0;"></button>
+        <sc-if value="{{ roomHotspotsOpen }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;left:var(--hot-bag-l);top:var(--hot-bag-t);width:var(--hot-bag-w);aspect-ratio:1;border-radius:var(--r-full);background:var(--hot-glow);pointer-events:none;"></div>
+          <button sc-camel-on-click="{{ askSleep }}" title="backpack" style-after="content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:100%;height:100%;min-width:88px;min-height:88px;" style="position:absolute;left:var(--hot-bag-l);top:var(--hot-bag-t);width:var(--hot-bag-w);aspect-ratio:1;border-radius:var(--r-full);background:transparent;border:0;padding:0;"></button>
+        </sc-if>
 
         <div style="position:absolute;left:var(--hot-phone-am-l);top:var(--hot-phone-am-t);width:var(--hot-phone-am-w);aspect-ratio:1;border-radius:var(--r-full);background:var(--hot-glow);pointer-events:none;"></div>
         <button sc-camel-on-click="{{ openPhone }}" title="phone" style-after="content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:100%;height:100%;min-width:88px;min-height:88px;" style="z-index:6;position:absolute;left:var(--hot-phone-am-l);top:var(--hot-phone-am-t);width:var(--hot-phone-am-w);aspect-ratio:1;border-radius:var(--r-full);background:transparent;border:0;padding:0;animation:{{ buzzAnim }};">
@@ -311,7 +305,7 @@
 <div sc-camel-on-touch-start="{{ vTouchStart }}" sc-camel-on-touch-end="{{ vTouchEnd }}" style="position:absolute;inset:0;z-index:var(--z-top);background:var(--c-black);display:flex;flex-direction:column;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;">
 
   <div style="flex:0 0 auto;display:flex;align-items:flex-start;gap:10px;padding:16px 14px 12px;">
-    <button sc-camel-on-click="{{ closeMedia }}" style="flex:0 0 auto;background:transparent;border:0;color:var(--c-white);font-size:22px;line-height:1;padding:10px;min-width:44px;min-height:44px;text-align:left;">✕</button>
+    <button sc-camel-on-click="{{ closeMedia }}" style="flex:0 0 auto;background:transparent;border:0;padding:10px;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;"><img src="assets/icons/icon-close.svg" alt="" width="22" height="22" style="display:block;"></button>
     <div style="flex:1;min-width:0;text-align:center;padding-top:8px;">
       <div style="font-size:var(--fs-body);font-weight:600;color:var(--c-white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ openName }}</div>
       <div style="font-size:var(--fs-caption);color:var(--c-white-muted);margin-top:3px;">{{ openMeta }}</div>
@@ -382,9 +376,9 @@
 <sc-if value="{{ feedImgOpen }}" hint-placeholder-val="{{ false }}">
 <div style="position:absolute;left:3%;right:3%;top:2%;bottom:2%;border-radius:var(--r-phone);z-index:89;background:var(--c-black);display:flex;flex-direction:column;overflow:hidden;">
   <div style="flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;">
-    <button sc-camel-on-click="{{ closeFeedImg }}" style="width:44px;height:44px;background:transparent;border:0;padding:0;color:var(--c-white);font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center;">✕</button>
+    <button sc-camel-on-click="{{ closeFeedImg }}" style="width:44px;height:44px;background:transparent;border:0;padding:0;display:flex;align-items:center;justify-content:center;"><img src="assets/icons/icon-close.svg" alt="" width="22" height="22" style="display:block;"></button>
     <div style="font-size:var(--fs-sm);color:var(--c-white-ghost);">{{ feedImgName }}</div>
-    <button sc-camel-on-click="{{ saveFeedImg }}" style="width:44px;height:44px;background:transparent;border:0;padding:0;color:var(--c-white);font-size:20px;line-height:1;display:flex;align-items:center;justify-content:center;">⤓</button>
+    <button sc-camel-on-click="{{ saveFeedImg }}" style="width:44px;height:44px;background:transparent;border:0;padding:0;display:flex;align-items:center;justify-content:center;"><img src="assets/icons/icon-download.svg" alt="" width="20" height="20" style="display:block;"></button>
   </div>
   <div style="flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:auto;padding:0 12px 16px;">
     <sc-if value="{{ feedImgIsGarden }}" hint-placeholder-val="{{ false }}">
@@ -485,7 +479,7 @@
     </sc-if>
     <sc-if value="{{ shotIsReal }}" hint-placeholder-val="{{ false }}">
       <div style="padding:12px 16px;border-bottom:1px solid var(--c-panel);">
-        <button sc-camel-on-click="{{ closeShot }}" style="background:transparent;border:0;color:var(--c-muted);font-size:20px;padding:0 4px;line-height:1;" style-hover="color:var(--c-ink);">←</button>
+        <button sc-camel-on-click="{{ closeShot }}" style="background:transparent;border:0;padding:0 4px;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;" style-hover="opacity:.7;"><img src="assets/icons/icon-back.svg" alt="" width="20" height="20" style="display:block;"></button>
       </div>
       <img src="assets/screenshot-real.webp" alt="" style="display:block;width:100%;height:auto;">
       <div style="padding:14px 20px;font-size:var(--fs-sm);color:var(--c-muted);">@nicole_kruger</div>
@@ -594,7 +588,7 @@
     <div style="flex:1;display:flex;flex-direction:column;padding:12px 20px 30px;">
       <div style="display:flex;align-items:center;justify-content:space-between;">
         <button sc-camel-on-click="{{ backToRoom }}" style="align-self:flex-start;background:var(--c-white);border:0;border-radius:var(--r-pill);padding:8px 14px;min-height:44px;display:flex;align-items:center;gap:6px;text-align:left;color:var(--c-ink);font-size:var(--fs-md);font-weight:500;box-shadow:0 1px 4px var(--c-ink-shadow);" style-hover="background:var(--c-wash-light);" style-active="background:var(--c-wash-light);">
-          <span style="font-size:var(--fs-md);line-height:1;">←</span>
+          <img src="assets/icons/icon-back.svg" alt="" width="16" height="16" style="display:block;">
           <span>Close</span>
         </button>
       </div>
@@ -617,7 +611,7 @@
   <div style="flex:1 1 auto;min-height:0;display:flex;flex-direction:column;background:var(--c-white);overflow:hidden;">
   <sc-if value="{{ !onThread }}" hint-placeholder-val="{{ true }}">
   <div style="flex:0 0 auto;display:flex;align-items:center;padding:0 10px 6px;border-bottom:1px solid var(--c-panel);">
-    <button sc-camel-on-click="{{ goHome }}" class="g-btn g-btn-nav">← Home</button>
+    <button sc-camel-on-click="{{ goHome }}" class="g-btn g-btn-nav" style="display:flex;align-items:center;gap:6px;"><img src="assets/icons/icon-back.svg" alt="" width="16" height="16" style="display:block;"> Home</button>
   </div>
   </sc-if>
   <div style="flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden;">
@@ -648,7 +642,7 @@
 
       <sc-if value="{{ onThread }}" hint-placeholder-val="{{ false }}">
         <div style="flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--c-panel);background:var(--c-white);">
-          <button sc-camel-on-click="{{ backToChats }}" class="g-btn g-btn-nav g-btn-nav-icon">←</button>
+          <button sc-camel-on-click="{{ backToChats }}" class="g-btn g-btn-nav g-btn-nav-icon" style="display:flex;align-items:center;justify-content:center;"><img src="assets/icons/icon-back.svg" alt="" width="18" height="18" style="display:block;"></button>
           <div style="flex:1;min-width:0;">
             <div style="font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ threadTitle }}</div>
             <div style="font-size:var(--fs-caption);color:var(--c-muted-dark);">{{ threadSub }}</div>
@@ -657,6 +651,9 @@
 
         <sc-if value="{{ memberLine }}" hint-placeholder-val="{{ false }}">
           <div style="flex:0 0 auto;padding:7px 16px;font-size:11px;color:var(--c-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ memberLine }}</div>
+        </sc-if>
+        <sc-if value="{{ showTtsStatus }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:0 0 auto;padding:8px 16px;font-size:var(--fs-caption);color:var(--c-accent);background:var(--c-accent-mist);border-bottom:1px solid var(--c-accent-wash);">{{ ttsStatusLabel }}</div>
         </sc-if>
         <sc-if value="{{ showShared }}" hint-placeholder-val="{{ false }}">
           <div style="flex:0 0 auto;padding:8px 16px;font-size:var(--fs-caption);font-weight:600;color:var(--c-accent);background:var(--c-accent-mist);border-bottom:1px solid var(--c-accent-wash);">{{ sharedLine }}</div>
@@ -686,7 +683,7 @@
                 </sc-if>
                 <sc-if value="{{ m.isVideo }}" hint-placeholder-val="{{ false }}">
                   <video controls="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;min-width:210px;max-width:250px;height:auto;border-radius:10px;background:var(--c-ink);"><source src="assets/nicole_day0.webm" type="video/webm"><source src="assets/nicole_day0.mp4" type="video/mp4"></video>
-                  <div style="font-size:var(--fs-caption);color:var(--c-muted);margin-top:5px;">video · 0:15</div>
+                  <div style="font-size:var(--fs-caption);color:var(--c-muted);margin-top:5px;">video · 0:07</div>
                   <div style="font-size:var(--fs-md);color:var(--c-ink);margin-top:5px;line-height:1.45;">{{ m.caption }}</div>
                 </sc-if>
                 <sc-if value="{{ m.isShot }}" hint-placeholder-val="{{ false }}">
@@ -707,7 +704,7 @@
                   </div>
                 </sc-if>
                 <sc-if value="{{ m.isVoice }}" hint-placeholder-val="{{ false }}">
-                  <button sc-camel-on-click="{{ m.togglePlay }}" title="{{ m.voiceLabel }}" aria-label="{{ m.voiceLabel }}" style="width:210px;display:flex;align-items:center;gap:10px;background:var(--c-white);border:0;border-radius:10px;padding:9px 10px;text-align:left;cursor:pointer;">
+                  <button sc-camel-on-click="{{ m.togglePlay }}" disabled="{{ m.voiceUnavailable }}" title="{{ m.voiceLabel }}" aria-label="{{ m.voiceLabel }}" style="width:210px;display:flex;align-items:center;gap:10px;background:var(--c-white);border:0;border-radius:10px;padding:9px 10px;text-align:left;cursor:pointer;opacity:{{ m.voiceOpacity }};">
                     <sc-if value="{{ m.isPlaying }}" hint-placeholder-val="{{ false }}">
                       <span style="flex:0 0 14px;width:14px;height:14px;border-radius:2px;background:var(--c-accent);"></span>
                     </sc-if>
@@ -928,10 +925,10 @@
                       </button>
                     </sc-if>
                   <button sc-camel-on-click="{{ p.openPost }}" disabled="{{ p.inert }}" style="display:block;width:100%;background:transparent;border:0;padding:0;text-align:left;color:inherit;opacity:1;cursor:{{ p.cursor }};">
-                    <div style="display:flex;gap:22px;margin-top:10px;font-size:var(--fs-sm);color:var(--c-ink-faint);">
-                      <span>♡ {{ p.likes }}</span>
-                      <span>↩ {{ p.replies }}</span>
-                      <span>↗</span>
+                    <div style="display:flex;gap:22px;margin-top:10px;font-size:var(--fs-sm);color:var(--c-ink-faint);align-items:center;">
+                      <span style="display:flex;align-items:center;gap:5px;"><img src="assets/icons/icon-like.svg" alt="" width="14" height="14" style="display:block;">{{ p.likes }}</span>
+                      <span style="display:flex;align-items:center;gap:5px;"><img src="assets/icons/icon-reply.svg" alt="" width="14" height="14" style="display:block;">{{ p.replies }}</span>
+                      <span style="display:flex;align-items:center;"><img src="assets/icons/icon-share.svg" alt="" width="14" height="14" style="display:block;"></span>
                     </div>
                   </button>
                 </div>
@@ -990,7 +987,7 @@
                   <span style="font-size:var(--fs-sm);color:var(--c-ink-dim);">Reported</span>
                 </sc-if>
                 <sc-if value="{{ profNotReported }}" hint-placeholder-val="{{ true }}">
-                  <button sc-camel-on-click="{{ openProfMenu }}" style="width:44px;height:44px;margin-right:-12px;background:transparent;border:0;padding:0;display:flex;align-items:center;justify-content:center;color:var(--c-muted-mid);font-size:20px;font-weight:700;letter-spacing:2px;" style-active="color:var(--c-muted-deep);">···</button>
+                  <button sc-camel-on-click="{{ openProfMenu }}" style="width:44px;height:44px;margin-right:-12px;background:transparent;border:0;padding:0;display:flex;align-items:center;justify-content:center;" style-active="opacity:.7;"><img src="assets/icons/icon-more.svg" alt="" width="20" height="20" style="display:block;"></button>
                 </sc-if>
               </div>
               <img src="{{ profAvatar }}" alt="" style="display:block;width:64px;height:64px;border-radius:var(--r-full);object-fit:cover;margin-bottom:12px;">
@@ -1030,10 +1027,10 @@
                     <div style="font-size:var(--fs-caption);color:var(--c-ink-dim);margin-top:6px;">{{ q.dated }}</div>
                   </sc-if>
                   <div style="font-size:var(--fs-sm);color:var(--c-ink-faint);margin-top:6px;">{{ q.ago }}</div>
-                  <div style="display:flex;gap:20px;margin-top:10px;font-size:var(--fs-sm);color:var(--c-ink-faint);">
-                    <span style="display:flex;align-items:center;gap:5px;"><span style="font-size:var(--fs-body);">♡</span>{{ q.likes }}</span>
-                    <span style="display:flex;align-items:center;gap:5px;"><span style="font-size:var(--fs-body);">↩</span>{{ q.replies }}</span>
-                    <span style="font-size:var(--fs-body);">↗</span>
+                  <div style="display:flex;gap:20px;margin-top:10px;font-size:var(--fs-sm);color:var(--c-ink-faint);align-items:center;">
+                    <span style="display:flex;align-items:center;gap:5px;"><img src="assets/icons/icon-like.svg" alt="" width="14" height="14" style="display:block;">{{ q.likes }}</span>
+                    <span style="display:flex;align-items:center;gap:5px;"><img src="assets/icons/icon-reply.svg" alt="" width="14" height="14" style="display:block;">{{ q.replies }}</span>
+                    <span style="display:flex;align-items:center;"><img src="assets/icons/icon-share.svg" alt="" width="14" height="14" style="display:block;"></span>
                   </div>
                 </div>
               </sc-for>
@@ -1081,9 +1078,9 @@
             <span>{{ postReplyCount }} comments</span>
           </div>
           <div style="padding:12px 18px;border-bottom:1px solid var(--c-panel);display:flex;justify-content:space-between;font-size:var(--fs-sm);color:var(--c-ink-faint);">
-            <span style="display:flex;align-items:center;gap:6px;"><span style="font-size:var(--fs-body);">♡</span>Like</span>
-            <span style="display:flex;align-items:center;gap:6px;"><span style="font-size:var(--fs-body);">↩</span>Reply</span>
-            <span style="display:flex;align-items:center;gap:6px;"><span style="font-size:var(--fs-body);">↗</span>Share</span>
+            <span style="display:flex;align-items:center;gap:6px;"><img src="assets/icons/icon-like.svg" alt="" width="14" height="14" style="display:block;">Like</span>
+            <span style="display:flex;align-items:center;gap:6px;"><img src="assets/icons/icon-reply.svg" alt="" width="14" height="14" style="display:block;">Reply</span>
+            <span style="display:flex;align-items:center;gap:6px;"><img src="assets/icons/icon-share.svg" alt="" width="14" height="14" style="display:block;">Share</span>
           </div>
           <div style="display:flex;flex-direction:column;">
             <sc-for list="{{ postReplies }}" as="r" hint-placeholder-count="2">
@@ -1095,7 +1092,7 @@
                     <span style="font-size:var(--fs-md);color:var(--c-ink-faint);">{{ r.handle }} · {{ r.ago }}</span>
                   </div>
                   <div style="font-size:var(--fs-body);line-height:1.45;color:var(--c-ink);margin-top:3px;">{{ r.text }}</div>
-                  <div style="font-size:var(--fs-sm);color:var(--c-ink-faint);margin-top:8px;">♡ {{ r.likes }}</div>
+                  <div style="font-size:var(--fs-sm);color:var(--c-ink-faint);margin-top:8px;display:flex;align-items:center;gap:5px;"><img src="assets/icons/icon-like.svg" alt="" width="12" height="12" style="display:block;">{{ r.likes }}</div>
                 </div>
               </div>
             </sc-for>
@@ -1294,7 +1291,7 @@
 
 <sc-if value="{{ isStanding }}" hint-placeholder-val="{{ false }}">
 <div style="width:100%;height:100%;display:flex;flex-direction:column;">
-  <div style="flex:1;min-height:0;overflow-y:auto;padding:40px var(--space-screen-x) 20px;">
+  <div class="g-end-fadein" style="flex:1;min-height:0;overflow-y:auto;padding:40px var(--space-screen-x) 20px;">
   <div style="border:2px solid var(--c-line);background:var(--c-white);opacity:.55;">
     <div style="background:var(--c-panel);padding:14px 16px;">
       <div style="font-size:17px;font-weight:600;color:var(--c-ink);">Nicole</div>
@@ -1333,7 +1330,7 @@
 
 <sc-if value="{{ isWriteBack }}" hint-placeholder-val="{{ false }}">
 <div style="width:100%;height:100%;display:flex;flex-direction:column;">
-  <div style="flex:1;min-height:0;overflow-y:auto;padding:64px var(--space-screen-x) 20px;display:flex;flex-direction:column;justify-content:center;">
+  <div class="g-end-fadein" style="flex:1;min-height:0;overflow-y:auto;padding:64px var(--space-screen-x) 20px;display:flex;flex-direction:column;justify-content:center;">
   <div style="font-size:17px;color:var(--c-muted);line-height:1.5;margin-bottom:26px;">{{ writeBackLine }}</div>
   <sc-if value="{{ writeBackHasText }}" hint-placeholder-val="{{ false }}">
     <div style="border-left:2px solid var(--c-accent);padding:6px 0 6px 18px;font-size:20px;line-height:1.55;color:var(--c-ink);text-wrap:pretty;">{{ writeBackText }}</div>
@@ -1350,7 +1347,7 @@
 
 <sc-if value="{{ isLedger }}" hint-placeholder-val="{{ false }}">
 <div style="width:100%;height:100%;display:flex;flex-direction:column;">
-  <div style="flex:1;min-height:0;overflow-y:auto;padding:64px var(--space-screen-x) 20px;">
+  <div class="g-end-fadein" style="flex:1;min-height:0;overflow-y:auto;padding:64px var(--space-screen-x) 20px;">
   <div style="height:2px;background:var(--c-accent);width:96px;margin-bottom:26px;"></div>
   <h2 style="font-size:38px;font-weight:700;margin:0 0 38px;letter-spacing:-.01em;color:var(--c-ink);">What you did</h2>
   <div style="display:flex;flex-direction:column;">
@@ -1383,7 +1380,7 @@
 
 <sc-if value="{{ isOmissions }}" hint-placeholder-val="{{ false }}">
 <div style="width:100%;height:100%;display:flex;flex-direction:column;">
-  <div style="flex:1;min-height:0;overflow-y:auto;padding:64px var(--space-screen-x) 20px;">
+  <div class="g-end-fadein" style="flex:1;min-height:0;overflow-y:auto;padding:64px var(--space-screen-x) 20px;">
   <div style="height:2px;background:var(--c-accent);width:96px;margin-bottom:26px;"></div>
   <h2 style="font-size:38px;font-weight:700;margin:0 0 38px;letter-spacing:-.01em;color:var(--c-ink);">What you didn't do</h2>
   <div style="display:flex;flex-direction:column;gap:22px;">
@@ -1403,7 +1400,7 @@
 
 <sc-if value="{{ isMoves }}" hint-placeholder-val="{{ false }}">
 <div style="width:100%;height:100%;display:flex;flex-direction:column;">
-  <div style="flex:1;min-height:0;overflow-y:auto;padding:64px var(--space-screen-x) 20px;">
+  <div class="g-end-fadein" style="flex:1;min-height:0;overflow-y:auto;padding:64px var(--space-screen-x) 20px;">
   <div style="height:2px;background:var(--c-accent);width:96px;margin-bottom:26px;"></div>
   <div style="display:flex;flex-direction:column;gap:2px;background:var(--c-line);margin-bottom:26px;">
     <sc-for list="{{ moves }}" as="mv" hint-placeholder-count="4">
@@ -1426,12 +1423,14 @@
 </sc-if>
 
 <sc-if value="{{ isLastCard }}" hint-placeholder-val="{{ false }}">
-<div style="width:100%;height:100%;display:flex;flex-direction:column;">
-  <div style="flex:1;min-height:0;overflow-y:auto;padding:80px var(--space-screen-x) 20px;">
-  <div style="height:2px;background:var(--c-accent);width:96px;margin-bottom:30px;"></div>
-  <div style="font-size:38px;font-weight:600;line-height:1.3;color:var(--c-ink);max-width:30ch;text-wrap:pretty;">{{ finalCard }}</div>
-
-  <img src="{{ endCardImage }}" alt="" style="display:block;width:100%;height:auto;margin-top:28px;object-fit:cover;">
+<div style="width:100%;height:100%;display:flex;flex-direction:column;background:var(--c-wash-grey);">
+  <div class="g-end-polaroid-stage">
+    <figure class="g-end-polaroid">
+      <div class="g-end-polaroid-photo">
+        <img src="{{ endCardImage }}" alt="">
+      </div>
+      <figcaption class="g-end-polaroid-caption {{ endCardCaptionMod }}">{{ finalCard }}</figcaption>
+    </figure>
   </div>
   <div style="flex:0 0 auto;padding:14px var(--space-screen-x) 20px;background:var(--c-frame);border-top:1px solid var(--c-ink-hair);">
     <sc-if value="{{ replayShown }}" hint-placeholder-val="{{ false }}">
@@ -1446,7 +1445,7 @@
 
 <sc-if value="{{ isInvitation }}" hint-placeholder-val="{{ false }}">
 <div style="width:100%;height:100%;display:flex;flex-direction:column;">
-  <div style="flex:1;min-height:0;overflow-y:auto;padding:80px var(--space-screen-x) 20px;">
+  <div class="g-end-fadein" style="flex:1;min-height:0;overflow-y:auto;padding:80px var(--space-screen-x) 20px;">
   <div style="font-size:var(--fs-title);line-height:1.6;color:var(--c-ink);max-width:40ch;margin-bottom:22px;text-wrap:pretty;">Some of what you saw this week was true. Some of it wasn't.</div>
   <div style="font-size:var(--fs-title);line-height:1.6;color:var(--c-muted);max-width:40ch;">The game isn't going to tell you which.</div>
   </div>
