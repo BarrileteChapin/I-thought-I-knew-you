@@ -451,6 +451,25 @@
 </div>
 </sc-if>
 
+<sc-if value="{{ profInfoOpen }}" hint-placeholder-val="{{ false }}">
+<div sc-camel-on-click="{{ closeProfInfo }}" style="position:absolute;left:3%;right:3%;top:2%;bottom:2%;z-index:var(--z-phone-ui);border-radius:var(--r-phone);overflow:hidden;background:var(--c-black-mid);display:flex;flex-direction:column;justify-content:flex-end;">
+  <div sc-camel-on-click="{{ stopClick }}" style="width:100%;background:var(--c-white);border-radius:var(--r-lg) 16px 0 0;display:flex;flex-direction:column;animation:sheetup var(--dur-fast) var(--ease-out);">
+    <div style="flex:0 0 auto;padding:8px 0 0;display:flex;justify-content:center;"><div style="width:36px;height:5px;border-radius:var(--r-xs);background:var(--c-line);"></div></div>
+    <div style="padding:16px 20px 8px;border-bottom:1px solid var(--c-panel);">
+      <div style="font-size:var(--fs-body);font-weight:600;color:var(--c-ink);">Account details</div>
+      <div style="font-size:var(--fs-sm);color:var(--c-ink-faint);margin-top:4px;">{{ profName }} · {{ profHandle }}</div>
+    </div>
+    <div style="padding:16px 20px 20px;">
+      <div style="font-size:var(--fs-sm);color:var(--c-ink-heavy);">→ Email on file</div>
+      <div style="font-size:var(--fs-body);color:var(--c-ink);margin-top:4px;">{{ profEmail }}</div>
+      <div style="font-size:var(--fs-sm);color:var(--c-ink-heavy);margin-top:16px;">Account age</div>
+      <div style="font-size:var(--fs-body);color:var(--c-ink);margin-top:4px;">{{ profAccountAge }}</div>
+    </div>
+    <button sc-camel-on-click="{{ closeProfInfo }}" style="width:100%;height:52px;background:var(--c-white);border:0;border-top:8px solid var(--c-wash);color:var(--c-accent);font-size:var(--fs-body);font-weight:600;" style-active="background:var(--c-wash);">Close</button>
+  </div>
+</div>
+</sc-if>
+
 <sc-if value="{{ reportReasonOpen }}" hint-placeholder-val="{{ false }}">
 <div sc-camel-on-click="{{ closeProfMenu }}" style="position:absolute;left:3%;right:3%;top:2%;bottom:2%;z-index:var(--z-phone-ui);border-radius:var(--r-phone);overflow:hidden;background:var(--c-black-mid);display:flex;flex-direction:column;justify-content:flex-end;">
   <div sc-camel-on-click="{{ stopClick }}" style="width:100%;background:var(--c-white);border-radius:var(--r-lg) 16px 0 0;display:flex;flex-direction:column;animation:sheetup var(--dur-fast) var(--ease-out);">
@@ -979,12 +998,15 @@
                 <button sc-camel-on-click="{{ backToFeed }}" style="width:44px;height:44px;margin-left:-12px;background:transparent;border:0;padding:0;display:flex;align-items:center;justify-content:center;color:var(--c-muted-mid);" style-active="color:var(--c-muted-deep);">
                   <img src="assets/icons/icon-back.svg" alt="" width="20" height="20" style="display:block;">
                 </button>
-                <sc-if value="{{ profReported }}" hint-placeholder-val="{{ false }}">
-                  <span style="font-size:var(--fs-sm);color:var(--c-ink-dim);">Reported</span>
-                </sc-if>
-                <sc-if value="{{ profNotReported }}" hint-placeholder-val="{{ true }}">
-                  <button sc-camel-on-click="{{ openProfMenu }}" style="width:44px;height:44px;margin-right:-12px;background:transparent;border:0;padding:0;display:flex;align-items:center;justify-content:center;" style-active="opacity:.7;"><img src="assets/icons/icon-more.svg" alt="" width="20" height="20" style="display:block;"></button>
-                </sc-if>
+                <div style="display:flex;align-items:center;gap:4px;margin-right:-12px;">
+                  <button sc-camel-on-click="{{ openProfInfo }}" title="Account details" style="width:44px;height:44px;background:transparent;border:0;padding:0;display:flex;align-items:center;justify-content:center;" style-active="opacity:.7;"><img src="assets/icons/icon-info.svg" alt="" width="20" height="20" style="display:block;"></button>
+                  <sc-if value="{{ profReported }}" hint-placeholder-val="{{ false }}">
+                    <span style="font-size:var(--fs-sm);color:var(--c-ink-dim);">Reported</span>
+                  </sc-if>
+                  <sc-if value="{{ profNotReported }}" hint-placeholder-val="{{ true }}">
+                    <button sc-camel-on-click="{{ openProfMenu }}" style="width:44px;height:44px;background:transparent;border:0;padding:0;display:flex;align-items:center;justify-content:center;" style-active="opacity:.7;"><img src="assets/icons/icon-more.svg" alt="" width="20" height="20" style="display:block;"></button>
+                  </sc-if>
+                </div>
               </div>
               <img src="{{ profAvatar }}" alt="" style="display:block;width:64px;height:64px;border-radius:var(--r-full);object-fit:cover;margin-bottom:12px;">
               <div style="font-size:20px;font-weight:700;color:var(--c-ink);">{{ profName }}</div>

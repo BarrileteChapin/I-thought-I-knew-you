@@ -57,7 +57,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       done: {}, used: {}, loading: null, loadingPct: 0, credibility: 0,
       credibilityLost: false, actedToday: false, openedGroup: false, ignored: false,
       dmAnsweredToday: false, phoneOpenedToday: false, shareTick: 0, shareHalved: false, fading: false,
-      tool: 'player', socTab: 'feed', socProfileKey: null, socPostId: null,
+      tool: 'player', socTab: 'feed', socProfileKey: null, socPostId: null, socInfoOpen: false,
       mediaOpen: null, seen: {}, zoom: false, dev: null, threadOpen: null,
       galleryNew: false, chatFlash: false,
       lastRead: { group: 0, dm: 0 }, newMarkAt: null, showNewPill: false,

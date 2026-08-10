@@ -335,10 +335,10 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const PROFILES = {
       '@nicole_kruger': { handle: '@nicole_kruger', name: 'Nicole Kruger', img: 'assets/av-nicole.webp',
         bio: 'not everything is about you 🖤', posts: '52', followers: '349', following: '42',
-        joined: 'Joined September 2022', dead: st.reported },
+        joined: 'Joined September 2022', email: 'n***k@g***.com', accountAge: 'Account created 4 years ago', dead: st.reported },
       '@n.krueger': { handle: '@n.krueger', name: 'Nicole K.', img: 'assets/av-nicole.webp',
         bio: 'not everything is about you 🖤', posts: '6', followers: '42', following: '12',
-        joined: 'Joined this week' },
+        joined: 'Joined this week', email: 'b****o@g***.com', accountAge: 'Account created 4 days ago' },
       '@nele.b': { handle: '@nele.b', name: 'Nele B', img: 'assets/av-nele.webp', bio: 'here for the food', posts: '208', followers: '190', following: '204', joined: 'Joined March 2022' },
       '@mia.h': { handle: '@mia.h', name: 'Mia H', img: 'assets/av-mia.webp', bio: 'cedar street', posts: '340', followers: '277', following: '250', joined: 'Joined June 2021' },
       '@hanna.k': { handle: '@hanna.k', name: 'Hanna K', img: 'assets/av-hanna.webp', bio: 'you had to be there', posts: '511', followers: '302', following: '333', joined: 'Joined January 2022' },
@@ -402,7 +402,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         : C.white,
       statusColor: C.ink,
       homeBarColor: C.inkMuted,
-      goHome: () => this.setState({ dev: null, threadOpen: null }),
+      goHome: () => this.setState({ dev: null, threadOpen: null, socInfoOpen: false }),
       apps: [
         { key: 'chats', label: 'Message', icon: 'assets/icons/app-chats.svg', badge: st.unread > 0 ? st.unread : 0 },
         { key: 'gallery', label: 'Photo Gallery', icon: 'assets/icons/app-gallery.svg', badge: 0 },
@@ -413,7 +413,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         go: () => {
           this.stopAudio();
           this.setState({
-            dev: a.key, threadOpen: null,
+            dev: a.key, threadOpen: null, socInfoOpen: false,
             tool: a.key === 'gallery' ? 'player' : a.key === 'social' ? 'social' : a.key === 'fact' ? (this.state.tool === 'ai' ? 'ai' : 'search') : this.state.tool,
             mediaOpen: null, socTab: 'feed', socProfileKey: null, socPostId: null,
             galleryNew: a.key === 'gallery' ? false : this.state.galleryNew
@@ -459,7 +459,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
           this._atBottom = true;
           this._lastLen = list.length;
           this.setState({
-            threadOpen: t.key, tab: t.key, actionsOpen: false, showNewPill: false,
+            threadOpen: t.key, tab: t.key, actionsOpen: false, showNewPill: false, socInfoOpen: false,
             newMarkAt: typeof read === 'number' && read >= 0 && read < list.length ? read : null,
             openedGroup: t.key === 'group' ? true : this.state.openedGroup,
             groupUnread: t.key === 'group' ? 0 : this.state.groupUnread,
@@ -477,7 +477,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         swatch: st.dev === n.key ? n.tile : C.inkGhost,
         color: n.flash ? C.danger : (st.dev === n.key ? C.ink : C.inkFaint),
         go: () => this.setState({
-          dev: n.key,
+          dev: n.key, socInfoOpen: false,
           tool: n.key === 'gallery' ? 'player' : n.key === 'social' ? 'social' : n.key === 'fact' ? (this.state.tool === 'ai' ? 'ai' : 'search') : this.state.tool,
           mediaOpen: null, galleryNew: n.key === 'gallery' ? false : this.state.galleryNew
         })
@@ -703,7 +703,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         off: n.key === 'search' || n.key === 'messages',
         rule: socTab === n.key ? C.accent : 'transparent',
         op: (n.key === 'search' || n.key === 'messages') ? 0.35 : (socTab === n.key ? 1 : 0.4),
-        go: () => { if (n.key !== 'search' && n.key !== 'messages') this.setState({ socTab: n.key, socProfileKey: null, socPostId: null }); }
+         go: () => { if (n.key !== 'search' && n.key !== 'messages') this.setState({ socTab: n.key, socProfileKey: null, socPostId: null, socInfoOpen: false }); }
       })),
       socMine: socTab === 'profile' && !st.socProfileKey,
       myName: this.name(),
@@ -724,14 +724,17 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         inert: !(p.handle === '@nicole_kruger' || p.handle === '@n.krueger'),
         cursor: (p.handle === '@nicole_kruger' || p.handle === '@n.krueger') ? 'pointer' : 'default',
         openProfile: () => {
-          this.setState({ socProfileKey: p.handle, socPostId: null, socTab: 'feed' });
+          this.setState({ socProfileKey: p.handle, socPostId: null, socInfoOpen: false, socTab: 'feed' });
           if (p.handle === '@n.krueger') { this.setState({ sawFake: true }); this.maybeCompare('fake'); }
           if (p.handle === '@nicole_kruger' && !st.reported) { this.setState({ sawReal: true }); this.maybeCompare('real'); }
         },
-        openPost: () => this.setState({ socPostId: p.id, socProfileKey: null, socTab: 'feed' })
+        openPost: () => this.setState({ socPostId: p.id, socProfileKey: null, socInfoOpen: false, socTab: 'feed' })
       })),
-      profDead: !!(prof && prof.dead), profLive: !!(prof && !prof.dead),
-      profMenuOpen: st.profMenuOpen, reportReasonOpen: st.reportReasonOpen, reportToast: st.reportToast,
+       profDead: !!(prof && prof.dead), profLive: !!(prof && !prof.dead),
+       profInfoOpen: !!st.socInfoOpen,
+       openProfInfo: () => this.setState({ socInfoOpen: true, profMenuOpen: false, reportReasonOpen: false }),
+       closeProfInfo: () => this.setState({ socInfoOpen: false }),
+       profMenuOpen: st.profMenuOpen, reportReasonOpen: st.reportReasonOpen, reportToast: st.reportToast,
       profReported: !!(st.socProfileKey && st.reportedAccounts[st.socProfileKey]),
       profNotReported: !(st.socProfileKey && st.reportedAccounts[st.socProfileKey]),
       openProfMenu: () => this.openProfMenu(), closeProfMenu: () => this.closeProfMenu(),
@@ -741,6 +744,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       profBio: prof ? prof.bio : '', profAvatar: window.__R((prof && (prof.img || prof.avatar)) || 'assets/av-mia.webp'),
       profPosts: prof ? prof.posts : '', profFollowers: prof ? prof.followers : '',
       profFollowing: prof ? prof.following : '', profJoined: prof ? prof.joined : '',
+      profEmail: prof ? prof.email : '', profAccountAge: prof ? prof.accountAge : '',
       profPostList: prof ? feedPosts.filter(p => p.handle === prof.handle).map(p => ({
         id: p.id, text: p.text || '[photo]', ago: p.ago, likes: p.likes, replies: p.replies,
         hasPhoto: !!p.photo, isGarden: !!p.garden, isCraft: !!p.craft, dated: p.dated || '',
@@ -752,7 +756,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       postAgo: openPost ? openPost.ago : '', postText: openPost ? (openPost.text || '[photo]') : '',
       postAvatar: window.__R((openPost && (openPost.avatar || av(openPost.handle))) || 'assets/av-nicole.webp'),
       postHasPhoto: !!(openPost && (openPost.photo || openPost.garden || openPost.craft)), postDated: (openPost && openPost.dated) || '',
-      postOpenProfile: () => { if (!openPost) return; this.setState({ socProfileKey: openPost.handle, socPostId: null, socTab: 'feed' }); if (openPost.handle === '@n.krueger') { this.setState({ sawFake: true }); this.maybeCompare('fake'); } if (openPost.handle === '@nicole_kruger' && !st.reported) { this.setState({ sawReal: true }); this.maybeCompare('real'); } },
+       postOpenProfile: () => { if (!openPost) return; this.setState({ socProfileKey: openPost.handle, socPostId: null, socInfoOpen: false, socTab: 'feed' }); if (openPost.handle === '@n.krueger') { this.setState({ sawFake: true }); this.maybeCompare('fake'); } if (openPost.handle === '@nicole_kruger' && !st.reported) { this.setState({ sawReal: true }); this.maybeCompare('real'); } },
       postIsGarden: !!(openPost && openPost.garden), postIsCraft: !!(openPost && openPost.craft), postIsParty: !!(openPost && openPost.photo),
       postOpenGarden: () => this.setState({ feedImg: 'garden' }), postOpenCraft: () => this.setState({ feedImg: 'craft' }), postOpenParty: () => this.setState({ feedImg: 'party' }),
       postLikes: openPost ? openPost.likes : 0,
@@ -761,7 +765,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         name: nm(r.handle), avatar: r.avatar || av(r.handle),
         ago: ['4h', '3h', '2h'][i] || '1h', likes: [2, 1, 4, 3][i] || 1
       })),
-      backToFeed: () => this.setState({ socProfileKey: null, socPostId: null, socTab: 'feed' }),
+       backToFeed: () => this.setState({ socProfileKey: null, socPostId: null, socInfoOpen: false, socTab: 'feed' }),
       tabAiBg: st.tool === 'ai' ? C.accentSoft : 'transparent',
       aiDead: false, aiOp: 1,
       playerChecks, aiChecks,
@@ -785,7 +789,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         open: () => {
           if (!h.goto) return;
           this._scrollToPost = h.goto;
-          this.setState({ dev: 'social', tool: 'search', socTab: 'feed', socProfileKey: null, socPostId: h.goto, mediaOpen: null });
+           this.setState({ dev: 'social', tool: 'search', socTab: 'feed', socProfileKey: null, socPostId: h.goto, socInfoOpen: false, mediaOpen: null });
         }
       })),
       hitCount: pickHits.length === 1 ? '1 match found.' : pickHits.length + ' matches found.',
@@ -1103,9 +1107,9 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         recOpen: false, recPhase: 'intro', recIdx: 0, recBusy: false, recLevel: 0, recTrying: false, recAttempts: 0, recTrying: false, recAttempts: 0,
         minCheck: 0, minReact: 0, postsWith: 0, postsWithout: 0, dmChances: 0, endStep: 1, gamePhase: 'playing',
         apology: false, reported: false, clipBack: false, phase: 'evening', sharedCount: 3,
-        profMenuOpen: false, reportReasonOpen: false, reportToast: false, reportedAccounts: {}, reportedFake: false,
+        profMenuOpen: false, reportReasonOpen: false, reportToast: false, reportedAccounts: {}, reportedFake: false, socInfoOpen: false,
         actedToday: false, openedGroup: false, ignored: false, dmAnsweredToday: false, phoneOpenedToday: false,
-        shareTick: 0, shareHalved: false, fading: false, tool: 'player', socTab: 'feed', socProfileKey: null, socPostId: null, mediaOpen: null, seen: {}, zoom: false, dev: null, threadOpen: null, galleryNew: false, chatFlash: false,
+        shareTick: 0, shareHalved: false, fading: false, tool: 'player', socTab: 'feed', socProfileKey: null, socPostId: null, socInfoOpen: false, mediaOpen: null, seen: {}, zoom: false, dev: null, threadOpen: null, galleryNew: false, chatFlash: false,
         writeIn: false, writeText: '', writeStatus: null, chatDraft: '', chatBusy: false, actionsOpen: false, chatGroupLeft: 4, chatDmLeft: 3, llmUsedReplies: [], llmReplySeed: 0,
         dragItem: null, pickIdx: null, pickerOpen: false, pickerMode: 'search', searched: {}, aiPickIdx: null, aiStage: 'idle', aiStep: 0, actionLog: [], reactionTimes: [],
         final: { post: null, fwd: null, tell: null }, sam: 50, group: 50, pushIdx: 0, flashSam: false, flashGroup: false, samDead: false,

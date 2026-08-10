@@ -30,7 +30,7 @@ class Component extends DCLogic {
     done: {}, used: {}, loading: null, loadingPct: 0, credibility: 0,
     credibilityLost: false, actedToday: false, openedGroup: false, ignored: false,
     dmAnsweredToday: false, phoneOpenedToday: false, shareTick: 0, shareHalved: false, fading: false,
-    tool: 'player', socTab: 'feed', socProfileKey: null, socPostId: null, mediaOpen: null, seen: {}, zoom: false, dev: null, threadOpen: null, galleryNew: false, chatFlash: false,
+    tool: 'player', socTab: 'feed', socProfileKey: null, socPostId: null, socInfoOpen: false, mediaOpen: null, seen: {}, zoom: false, dev: null, threadOpen: null, galleryNew: false, chatFlash: false,
     lastRead: { group: 0, dm: 0 }, newMarkAt: null, showNewPill: false,
     writeIn: false, writeText: '', writeStatus: null, chatDraft: '', chatBusy: false, llmStatus: '', actionsOpen: false, chatGroupLeft: 4, chatDmLeft: 3, llmUsedReplies: [], llmReplySeed: 0,
     dragItem: null, pickIdx: null, pickerOpen: false, pickerMode: 'search', searched: {}, aiPickIdx: null, aiStage: 'idle', aiStep: 0, actionLog: [], reactionTimes: [],
