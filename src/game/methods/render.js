@@ -273,9 +273,6 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     }
     if (st.day >= 3) {
       feedPosts = [
-        P('f1', '@n.krueger', '12m', NAME + ' doesn' + "'" + 't even like Spiderman lol', { likes: 47, replies: 14, thread: [
-          R('@nele.b', '😭😭'), R('@hanna.k', 'she' + "'" + 's not wrong'), R('@lea.m', '?? this doesn' + "'" + 't sound like her')
-        ] }),
         P('f5', '@n.krueger', '4h', 'Spending the afternoon in the garden really underscores the importance of slowing down 🌿 At its core, it' + "'" + 's about finding small moments of calm in a busy week.', { garden: true, likes: 61, replies: 8 }),
         P('f6', '@n.krueger', '6h', 'Delving into a little creative project this evening ✨ There' + "'" + 's something pivotal about making things with your own hands. A key takeaway: patience really is everything 💛', { craft: true, likes: 55, replies: 12 }),
         P('d3a', '@hanna.k', '30m', 'so she made a second account. cool cool', { likes: 29, replies: 8, thread: [
