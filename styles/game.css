@@ -1704,8 +1704,8 @@ video.g-notebook-got-media {
 
 .g-title-album-icon {
   display: block;
-  width: 52px;
-  height: 52px;
+  width: 72px;
+  height: 72px;
   object-fit: contain;
   filter: drop-shadow(0 6px 14px rgba(17, 17, 17, .12));
 }
