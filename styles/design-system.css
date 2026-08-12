@@ -435,10 +435,11 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--c-accent);
   color: var(--c-frame);
   border: 0;
+  border-radius: 10px;
   padding: 15px 22px;
   font-size: 16px;
   font-weight: 700;
-  text-align: left;
+  text-align: center;
 }
 
 .g-btn-footer-row {
@@ -456,10 +457,11 @@ h1, h2, h3, h4, h5, h6 {
   background: transparent;
   color: var(--c-ink);
   border: 1px solid var(--c-line);
+  border-radius: 10px;
   padding: 15px 22px;
   font-size: 16px;
   font-weight: 700;
-  text-align: left;
+  text-align: center;
 }
 
 .g-btn-footer-back:hover {

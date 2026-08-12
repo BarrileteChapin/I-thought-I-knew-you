@@ -139,12 +139,15 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
   moves(s) {
     const w = n => n === 0 ? 'never' : n === 1 ? 'once' : n === 2 ? 'twice' : 'most times';
-    return [
-      { label: 'Stopped before reacting', value: w(s.stopped) },
-      { label: 'Looked at who was posting', value: w(s.sift.investigate) },
-      { label: 'Asked someone who was there', value: w(s.sift.coverage) },
-      { label: 'Found the original', value: w(s.sift.trace) }
+    const counts = [
+      s.stopped || 0,
+      (s.sift && s.sift.investigate) || 0,
+      (s.sift && s.sift.coverage) || 0,
+      (s.sift && s.sift.trace) || 0
     ];
+    return this.notebookMilCells().map((cell, i) => Object.assign({}, cell, {
+      value: w(counts[i])
+    }));
   },
 
   endingDefs() {
