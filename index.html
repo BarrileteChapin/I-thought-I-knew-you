@@ -7,6 +7,7 @@
   <title>I Thought I Knew You</title>
   <link rel="stylesheet" href="./styles/design-system.css">
   <link rel="stylesheet" href="./styles/game.css">
+  <style>x-dc{display:none!important}</style>
   <script src="./assets/vendor/react.production.min.js"></script>
   <script src="./assets/vendor/react-dom.production.min.js"></script>
   <script>
@@ -35,6 +36,8 @@
   <script src="./src/game/methods/relationships.js"></script>
   <script src="./src/game/methods/actions.js"></script>
   <script src="./src/game/methods/days.js"></script>
+  <script src="./src/game/methods/notebook.js"></script>
+  <script src="./src/game/methods/relation-map.js"></script>
   <script src="./src/game/methods/ending.js"></script>
   <script src="./src/game/methods/render.js"></script>
   <script src="./src/data/load-game-data.js"></script>
@@ -57,7 +60,9 @@
       </filter>
     </defs>
   </svg>
-  <div id="app-loading" role="status">Loading...</div>
+  <div id="app-loading" role="status" aria-label="Loading">
+    <span class="g-app-loading-spinner" aria-hidden="true"></span>
+  </div>
   <script>
     (async function bootOrganizedGame() {
       const loading = document.getElementById('app-loading');
@@ -66,8 +71,17 @@
         if (loading) {
           loading.textContent = message;
           loading.style.color = getComputedStyle(document.documentElement).getPropertyValue('--c-danger-dark').trim() || '#8A1C1C';
+          loading.style.fontFamily = getComputedStyle(document.documentElement).getPropertyValue('--font-body').trim() || 'system-ui, sans-serif';
+          loading.style.fontSize = '16px';
+          loading.style.fontWeight = '600';
+          loading.style.textAlign = 'center';
+          loading.style.padding = '24px';
         }
         console.error('[game] ' + message);
+      }
+
+      function dismissLoading() {
+        if (loading && loading.parentNode) loading.remove();
       }
 
       async function readSource(path) {
@@ -85,6 +99,7 @@
         ]);
 
         const root = document.createElement('x-dc');
+        root.setAttribute('aria-hidden', 'true');
         root.innerHTML = template;
 
         const logicScript = document.createElement('script');
@@ -112,11 +127,28 @@
         logicScript.textContent = logic;
         root.appendChild(logicScript);
 
-        document.body.replaceChildren(root);
+        // Keep #app-loading on top until React has painted a real screen.
+        // Replacing the body early lets the raw template (videos included) flash.
+        document.body.appendChild(root);
 
         const runtime = document.createElement('script');
         runtime.src = './src/runtime/dc-runtime.js';
         runtime.onerror = () => setError('Could not load the React component runtime.');
+        runtime.onload = () => {
+          let settled = false;
+          const finish = () => {
+            if (settled) return;
+            settled = true;
+            obs.disconnect();
+            requestAnimationFrame(dismissLoading);
+          };
+          const obs = new MutationObserver(() => {
+            if (document.querySelector('.g-title, .g-name-entry, .g-daycard, .g-lp-frame .g-btn')) finish();
+          });
+          obs.observe(document.body, { childList: true, subtree: true });
+          if (document.querySelector('.g-title, .g-name-entry, .g-daycard, .g-lp-frame .g-btn')) finish();
+          setTimeout(finish, 8000);
+        };
         document.head.appendChild(runtime);
       } catch (error) {
         setError('Could not load the game source: ' + error.message);

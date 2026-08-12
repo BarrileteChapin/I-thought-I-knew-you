@@ -1,7 +1,19 @@
 <div style="display:none;" aria-hidden="true"><img id="__av-nicole" src="assets/av-nicole.webp" alt=""><img id="__av-mia" src="assets/av-mia.webp" alt=""><img id="__av-hanna" src="assets/av-hanna.webp" alt=""><img id="__av-lea" src="assets/av-lea.webp" alt=""><img id="__av-nele" src="assets/av-nele.webp" alt=""><img id="__av-benito" src="assets/av-benito.webp" alt=""></div>
 
-<div style="width:100%;height:100dvh;max-height:100dvh;overflow:hidden;background:var(--c-canvas);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--c-ink);">
-<div style="position:relative;flex:0 0 auto;width:var(--frame-w);max-width:100vw;height:var(--frame-h);max-height:100dvh;background:var(--c-frame);border-radius:var(--r-frame);overflow:hidden;display:flex;flex-direction:column;">
+<div class="g-lp {{ titleLpMod }}" style="width:100%;height:100dvh;max-height:100dvh;overflow:hidden;background:var(--c-canvas);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--c-ink);">
+
+<sc-if value="{{ showTitleCast }}" hint-placeholder-val="{{ false }}">
+<div class="g-lp-cast" aria-hidden="true">
+  <img class="g-lp-cast-face g-lp-cast-nicole" src="assets/av-nicole.webp" alt="">
+  <img class="g-lp-cast-face g-lp-cast-hanna" src="assets/av-hanna.webp" alt="">
+  <img class="g-lp-cast-face g-lp-cast-mia" src="assets/av-mia.webp" alt="">
+  <img class="g-lp-cast-face g-lp-cast-lea" src="assets/av-lea.webp" alt="">
+  <img class="g-lp-cast-face g-lp-cast-benito" src="assets/av-benito.webp" alt="">
+  <img class="g-lp-cast-face g-lp-cast-nele" src="assets/av-nele.webp" alt="">
+</div>
+</sc-if>
+
+<div class="g-lp-frame" style="position:relative;z-index:1;flex:0 0 auto;width:var(--frame-w);max-width:100vw;height:var(--frame-h);max-height:100dvh;background:var(--c-frame);border-radius:var(--r-frame);overflow:hidden;display:flex;flex-direction:column;">
 
 <sc-if value="{{ isCinematic }}" hint-placeholder-val="{{ false }}">
 <div style="width:100%;height:100%;position:relative;overflow:hidden;background:#000000;">
@@ -13,7 +25,7 @@
 
   <div style="position:absolute;inset:0;z-index:13;pointer-events:none;background:radial-gradient(ellipse at 50% 42%,transparent 42%,rgba(15,8,6,.4) 100%),linear-gradient(rgba(255,178,120,.05),rgba(10,8,20,.14));"></div>
 
-  <sc-if value="{{ cinePlaying }}" hint-placeholder-val="{{ true }}">
+  <sc-if value="{{ cinePlaying }}" hint-placeholder-val="{{ false }}">
 
     <div style="position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:{{ cineImgHeight }};overflow:hidden;background:#000000;">
       <img src="{{ cineImgSrc }}" alt="" style="width:100%;height:100%;object-fit:cover;object-position:{{ cineObjX }} {{ cineObjY }};opacity:{{ cineImgOp }};filter:blur({{ cineImgBlur }});transform:translateX({{ cinePanX }}) scale({{ cineScale }});transition:transform {{ cineTransDur }} linear, opacity .45s ease, filter .45s ease;">
@@ -25,8 +37,10 @@
       </div>
     </div>
 
-    <button sc-camel-on-click="{{ toggleCineMute }}" title="mute" style="position:absolute;left:16px;top:16px;z-index:20;background:rgba(0,0,0,.35);border:0;border-radius:20px;color:var(--c-white);font-size:15px;padding:8px 11px;min-width:38px;min-height:38px;">{{ cineMuteLabel }}</button>
-    <button sc-camel-on-click="{{ skipCinematic }}" style="position:absolute;right:16px;top:16px;z-index:20;background:rgba(0,0,0,.35);border:0;border-radius:20px;color:var(--c-white);font-size:var(--fs-sm);padding:9px 14px;min-height:38px;">Skip</button>
+    <button sc-camel-on-click="{{ toggleCineMute }}" title="{{ cineMuteTitle }}" aria-label="{{ cineMuteTitle }}" style="position:absolute;left:16px;top:16px;z-index:20;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);border:0;border-radius:20px;padding:8px;min-width:38px;min-height:38px;-webkit-tap-highlight-color:transparent;">
+      <img src="{{ cineMuteIcon }}" alt="" width="20" height="20" style="display:block;width:20px;height:20px;" decoding="sync">
+    </button>
+    <button sc-camel-on-click="{{ skipCinematic }}" class="g-skip" style="color:var(--c-white);">Skip</button>
 
   </sc-if>
 
@@ -36,94 +50,150 @@
 </sc-if>
 
 <sc-if value="{{ isTitle }}" hint-placeholder-val="{{ true }}">
-<div style="width:100%;height:100%;overflow-y:auto;padding:64px var(--space-screen-x);">
-  <div style="height:2px;background:var(--c-accent);width:96px;margin-bottom:28px;"></div>
-  <div style="font-size:var(--fs-sm);letter-spacing:.18em;text-transform:uppercase;color:var(--c-muted);margin-bottom:18px;">Four evenings</div>
-  <h1 style="font-size:var(--fs-hero);line-height:1.02;margin:0 0 24px;font-weight:700;letter-spacing:-.02em;color:var(--c-ink);">I Thought<br>I Knew You</h1>
-  <p style="font-size:var(--fs-lead);line-height:1.55;color:var(--c-muted);max-width:46ch;margin:0 0 40px;text-wrap:pretty;">You are fifteen. Your room, your bed, your phone. Nicole is in the class group chat tonight, and she is not going to be fine.</p>
-  <sc-if value="{{ hasSave }}" hint-placeholder-val="{{ false }}">
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:8px;">
-      <img src="{{ savePlayerAvatar }}" alt="" style="display:block;width:56px;height:56px;border-radius:28px;object-fit:cover;flex:0 0 auto;background:var(--c-line-soft);">
-      <div style="font-size:var(--fs-lead);font-weight:700;color:var(--c-ink);">Hi, {{ savePlayerName }}</div>
+<div class="g-title">
+  <div class="g-title-body">
+    <h1 class="g-title-heading">I Thought<br>I Knew You</h1>
+    <p class="g-title-lead"><span class="g-title-lead-text"><sc-for list="{{ titleLeadParts }}" as="p" hint-placeholder-count="1"><sc-if value="{{ p.bold }}" hint-placeholder-val="{{ false }}"><strong class="g-title-lead-em">{{ p.text }}</strong></sc-if><sc-if value="{{ p.notBold }}" hint-placeholder-val="{{ true }}"><span>{{ p.text }}</span></sc-if></sc-for></span><sc-if value="{{ titleCaretOn }}" hint-placeholder-val="{{ true }}"><span class="g-title-caret" aria-hidden="true"></span></sc-if></p>
+    <div class="g-title-actions">
+      <sc-if value="{{ hasSave }}" hint-placeholder-val="{{ false }}">
+        <div class="g-title-save">
+          <img src="{{ savePlayerAvatar }}" alt="" class="g-title-save-av">
+          <div class="g-title-save-name">Hi, {{ savePlayerName }}</div>
+        </div>
+        <div class="g-title-save-progress">{{ saveProgressLabel }}</div>
+        <button sc-camel-on-click="{{ continueGame }}" class="g-btn g-title-start">Continue</button>
+        <div style="margin-top:14px;">
+          <button sc-camel-on-click="{{ startOver }}" class="g-btn g-title-start g-title-start--muted">Start over</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ !hasSave }}" hint-placeholder-val="{{ true }}">
+        <button sc-camel-on-click="{{ start }}" class="g-btn g-title-start">Start</button>
+      </sc-if>
+      <sc-if value="{{ hasUnlockedEnding }}" hint-placeholder-val="{{ false }}">
+        <button sc-camel-on-click="{{ openEndingsGallery }}" class="g-title-album" title="Endings album">
+          <img src="assets/icons/icon-album.png" alt="" class="g-title-album-icon">
+          <span class="g-title-album-label">{{ endingsUnlockedCount }} / {{ endingsTotalCount }}</span>
+        </button>
+      </sc-if>
     </div>
-    <div style="font-size:var(--fs-sm);letter-spacing:.1em;text-transform:uppercase;color:var(--c-accent);margin-bottom:16px;">{{ saveProgressLabel }}</div>
-    <button sc-camel-on-click="{{ continueGame }}" class="g-btn g-btn-primary g-btn-primary-lg">Continue</button>
-    <div style="margin-top:14px;">
-      <button sc-camel-on-click="{{ startOver }}" class="g-btn g-btn-primary-lg" style="background:var(--c-muted);color:var(--c-frame);">Start over</button>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ endingsGalleryOpen }}" hint-placeholder-val="{{ false }}">
+<div class="g-endings-gallery {{ endingsGalleryMod }}">
+  <div class="g-endings-gallery-head">
+    <div style="font-size:var(--fs-sm);letter-spacing:.14em;text-transform:uppercase;color:var(--c-muted);">Collected endings</div>
+    <button sc-camel-on-click="{{ closeEndingsGallery }}" class="g-btn g-btn-ghost">Close</button>
+  </div>
+  <div class="g-endings-gallery-body">
+    <div style="font-size:var(--fs-lead);color:var(--c-ink);margin-bottom:18px;">{{ endingsUnlockedCount }} of {{ endingsTotalCount }} unlocked</div>
+    <div class="g-endings-gallery-grid">
+      <sc-for list="{{ endingGalleryRows }}" as="e" hint-placeholder-count="7">
+        <div class="g-ending-card {{ e.cardMod }}">
+          <div class="g-ending-card-media">
+            <img src="{{ e.image }}" alt="" class="g-ending-card-img">
+          </div>
+          <div class="g-ending-card-copy">
+            <div class="g-ending-card-title">{{ e.title }}</div>
+            <div class="g-ending-card-body">{{ e.body }}</div>
+          </div>
+        </div>
+      </sc-for>
     </div>
-  </sc-if>
-  <sc-if value="{{ !hasSave }}" hint-placeholder-val="{{ true }}">
-    <button sc-camel-on-click="{{ start }}" class="g-btn g-btn-primary g-btn-primary-lg">Start</button>
-  </sc-if>
+  </div>
 </div>
 </sc-if>
 
 <sc-if value="{{ isNameEntry }}" hint-placeholder-val="{{ false }}">
-<div style="width:100%;height:100%;overflow-y:auto;overscroll-behavior:contain;padding:34px var(--space-screen-x) 24px;">
-  <div style="font-size:var(--fs-lead);line-height:1.5;color:var(--c-ink);max-width:46ch;margin-bottom:26px;animation:fadeup var(--dur-fade) var(--ease);">What is your name?</div>
-  <input value="{{ nameDraft }}" sc-camel-on-change="{{ onNameChange }}" sc-camel-on-key-down="{{ onNameKey }}" ref="{{ nameRef }}" sc-camel-max-length="16" style="width:100%;max-width:360px;background:transparent;border:0;border-bottom:2px solid var(--c-line);color:var(--c-ink);font-family:var(--font-body);font-size:var(--fs-title);padding:8px 0 12px;outline:none;margin-bottom:26px;">
-  <div style="font-size:var(--fs-lead);line-height:1.5;color:var(--c-ink);margin-bottom:20px;">Pick your avatar</div>
-  <div style="display:flex;gap:20px;justify-content:center;margin-bottom:30px;">
-    <button sc-camel-on-click="{{ pickFemale }}" style="background:transparent;border:0;padding:0;border-radius:var(--r-full);position:relative;top:{{ femaleLift }};transition:top var(--dur-instant) var(--ease);">
-      <img src="assets/av-player-female.webp" alt="" style="display:block;width:108px;height:108px;border-radius:54px;object-fit:cover;box-shadow:{{ femaleRing }};">
-    </button>
-    <button sc-camel-on-click="{{ pickMale }}" style="background:transparent;border:0;padding:0;border-radius:var(--r-full);position:relative;top:{{ maleLift }};transition:top var(--dur-instant) var(--ease);">
-      <img src="assets/av-player-male.webp" alt="" style="display:block;width:108px;height:108px;border-radius:54px;object-fit:cover;box-shadow:{{ maleRing }};">
-    </button>
+<div class="g-name-entry">
+  <div class="g-name-entry-body">
+    <div class="g-name-entry-center">
+      <div style="font-size:var(--fs-lead);line-height:1.5;color:var(--c-ink);margin-bottom:26px;animation:fadeup var(--dur-fade) var(--ease);">What is your name?</div>
+      <input value="{{ nameDraft }}" sc-camel-on-change="{{ onNameChange }}" sc-camel-on-key-down="{{ onNameKey }}" ref="{{ nameRef }}" sc-camel-max-length="16" style="width:100%;background:transparent;border:0;border-bottom:2px solid var(--c-line);color:var(--c-ink);font-family:var(--font-body);font-size:var(--fs-title);padding:8px 0 12px;outline:none;">
+    </div>
   </div>
-  <div>
-    <button sc-camel-on-click="{{ submitName }}" disabled="{{ noAvatar }}" class="g-btn g-btn-primary" style="opacity:{{ enterOp }};">Enter</button>
+  <div class="g-name-entry-footer">
+    <button sc-camel-on-click="{{ confirmName }}" class="g-btn g-btn-primary g-btn-screen">Continue</button>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isAvatarEntry }}" hint-placeholder-val="{{ false }}">
+<div class="g-name-entry">
+  <div class="g-name-entry-body">
+    <div class="g-name-entry-center">
+      <div style="font-size:var(--fs-lead);line-height:1.5;color:var(--c-ink);margin-bottom:28px;text-align:center;animation:fadeup var(--dur-fade) var(--ease);">Pick your avatar</div>
+      <div style="display:flex;gap:24px;justify-content:center;align-items:center;min-height:148px;">
+        <button sc-camel-on-click="{{ pickFemale }}" style="background:transparent;border:0;padding:0;border-radius:var(--r-full);position:relative;top:{{ femaleLift }};transition:top var(--dur-instant) var(--ease);">
+          <img src="assets/av-player-female.webp" alt="" style="display:block;width:{{ femaleAvSize }};height:{{ femaleAvSize }};border-radius:{{ femaleAvRadius }};object-fit:cover;box-shadow:{{ femaleRing }};transition:width var(--dur) var(--ease),height var(--dur) var(--ease),border-radius var(--dur) var(--ease),box-shadow var(--dur) var(--ease);">
+        </button>
+        <button sc-camel-on-click="{{ pickMale }}" style="background:transparent;border:0;padding:0;border-radius:var(--r-full);position:relative;top:{{ maleLift }};transition:top var(--dur-instant) var(--ease);">
+          <img src="assets/av-player-male.webp" alt="" style="display:block;width:{{ maleAvSize }};height:{{ maleAvSize }};border-radius:{{ maleAvRadius }};object-fit:cover;box-shadow:{{ maleRing }};transition:width var(--dur) var(--ease),height var(--dur) var(--ease),border-radius var(--dur) var(--ease),box-shadow var(--dur) var(--ease);">
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="g-name-entry-footer">
+    <button sc-camel-on-click="{{ submitAvatar }}" disabled="{{ noAvatar }}" class="g-btn g-btn-primary g-btn-screen" style="opacity:{{ enterOp }};">Enter</button>
   </div>
 </div>
 </sc-if>
 
 <sc-if value="{{ isHowTo }}" hint-placeholder-val="{{ false }}">
-<div style="width:100%;height:100%;overflow-y:auto;padding:34px var(--space-screen-x) 24px;animation:fadeup var(--dur-fade) var(--ease);">
-  <div style="font-size:var(--fs-caption);letter-spacing:.16em;text-transform:uppercase;color:var(--c-ink-faint);margin-bottom:18px;">How to play</div>
-  <div style="font-size:var(--fs-lead);line-height:1.5;color:var(--c-ink);max-width:46ch;margin-bottom:16px;text-wrap:pretty;">The story plays out over four evenings, and you spend every one of them in your room.</div>
-  <div style="font-size:var(--fs-sm);letter-spacing:.14em;text-transform:uppercase;color:var(--c-accent);margin:24px 0 16px;">Things you have</div>
-  <div style="font-size:var(--fs-lead);line-height:1.5;color:var(--c-ink);max-width:46ch;margin-bottom:16px;text-wrap:pretty;">You have your phone, which is where the class group chat is, and it's where everything reaches you first.</div>
-  <div style="font-size:var(--fs-lead);line-height:1.5;color:var(--c-ink);max-width:46ch;margin-bottom:16px;text-wrap:pretty;">Your phone also holds everything anyone has sent you, and a couple of apps for looking things up and comparing them, although those are slow and the evening keeps moving while you sit there.</div>
-  <div style="font-size:var(--fs-lead);line-height:1.5;color:var(--c-ink);max-width:46ch;margin-bottom:16px;text-wrap:pretty;">And you have your bed, which ends the day whenever you decide you've done enough.</div>
-  <div style="font-size:17px;line-height:1.5;color:var(--c-muted);max-width:46ch;margin:22px 0 26px;text-wrap:pretty;">What you do with each evening is up to you.</div>
-  <button sc-camel-on-click="{{ leaveHowTo }}" class="g-btn g-btn-primary">Next</button>
-  <div style="margin-top:14px;">
-    <button sc-camel-on-click="{{ skipIntro }}" class="g-btn g-btn-ghost">Skip intro</button>
+<div class="g-screen-flow" style="animation:fadeup var(--dur-fade) var(--ease);">
+  <button sc-camel-on-click="{{ skipIntro }}" class="g-skip">Skip intro</button>
+  <div class="g-screen-flow-body">
+    <div style="font-size:var(--fs-lead);letter-spacing:.16em;text-transform:uppercase;color:var(--c-accent);margin-bottom:18px;">How to play</div>
+    <div style="font-size:var(--fs-lead);line-height:1.5;color:var(--c-ink);max-width:46ch;margin-bottom:16px;text-wrap:pretty;">The story lasts four evenings. You stay in your room.</div>
+    <div style="font-size:var(--fs-lead);line-height:1.5;color:var(--c-ink);max-width:46ch;margin-bottom:16px;text-wrap:pretty;">Use your phone to read messages and check files. Looking things up takes time, and the evening keeps going.</div>
+    <div style="font-size:var(--fs-lead);line-height:1.5;color:var(--c-ink);max-width:46ch;margin-bottom:16px;text-wrap:pretty;">Go to bed when you want to end the day. Your diary opens before the next day starts.</div>
+    <div style="font-size:17px;line-height:1.5;color:var(--c-muted);max-width:46ch;text-wrap:pretty;">You choose what to do each evening.</div>
+  </div>
+  <div class="g-screen-flow-footer">
+    <button sc-camel-on-click="{{ leaveHowTo }}" class="g-btn g-btn-primary g-btn-screen">Next</button>
   </div>
 </div>
 </sc-if>
 
 <sc-if value="{{ isIntroText }}" hint-placeholder-val="{{ false }}">
-<div style="width:100%;height:100%;overflow-y:auto;padding:34px var(--space-screen-x) 24px;display:flex;flex-direction:column;gap:16px;">
-  <sc-for list="{{ introLines }}" as="l" hint-placeholder-count="1">
-    <div style="font-size:var(--fs-lead);line-height:1.5;color:var(--c-ink);max-width:46ch;animation:fadeup var(--dur-slow) var(--ease);text-wrap:pretty;">{{ l.text }}</div>
-  </sc-for>
+<div class="g-screen-flow">
+  <button sc-camel-on-click="{{ skipIntro }}" class="g-skip">Skip intro</button>
+  <div class="g-screen-flow-body" style="display:flex;flex-direction:column;gap:16px;">
+    <sc-for list="{{ introLines }}" as="l" hint-placeholder-count="1">
+      <div style="font-size:var(--fs-lead);line-height:1.5;color:var(--c-ink);max-width:46ch;animation:fadeup var(--dur-slow) var(--ease);text-wrap:pretty;">{{ l.text }}</div>
+    </sc-for>
+  </div>
   <sc-if value="{{ introReady }}" hint-placeholder-val="{{ false }}">
-    <div style="animation:fadeup var(--dur-fade) var(--ease);">
-      <button sc-camel-on-click="{{ advanceIntro }}" class="g-btn g-btn-primary">Next</button>
+    <div class="g-screen-flow-footer">
+      <button sc-camel-on-click="{{ advanceIntro }}" class="g-btn g-btn-primary g-btn-screen" style="animation:fadeup var(--dur-fade) var(--ease);">Next</button>
     </div>
   </sc-if>
-  <div style="margin-top:8px;">
-    <button sc-camel-on-click="{{ skipIntro }}" class="g-btn g-btn-ghost">Skip intro</button>
-  </div>
 </div>
 </sc-if>
 
 <sc-if value="{{ isDayCard }}" hint-placeholder-val="{{ false }}">
-<div style="width:100%;height:100%;overflow-y:auto;padding:80px var(--space-screen-x);animation:fadeup var(--dur-fade) var(--ease);">
-  <div style="height:2px;background:var(--c-accent);width:72px;margin-bottom:26px;"></div>
-  <div style="font-size:var(--fs-sm);letter-spacing:.2em;text-transform:uppercase;color:var(--c-muted);margin-bottom:14px;">{{ dayCardKicker }}</div>
-  <div style="font-size:var(--fs-display);line-height:1.05;font-weight:700;letter-spacing:-.02em;color:var(--c-ink);margin-bottom:18px;">{{ dayCardDay }}</div>
-  <div style="font-size:20px;line-height:1.5;color:var(--c-muted);max-width:34ch;">{{ dayCardWhen }}</div>
+<div class="g-daycard">
+  <div class="g-daycard-kicker">{{ dayCardKicker }}</div>
+  <div class="g-daycard-day">{{ dayCardDay }}</div>
+  <div class="g-daycard-when">{{ dayCardWhen }}</div>
+  <div class="g-daycard-marks" aria-hidden="true">
+    <sc-for list="{{ dayCardMarks }}" as="m" hint-placeholder-count="5">
+      <span class="g-daycard-mark {{ m.mod }}"></span>
+    </sc-for>
+  </div>
 </div>
 </sc-if>
 
 <sc-if value="{{ isIntroChat }}" hint-placeholder-val="{{ false }}">
-<div ref="{{ introRef }}" style="width:100%;height:100%;overflow-y:auto;padding:30px var(--space-screen-x);display:flex;flex-direction:column;">
+<div ref="{{ introRef }}" style="position:relative;width:100%;height:100%;overflow-y:auto;padding:30px var(--space-screen-x);display:flex;flex-direction:column;">
   <div style="border:2px solid var(--c-line);background:var(--c-white);display:flex;flex-direction:column;">
-    <div style="background:var(--c-panel);padding:14px 16px;">
-      <div style="font-size:17px;font-weight:600;color:var(--c-ink);">10b 🍕</div>
-      <div style="font-size:var(--fs-caption);color:var(--c-muted);">28 members</div>
+    <div style="background:var(--c-panel);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+      <div>
+        <div style="font-size:17px;font-weight:600;color:var(--c-ink);">10b 🍕</div>
+        <div style="font-size:var(--fs-caption);color:var(--c-muted);">28 members</div>
+      </div>
+      <button sc-camel-on-click="{{ skipIntro }}" class="g-skip g-skip--inline">Skip intro</button>
     </div>
     <div style="flex:0 0 auto;padding:16px 14px;display:flex;flex-direction:column;gap:10px;">
       <sc-for list="{{ introMsgs }}" as="m" hint-placeholder-count="4">
@@ -165,9 +235,6 @@
       </sc-if>
     </div>
   </div>
-  <div style="margin-top:14px;">
-    <button sc-camel-on-click="{{ skipIntro }}" class="g-btn g-btn-ghost">Skip intro</button>
-  </div>
 </div>
 </sc-if>
 
@@ -195,7 +262,6 @@
             <div style="position:relative;font-size:var(--fs-sm);line-height:1.5;color:var(--c-ink-strong);">How much Nicole trusts you.</div>
             <div style="position:relative;font-size:var(--fs-sm);line-height:1.5;color:var(--c-ink-strong);margin-top:10px;">The bar rises when you answer her, believe her, or stand up for her where other people can see it. It falls when you leave her on read, forward things about her, or stay quiet while the class talks.</div>
             <div style="position:relative;font-size:var(--fs-sm);line-height:1.5;color:var(--c-ink-strong);margin-top:10px;">The lower it gets, the slower and shorter her replies get. If it empties, she stops answering you — and that doesn't come back.</div>
-            <div style="position:relative;font-size:var(--fs-caption);line-height:1.5;color:var(--c-ink-dim);margin-top:10px;">Checking things never moves either bar.</div>
           </div>
         </sc-if>
       </div>
@@ -213,7 +279,6 @@
             <div style="position:relative;font-size:var(--fs-sm);line-height:1.5;color:var(--c-ink-strong);">What the class thinks of you.</div>
             <div style="position:relative;font-size:var(--fs-sm);line-height:1.5;color:var(--c-ink-strong);margin-top:10px;">The bar rises when you go along with everyone, and it rises most when you say something and can back it up. It falls when you contradict the group with nothing to show — after that, people stop taking your word for anything.</div>
             <div style="position:relative;font-size:var(--fs-sm);line-height:1.5;color:var(--c-ink-strong);margin-top:10px;">The lower it gets, the more they push back at you and leave you out. The higher it gets, the more they assume you're on their side.</div>
-            <div style="position:relative;font-size:var(--fs-caption);line-height:1.5;color:var(--c-ink-dim);margin-top:10px;">Checking things never moves either bar.</div>
           </div>
         </sc-if>
       </div>
@@ -222,9 +287,15 @@
   </div>
 
   <div sc-camel-on-click="{{ tipOff }}" style="position:relative;flex:1 1 auto;min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;background:var(--c-frame);transform-origin:20% 52%;transform:scale({{ sceneScale }});transition:transform .8s cubic-bezier(.16,.8,.24,1);">
-    <div style="position:relative;width:100%;">
+    <sc-if value="{{ roomBgLoading }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:8;display:flex;align-items:center;justify-content:center;background:var(--c-frame);pointer-events:none;">
+        <span class="g-app-loading-spinner" aria-hidden="true"></span>
+      </div>
+    </sc-if>
+    <div style="position:relative;width:100%;opacity:{{ roomBgReadyOp }};transition:opacity .25s ease;">
       <img src="{{ roomBg }}" alt="" style="display:block;width:100%;height:auto;pointer-events:none;">
 
+      <sc-if value="{{ roomBgReady }}" hint-placeholder-val="{{ false }}">
       <sc-if value="{{ isEveningRoom }}" hint-placeholder-val="{{ true }}">
         <sc-if value="{{ roomHotspotsOpen }}" hint-placeholder-val="{{ true }}">
           <div style="position:absolute;left:var(--hot-bed-l);top:var(--hot-bed-t);width:var(--hot-bed-w);aspect-ratio:1;border-radius:var(--r-full);background:var(--hot-glow);pointer-events:none;"></div>
@@ -237,6 +308,9 @@
             <span style="position:absolute;right:16px;top:16px;transform:translateX(-50%);min-width:22px;height:22px;border-radius:11px;background:var(--c-accent);color:var(--c-white);font-size:var(--fs-caption);font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 6px;pointer-events:none;animation:pulse 2.2s ease-in-out infinite;">{{ unread }}</span>
           </sc-if>
         </button>
+
+        <div style="position:absolute;left:var(--hot-nb-l);top:var(--hot-nb-t);width:var(--hot-nb-w);aspect-ratio:1;border-radius:var(--r-full);background:var(--hot-glow);pointer-events:none;"></div>
+        <button sc-camel-on-click="{{ openNotebook }}" title="notebook" style-after="content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:100%;height:100%;min-width:88px;min-height:88px;" style="z-index:6;position:absolute;left:var(--hot-nb-l);top:var(--hot-nb-t);width:var(--hot-nb-w);aspect-ratio:1;border-radius:var(--r-full);background:transparent;border:0;padding:0;"></button>
       </sc-if>
 
       <sc-if value="{{ isMorningRoom }}" hint-placeholder-val="{{ false }}">
@@ -251,6 +325,10 @@
             <span style="position:absolute;right:16px;top:16px;transform:translateX(-50%);min-width:22px;height:22px;border-radius:11px;background:var(--c-accent);color:var(--c-white);font-size:var(--fs-caption);font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 6px;pointer-events:none;animation:pulse 2.2s ease-in-out infinite;">{{ unread }}</span>
           </sc-if>
         </button>
+
+        <div style="position:absolute;left:var(--hot-nb-am-l);top:var(--hot-nb-am-t);width:var(--hot-nb-am-w);aspect-ratio:1;border-radius:var(--r-full);background:var(--hot-glow);pointer-events:none;"></div>
+        <button sc-camel-on-click="{{ openNotebook }}" title="notebook" style-after="content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:100%;height:100%;min-width:88px;min-height:88px;" style="z-index:6;position:absolute;left:var(--hot-nb-am-l);top:var(--hot-nb-am-t);width:var(--hot-nb-am-w);aspect-ratio:1;border-radius:var(--r-full);background:transparent;border:0;padding:0;"></button>
+      </sc-if>
       </sc-if>
 
       <sc-if value="{{ msgToastShown }}" hint-placeholder-val="{{ false }}">
@@ -275,15 +353,211 @@
 
   <sc-if value="{{ confirmSleepOpen }}" hint-placeholder-val="{{ false }}">
   <div style="position:absolute;inset:0;z-index:var(--z-modal);background:var(--c-ink-faint);display:flex;align-items:center;justify-content:center;">
-    <div style="position:relative;z-index:calc(var(--z-modal) + 1);background:var(--c-panel);border:2px solid var(--c-ink);padding:34px 36px;width:min(420px,86%);animation:fadeup var(--dur-fast) var(--ease);">
-      <div style="font-size:var(--fs-title);font-weight:600;margin-bottom:24px;color:var(--c-ink);">{{ sleepTitle }}</div>
+    <div style="position:relative;z-index:calc(var(--z-modal) + 1);background:var(--c-panel);padding:34px 36px;width:min(420px,86%);animation:fadeup var(--dur-fast) var(--ease);">
+      <div style="font-size:var(--fs-title);font-weight:600;margin-bottom:24px;color:var(--c-ink);text-align:center;">{{ sleepTitle }}</div>
       <div style="display:flex;gap:12px;">
-        <button sc-camel-on-click="{{ doSleep }}" class="g-btn g-btn-primary g-btn-primary-sm">{{ sleepConfirmLabel }}</button>
-        <button sc-camel-on-click="{{ cancelSleep }}" class="g-btn g-btn-secondary">Not yet</button>
+        <button sc-camel-on-click="{{ doSleep }}" class="g-btn g-btn-primary g-btn-primary-sm" style="flex:1;min-width:0;text-align:center;">{{ sleepConfirmLabel }}</button>
+        <button sc-camel-on-click="{{ cancelSleep }}" class="g-btn g-btn-secondary" style="flex:1;min-width:0;text-align:center;">Not yet</button>
       </div>
     </div>
   </div>
   </sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ notebookOpen }}" hint-placeholder-val="{{ false }}">
+<div class="g-notebook {{ notebookAnimClass }}">
+  <div class="g-notebook-book {{ notebookBookClass }}">
+    <sc-if value="{{ notebookShowShelf }}" hint-placeholder-val="{{ false }}">
+      <div class="g-notebook-shelf">
+        <div class="g-notebook-shelf-grid">
+          <sc-for list="{{ notebookShelfBooks }}" as="book" hint-placeholder-count="3">
+            <button sc-camel-on-click="{{ book.open }}" type="button" class="{{ book.cardClass }}">
+              <span class="g-notebook-shelf-spine" aria-hidden="true"></span>
+              <span class="g-notebook-shelf-face">
+                <span class="g-notebook-shelf-name">{{ book.title }}</span>
+                <span class="g-notebook-shelf-lines" aria-hidden="true">
+                  <span></span>
+                  <span></span>
+                </span>
+              </span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ notebookShowIntro }}" hint-placeholder-val="{{ false }}">
+      <div class="g-notebook-intro">
+        <div class="g-notebook-intro-title">Media and information literacy</div>
+        <p class="g-notebook-intro-p g-notebook-intro-p-lead">Most misleading posts aren’t invented — they’re real things, cut, redated, or shared as someone else.</p>
+        <div class="g-notebook-mil-grid">
+          <sc-for list="{{ notebookMilCells }}" as="cell" hint-placeholder-count="4">
+            <div class="g-notebook-mil-cell">
+              <img src="{{ cell.icon }}" alt="" width="56" height="56" class="g-notebook-mil-icon" decoding="sync">
+              <div class="g-notebook-mil-title">{{ cell.title }}</div>
+              <div class="g-notebook-mil-body">{{ cell.body }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ notebookShowMap }}" hint-placeholder-val="{{ false }}">
+      <div class="g-notebook-map">
+        <div class="g-notebook-map-title">Class album</div>
+        <p class="g-notebook-map-hint">{{ rmapHint }}</p>
+        <div class="g-rmap">
+          <div class="g-rmap-stage">
+          <svg class="g-rmap-edges" viewBox="0 0 100 132" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <marker id="rmap-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="3.5" markerHeight="3.5" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#E01B1B"></path>
+              </marker>
+            </defs>
+            <sc-for list="{{ rmapEdges }}" as="e" hint-placeholder-count="3">
+              <sc-if value="{{ e.notPressure }}" hint-placeholder-val="{{ true }}">
+                <line x1="{{ e.x1 }}" y1="{{ e.y1 }}" x2="{{ e.x2 }}" y2="{{ e.y2 }}" class="{{ e.lineClass }}"></line>
+              </sc-if>
+              <sc-if value="{{ e.isPressure }}" hint-placeholder-val="{{ false }}">
+                <line x1="{{ e.x1 }}" y1="{{ e.y1 }}" x2="{{ e.x2 }}" y2="{{ e.y2 }}" class="{{ e.lineClass }}" marker-end="url(#rmap-arrow)"></line>
+              </sc-if>
+            </sc-for>
+          </svg>
+          <sc-for list="{{ rmapNodes }}" as="n" hint-placeholder-count="6">
+            <button sc-camel-on-click="{{ n.select }}" type="button" class="{{ n.nodeClass }}" style="left:{{ n.left }};top:{{ n.top }};--rmap-ring:{{ n.ring }};" title="{{ n.label }}">
+              <span class="g-rmap-avatar">
+                <sc-if value="{{ n.unlocked }}" hint-placeholder-val="{{ true }}">
+                  <sc-if value="{{ n.offscreen }}" hint-placeholder-val="{{ false }}">
+                    <span class="g-rmap-avatar-empty"></span>
+                  </sc-if>
+                  <sc-if value="{{ n.onscreen }}" hint-placeholder-val="{{ true }}">
+                    <img src="{{ n.avatar }}" alt="" width="96" height="96" decoding="sync">
+                  </sc-if>
+                </sc-if>
+                <sc-if value="{{ n.locked }}" hint-placeholder-val="{{ false }}">
+                  <span class="g-rmap-avatar-q">?</span>
+                </sc-if>
+              </span>
+              <span class="g-rmap-name">{{ n.label }}</span>
+              <sc-if value="{{ n.offscreen }}" hint-placeholder-val="{{ false }}">
+                <span class="g-rmap-sub">{{ n.sub }}</span>
+              </sc-if>
+            </button>
+          </sc-for>
+          </div>
+        </div>
+        <div class="g-rmap-legend">
+          <sc-for list="{{ rmapLegend }}" as="lg" hint-placeholder-count="3">
+            <div class="g-rmap-legend-row">
+              <span class="{{ lg.swatchClass }}"></span>
+              <span>{{ lg.label }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div class="g-rmap-panel">
+          <sc-if value="{{ rmapNoFocus }}" hint-placeholder-val="{{ true }}">
+            <div class="g-rmap-panel-empty">Tap a person to review what you know.</div>
+          </sc-if>
+          <sc-if value="{{ rmapHasFocus }}" hint-placeholder-val="{{ false }}">
+            <div class="g-rmap-panel-title">{{ rmapFocusName }}</div>
+            <sc-if value="{{ rmapFocusEmpty }}" hint-placeholder-val="{{ false }}">
+              <div class="g-rmap-panel-empty">You haven't learned about them yet.</div>
+            </sc-if>
+            <sc-for list="{{ rmapFocusFacts }}" as="f" hint-placeholder-count="2">
+              <div class="g-rmap-panel-fact">{{ f.text }}</div>
+            </sc-for>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ notebookShowDay }}" hint-placeholder-val="{{ false }}">
+    <div class="g-notebook-day">
+    <div class="g-notebook-page g-notebook-page-left">
+      <sc-if value="{{ notebookHasTabs }}" hint-placeholder-val="{{ false }}">
+        <div class="g-notebook-tabs">
+          <sc-for list="{{ notebookTabs }}" as="t" hint-placeholder-count="2">
+            <button sc-camel-on-click="{{ t.go }}" type="button" class="g-notebook-tab" style="color:{{ t.color }};border-bottom-color:{{ t.underline }};">{{ t.label }}</button>
+          </sc-for>
+        </div>
+      </sc-if>
+      <div class="g-notebook-date">
+        <span class="g-notebook-date-day">{{ notebookDateDay }}</span><span class="g-notebook-date-num">, {{ notebookDateNum }}</span>
+      </div>
+      <sc-if value="{{ notebookShowLead }}" hint-placeholder-val="{{ true }}">
+        <div class="g-notebook-note">
+          <img src="assets/circle_handwritten.webp" alt="" width="20" height="20" class="g-notebook-note-mark" decoding="sync">
+          <div class="g-notebook-note-text">{{ notebookLeadText }}</div>
+        </div>
+      </sc-if>
+    </div>
+    <div class="g-notebook-page g-notebook-page-right">
+      <div class="g-notebook-list">
+        <sc-if value="{{ notebookShowReflection }}" hint-placeholder-val="{{ false }}">
+          <div class="g-notebook-section-title">What I did</div>
+        </sc-if>
+        <sc-for list="{{ notebookRows }}" as="q" hint-placeholder-count="2">
+          <div class="g-notebook-row" style="opacity:{{ q.opacity }};">
+            <sc-if value="{{ q.done }}" hint-placeholder-val="{{ false }}">
+              <span class="g-notebook-check is-done">✓</span>
+            </sc-if>
+            <sc-if value="{{ q.notDone }}" hint-placeholder-val="{{ true }}">
+              <span class="g-notebook-check"></span>
+            </sc-if>
+            <div class="g-notebook-row-label">{{ q.label }}</div>
+          </div>
+        </sc-for>
+        <sc-if value="{{ notebookShowReflection }}" hint-placeholder-val="{{ false }}">
+          <div class="g-notebook-section-title g-notebook-section-title-spaced">What I got</div>
+          <sc-for list="{{ notebookGot }}" as="mi" hint-placeholder-count="1">
+            <div class="g-notebook-got">
+              <sc-if value="{{ mi.isVideo }}" hint-placeholder-val="{{ false }}">
+                <video class="g-notebook-got-media" controls="{{ true }}" playsinline="{{ true }}" preload="metadata">
+                  <source src="assets/nicole_day0.webm" type="video/webm">
+                  <source src="assets/nicole_day0.mp4" type="video/mp4">
+                </video>
+              </sc-if>
+              <sc-if value="{{ mi.isImage }}" hint-placeholder-val="{{ false }}">
+                <button sc-camel-on-click="{{ mi.open }}" class="g-notebook-got-img-btn" type="button">
+                  <img src="{{ mi.src }}" alt="" class="g-notebook-got-media">
+                </button>
+              </sc-if>
+              <sc-if value="{{ mi.isAudio }}" hint-placeholder-val="{{ false }}">
+                <button sc-camel-on-click="{{ mi.open }}" class="g-notebook-got-audio" type="button">
+                  <span class="g-notebook-got-audio-play" aria-hidden="true"></span>
+                  <div class="g-notebook-got-audio-bars">
+                    <sc-for list="{{ mi.bars }}" as="b" hint-placeholder-count="18">
+                      <div class="g-notebook-got-audio-bar" style="height:{{ b.h }};"></div>
+                    </sc-for>
+                  </div>
+                  <span class="g-notebook-got-audio-spec">{{ mi.spec }}</span>
+                </button>
+              </sc-if>
+              <div class="g-notebook-got-label">{{ mi.label }}</div>
+              <div class="g-notebook-got-meta">{{ mi.meta }}</div>
+            </div>
+          </sc-for>
+          <div class="g-notebook-section-title g-notebook-section-title-spaced">What I think it is</div>
+          <div class="g-notebook-verdict">
+            <button sc-camel-on-click="{{ nbSetReal }}" class="{{ nbRealClass }}" type="button">
+              <span class="g-notebook-verdict-dot" style="background:{{ nbRealFill }};"></span>Real
+            </button>
+            <button sc-camel-on-click="{{ nbSetFake }}" class="{{ nbFakeClass }}" type="button">
+              <span class="g-notebook-verdict-dot" style="background:{{ nbFakeFill }};"></span>Fake
+            </button>
+            <button sc-camel-on-click="{{ nbSetContext }}" class="{{ nbContextClass }}" type="button">
+              <span class="g-notebook-verdict-dot" style="background:{{ nbContextFill }};"></span>Real, but out of context
+            </button>
+            <button sc-camel-on-click="{{ nbSetUnsure }}" class="{{ nbUnsureClass }}" type="button">
+              <span class="g-notebook-verdict-dot" style="background:{{ nbUnsureFill }};"></span>I don't know yet
+            </button>
+          </div>
+          <textarea value="{{ nbNote }}" sc-camel-on-change="{{ nbNoteChange }}" placeholder="(optional note)" rows="3" class="g-notebook-note-field"></textarea>
+        </sc-if>
+      </div>
+    </div>
+    </div>
+    </sc-if>
+  </div>
+  <button sc-camel-on-click="{{ closeNotebook }}" class="g-btn g-btn-primary g-btn-screen g-notebook-close">{{ notebookContinueLabel }}</button>
 </div>
 </sc-if>
 
@@ -378,7 +652,7 @@
   <div style="flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;">
     <button sc-camel-on-click="{{ closeFeedImg }}" style="width:44px;height:44px;background:transparent;border:0;padding:0;display:flex;align-items:center;justify-content:center;"><img src="assets/icons/icon-close.svg" alt="" width="22" height="22" style="display:block;"></button>
     <div style="font-size:var(--fs-sm);color:var(--c-white-ghost);">{{ feedImgName }}</div>
-    <button sc-camel-on-click="{{ saveFeedImg }}" style="width:44px;height:44px;background:transparent;border:0;padding:0;display:flex;align-items:center;justify-content:center;"><img src="assets/icons/icon-download.svg" alt="" width="20" height="20" style="display:block;"></button>
+    <button sc-camel-on-click="{{ saveFeedImg }}" style="width:44px;height:44px;background:transparent;border:0;padding:0;display:flex;align-items:center;justify-content:center;"><img src="assets/icons/icon-download.svg" alt="" width="22" height="22" style="display:block;"></button>
   </div>
   <div style="flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:auto;padding:0 12px 16px;">
     <sc-if value="{{ feedImgIsGarden }}" hint-placeholder-val="{{ false }}">
@@ -492,7 +766,7 @@
 <sc-if value="{{ shotOpen }}" hint-placeholder-val="{{ false }}">
 <div style="position:absolute;left:3%;right:3%;top:2%;bottom:2%;border-radius:var(--r-phone);z-index:85;background:var(--c-ink-heavy);display:flex;align-items:center;justify-content:center;padding:24px;">
   <div style="width:100%;max-height:92vh;overflow-y:auto;border:2px solid var(--c-line);background:var(--c-white);">
-    <sc-if value="{{ shotIsFake }}" hint-placeholder-val="{{ true }}">
+    <sc-if value="{{ shotIsFake }}" hint-placeholder-val="{{ false }}">
       <img src="assets/screenshot-fake.webp" alt="" style="display:block;width:100%;height:auto;">
       <div style="padding:14px 20px;font-size:var(--fs-sm);color:var(--c-muted);">Sent by Hanna, 4:40pm. screenshot_2847.png</div>
     </sc-if>
@@ -530,22 +804,23 @@
 </sc-if>
 
 <sc-if value="{{ recOpen }}" hint-placeholder-val="{{ false }}">
-<div style="position:absolute;left:3%;right:3%;top:2%;bottom:2%;border-radius:var(--r-phone);z-index:80;background:var(--c-ink-dim);display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;">
+<div style="position:absolute;inset:0;z-index:80;background:var(--c-ink-dim);display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;">
   <div style="width:100%;background:var(--c-white);border-radius:var(--r-lg) 16px 0 0;padding:8px 0 26px;animation:sheetup var(--dur-fast) var(--ease-out);">
     <div style="display:flex;justify-content:center;padding:0 0 14px;"><div style="width:36px;height:5px;border-radius:var(--r-xs);background:var(--c-line);"></div></div>
 
     <sc-if value="{{ recIntro }}" hint-placeholder-val="{{ true }}">
       <div style="padding:0 20px;">
-        <div style="font-size:var(--fs-body);line-height:1.6;color:var(--c-ink);margin-bottom:22px;">This records on your device and never leaves it. Nothing is uploaded.</div>
+        <div style="font-size:var(--fs-body);line-height:1.6;color:var(--c-ink);margin-bottom:22px;">Your voice stays on this device. We never send it anywhere.</div>
         <button sc-camel-on-click="{{ recAllow }}" disabled="{{ recTrying }}" class="g-btn g-btn-primary-block" style="opacity:{{ recTryOp }};">{{ recAskLabel }}</button>
       </div>
     </sc-if>
 
     <sc-if value="{{ recBlocked }}" hint-placeholder-val="{{ false }}">
       <div style="padding:0 20px;">
-        <div style="font-size:var(--fs-body);line-height:1.6;color:var(--c-ink);margin-bottom:22px;">Your browser has blocked the microphone for this page. Allow it in the address bar, then reload.</div>
-        <button sc-camel-on-click="{{ reloadPage }}" class="g-btn g-btn-primary-block">Reload the page</button>
-        <button sc-camel-on-click="{{ recAllow }}" disabled="{{ recTrying }}" style="width:100%;margin-top:10px;height:44px;background:transparent;color:var(--c-muted);border:0;font-size:var(--fs-md);opacity:{{ recTryOp }};">{{ recRetryLabel }}</button>
+        <div style="font-size:var(--fs-body);line-height:1.6;color:var(--c-ink);margin-bottom:22px;">Your browser blocked the microphone. Allow it in the address bar, then try again.</div>
+        <button sc-camel-on-click="{{ recAllow }}" disabled="{{ recTrying }}" class="g-btn g-btn-primary-block" style="opacity:{{ recTryOp }};">{{ recRetryLabel }}</button>
+        <button sc-camel-on-click="{{ reloadPage }}" style="width:100%;margin-top:10px;height:44px;background:transparent;color:var(--c-muted);border:0;font-size:var(--fs-md);">Reload the page</button>
+        <button sc-camel-on-click="{{ skipRecording }}" style="width:100%;margin-top:6px;height:44px;background:transparent;color:var(--c-muted);border:0;font-size:var(--fs-md);">Skip recording</button>
       </div>
     </sc-if>
 
@@ -554,6 +829,7 @@
         <div style="font-size:var(--fs-body);line-height:1.6;color:var(--c-ink);margin-bottom:22px;">This needs to run in its own tab.</div>
         <button sc-camel-on-click="{{ openInTab }}" class="g-btn g-btn-primary-block">Open in a new tab</button>
         <button sc-camel-on-click="{{ recAllow }}" disabled="{{ recTrying }}" style="width:100%;margin-top:10px;height:44px;background:transparent;color:var(--c-muted);border:0;font-size:var(--fs-md);opacity:{{ recTryOp }};">{{ recRetryLabel }}</button>
+        <button sc-camel-on-click="{{ skipRecording }}" style="width:100%;margin-top:6px;height:44px;background:transparent;color:var(--c-muted);border:0;font-size:var(--fs-md);">Skip recording</button>
       </div>
     </sc-if>
 
@@ -570,8 +846,9 @@
 
     <sc-if value="{{ recFailed }}" hint-placeholder-val="{{ false }}">
       <div style="padding:0 20px;">
-        <div style="font-size:var(--fs-body);line-height:1.6;color:var(--c-ink);margin-bottom:22px;">This device has no microphone the game can use. You type it out instead.</div>
-        <button sc-camel-on-click="{{ recDecline }}" class="g-btn g-btn-primary-block">Send it typed</button>
+        <div style="font-size:var(--fs-body);line-height:1.6;color:var(--c-ink);margin-bottom:22px;">The microphone still isn’t available. You can continue without a voice note.</div>
+        <button sc-camel-on-click="{{ skipRecording }}" class="g-btn g-btn-primary-block">Skip recording</button>
+        <button sc-camel-on-click="{{ recAllow }}" disabled="{{ recTrying }}" style="width:100%;margin-top:10px;height:44px;background:transparent;color:var(--c-muted);border:0;font-size:var(--fs-md);opacity:{{ recTryOp }};">{{ recRetryLabel }}</button>
       </div>
     </sc-if>
   </div>
@@ -579,8 +856,8 @@
 </sc-if>
 
 <sc-if value="{{ isPhone }}" hint-placeholder-val="{{ false }}">
-<div style="position:absolute;inset:0;z-index:var(--z-modal);display:flex;align-items:flex-end;justify-content:center;background:var(--c-ink-dim);">
- <div style="position:relative;width:94%;height:96%;background:var(--c-ink);border-radius:44px;padding:12px;box-shadow:0 -18px 50px var(--c-ink-muted);animation:sheetup .34s cubic-bezier(.2,.9,.25,1);">
+<div class="g-phone-scrim {{ phoneAnimMod }}">
+ <div class="g-phone-device {{ phoneAnimMod }}">
   <div style="position:relative;width:100%;height:100%;background:{{ screenBg }};border-radius:var(--r-phone);overflow:hidden;display:flex;flex-direction:column;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;color:var(--c-ink);">
 
   <div style="position:absolute;left:50%;top:6px;transform:translateX(-50%);width:92px;height:22px;border-radius:11px;background:var(--c-ink);z-index:var(--z-sheet);pointer-events:none;"></div>
@@ -647,7 +924,7 @@
                   <div style="font-size:var(--fs-md);color:var(--c-muted-dark);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ t.preview }}</div>
                 </div>
                 <sc-if value="{{ t.hasUnread }}" hint-placeholder-val="{{ false }}">
-                  <div style="flex:0 0 auto;min-width:22px;height:22px;border-radius:11px;background:var(--c-danger);color:var(--c-ink);font-size:var(--fs-caption);font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 6px;">{{ t.unread }}</div>
+                  <div style="flex:0 0 auto;min-width:22px;height:22px;border-radius:11px;background:var(--c-danger);color:var(--c-white);font-size:var(--fs-caption);font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 6px;">{{ t.unread }}</div>
                 </sc-if>
               </button>
             </sc-for>
@@ -795,8 +1072,8 @@
           <div style="font-size:var(--fs-sm);color:var(--c-muted-dark);line-height:1.45;">It's late. The chat is still going. You start typing.</div>
           <textarea value="{{ writeText }}" sc-camel-on-change="{{ onWrite }}" sc-camel-max-length="{{ 400 }}" rows="{{ 3 }}" style="width:100%;resize:none;border:1px solid var(--c-panel);border-radius:var(--r-md);background:var(--c-white);color:var(--c-ink);font-family:inherit;font-size:var(--fs-body);line-height:1.45;padding:11px 13px;"></textarea>
           <div style="display:flex;gap:8px;">
-            <button sc-camel-on-click="{{ sendWrite }}" style="flex:1;background:var(--c-accent);border:0;border-radius:var(--r-md);color:var(--c-white);padding:13px;font-size:var(--fs-body);font-weight:600;min-height:44px;text-align:left;">Send</button>
             <button sc-camel-on-click="{{ deleteWrite }}" style="flex:1;background:var(--c-white);border:1px solid var(--c-panel);border-radius:var(--r-md);color:var(--c-ink);padding:13px;font-size:var(--fs-body);min-height:44px;text-align:left;">Delete it</button>
+            <button sc-camel-on-click="{{ sendWrite }}" style="flex:1;background:var(--c-accent);border:0;border-radius:var(--r-md);color:var(--c-white);padding:13px;font-size:var(--fs-body);font-weight:600;min-height:44px;text-align:left;">Send</button>
           </div>
         </div>
         </sc-if>

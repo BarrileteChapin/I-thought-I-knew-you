@@ -113,12 +113,15 @@
   --fs-display: 52px;
   --fs-hero: 64px;
 
+  -webkit-tap-highlight-color: 'red';
+
   /* Breakpoints (media queries must repeat the px value; keep in sync) */
   --bp-desktop: 768px;
 
   /* Phone shell size */
   --frame-w: 100%;
   --frame-h: 100dvh; /* mobile: fill viewport (falls back via max-height) */
+  --btn-screen-max: 280px;
 
   /* Radius */
   --r-xs: 3px;
@@ -173,9 +176,18 @@
   --hot-toast-t: 56%;
   --hot-toast-am-l: 30%;
   --hot-toast-am-t: 50%;
+  /* Notebook on desk (evening + morning room) */
+  --hot-nb-l: 50%;
+  --hot-nb-t: 72%;
+  --hot-nb-w: 28%;
+  --hot-nb-am-l: 36%;
+  --hot-nb-am-t: 58%;
+  --hot-nb-am-w: 14%;
 
   /* Brand / action */
-  --c-accent: #1B4FE0;
+  --c-accent: #0b68da;
+  --c-accent-bright: #0b68da;
+  --c-accent-pop: #0099ff;
   --c-accent-soft: rgba(27, 79, 224, .1);
   --c-accent-faint: rgba(27, 79, 224, .05);
   --c-accent-wash: #D5DEFA;
@@ -225,7 +237,7 @@
   --c-white-fog: rgba(255, 255, 255, .85);
   --c-white-sheet: rgba(255, 255, 255, .94);
   --c-white-bloom: rgba(255, 255, 255, .95);
-  --c-tooltip: rgba(255, 255, 255, .82);
+  --c-tooltip: rgba(255, 255, 255, 1);
   --c-black: #000000;
   --c-black-soft: rgba(0, 0, 0, .2);
   --c-black-mid: rgba(0, 0, 0, .35);
@@ -290,11 +302,27 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .g-btn-primary {
-  background: var(--c-accent);
-  color: var(--c-frame);
+  background: var(--c-accent-pop);
+  color: var(--c-ink);
   padding: 14px 26px;
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  border-radius: 10px;
+}
+
+/* Full-width screen CTA — same width/height as title Start */
+.g-btn-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: var(--btn-screen-max);
+  min-height: 58px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 14px 28px;
+  box-sizing: border-box;
 }
 
 .g-btn-primary-lg {
@@ -322,6 +350,7 @@ h1, h2, h3, h4, h5, h6 {
   background: transparent;
   color: var(--c-ink);
   border: 2px solid var(--c-ink);
+  border-radius: 10px;
   padding: 13px 22px;
   font-size: 15px;
 }
@@ -341,6 +370,35 @@ h1, h2, h3, h4, h5, h6 {
 
 .g-btn-ghost-pad {
   padding: 10px 0 0;
+}
+
+.g-skip {
+  position: absolute;
+  top: 16px;
+  right: 12px;
+  z-index: 20;
+  background: transparent;
+  border: 0;
+  color: var(--c-muted);
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  padding: 8px 12px;
+  min-height: 44px;
+  text-align: right;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.g-skip--inline {
+  position: static;
+  z-index: auto;
+  flex: 0 0 auto;
+  padding: 0;
+  min-height: 0;
+}
+
+.g-skip:hover {
+  color: var(--c-ink);
 }
 
 .g-btn-nav {

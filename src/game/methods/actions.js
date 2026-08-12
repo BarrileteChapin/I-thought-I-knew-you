@@ -237,7 +237,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         ]);
       }
     } else if (a.id === 'sendvoice') {
-      this.setState({ screen: 'phone', phoneOpenedToday: true });
+      this.openPhone();
       this.openRecorder();
       return;
     } else if (a.id === 'sharesorry') {
