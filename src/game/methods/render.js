@@ -546,6 +546,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       socToastY: st.socToastVisible ? '0px' : '-14px',
       socToastWho: st.socToast ? st.socToast.who : '',
       socToastText: st.socToast ? st.socToast.text : '',
+      socToastLeft: (st.day === 3 && st.phase === 'morning') ? 'var(--hot-toast-am-l)' : 'var(--hot-toast-l)',
+      socToastTop: (st.day === 3 && st.phase === 'morning') ? 'var(--hot-toast-am-t)' : 'var(--hot-toast-t)',
       sceneScale: st.cameraPush ? 1.045 : 1,
       pushVignetteOp: st.cameraPush ? 0.32 : 0,
       dayPanY: st.dayEnter ? '-52px' : '0px',
