@@ -147,7 +147,10 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       };
     });
     const mediaRows = rows.slice().reverse();
-    const openRow = (st.mediaOpen !== null && rows[st.mediaOpen]) || { day: -1, item: -1, kind: '', name: '', meta: '', spec: '', savedKind: '' };
+    const viewingMedia = st.screen === 'phone' && st.dev === 'gallery' && st.mediaOpen !== null && !!rows[st.mediaOpen];
+    const openRow = viewingMedia
+      ? rows[st.mediaOpen]
+      : { day: -1, item: -1, kind: '', name: '', meta: '', spec: '', caption: '', savedKind: '' };
     const openItemChecks = playerChecks.filter(c => c.item === openRow.item);
     const revDone = revCheck ? !!st.done[revCheck.id] : true;
     const HITS = {
@@ -369,6 +372,20 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       : 0;
 
     const cineScene = this.CINE_SCENES[st.cineIdx] || this.CINE_SCENES[0] || {};
+    const roomBg = this.roomBgFor(st.day, st.phase, !!st.phoneOpenedToday);
+    const roomBgReady = st.roomBgReadySrc === roomBg;
+    const notebookGot = this.notebookGotItems(st, st.notebookDayKey);
+    const notebookFills = this.notebookVerdictFills(st, st.notebookDayKey);
+    const notebookTabs = this.notebookDayTabs(st);
+    const notebookShowReflection = this.notebookShowReflection(st);
+    const notebookShowShelf = st.notebookSection === 'shelf';
+    const notebookShowIntro = st.notebookSection === 'intro';
+    const notebookShowMap = st.notebookSection === 'map';
+    const notebookShowDay = st.notebookSection === 'day';
+    const relationMap = notebookShowMap ? this.relationMapView(st) : {
+      nodes: [], edges: [], notes: [], legend: [], focusFacts: [],
+      hasFocus: false, noFocus: true, focusName: '', focusEmpty: true, hint: ''
+    };
 
     return {
       isCinematic: st.screen === 'cinematic',
@@ -391,11 +408,13 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       cineCaption: cineScene.caption || '',
       cineCaptionOp: st.cineActive ? 1 : 0,
       cineFlashOp: st.cineFlash ? 1 : 0,
-      cineMuteLabel: st.cineMuted ? '🔇' : '🔈',
+      cineMuteIcon: st.cineMuted ? 'assets/icons/speaker-x.svg' : 'assets/icons/speaker-high.svg',
+      cineMuteTitle: st.cineMuted ? 'Unmute' : 'Mute',
       beginCinematic: () => this.beginCinematic(),
       skipCinematic: () => this.skipCinematic(),
       toggleCineMute: () => this.toggleCineMute(),
       isTitle: st.screen === 'title', isRoom: st.screen === 'room' || st.screen === 'phone', isPhone: st.screen === 'phone',
+      phoneAnimMod: st.phoneClosing ? 'is-closing' : '',
       onHome: st.dev === null, onApp: st.dev !== null,
       screenBg: st.dev === null
         ? 'center / cover no-repeat url("assets/class_10b.webp"), var(--c-accent)'
@@ -485,8 +504,11 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       isFinal: st.screen === 'final',
       clockLabel: (this.props.showClock ?? true) ? this.fmt(st.min) : '',
       dayName: d.dayName.toUpperCase(), nightOpacity: 0, morningWash: 0,
-      roomBg: this.roomBgFor(st.day, st.phase, !!st.phoneOpenedToday),
-      roomHotspotsOpen: !!st.phoneOpenedToday,
+      roomBg,
+      roomBgReady,
+      roomBgLoading: !roomBgReady,
+      roomBgReadyOp: roomBgReady ? 1 : 0,
+      roomHotspotsOpen: !!st.phoneOpenedToday && roomBgReady,
       isMorningRoom: st.day === 3 && st.phase === 'morning',
       isEveningRoom: !(st.day === 3 && st.phase === 'morning'),
       dayStrip: ['Mon', 'Tue', 'Wed', 'Thu'].map((label, i) => ({
@@ -518,7 +540,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       photoUp: st.photoUp, photoBg: st.photoUp ? C.ink : C.panel,
       confirmSleepOpen: st.confirmSleep,
       sleepTitle: st.day === 4
-        ? 'That' + "'" + 's the week. Go to sleep?'
+        ? 'That' + "'" + 's the week.\nGo to sleep?'
         : (st.day === 3 && st.phase === 'morning')
           ? 'Go to school?'
           : 'Go to sleep?',
@@ -538,7 +560,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       tabGroupBg: st.tab === 'group' ? C.warmSoft : 'transparent',
       tabDmBg: st.tab === 'dm' ? C.warmSoft : 'transparent',
       samBar: (st.samDead ? 100 : Math.max(0, st.sam)) + '%', groupBar: st.group + '%', samGone: false,
-      shotOpen: st.shotOpen, shotIsFake: st.shotOpen === 'fake', shotIsReal: st.shotOpen === 'real', shotIsPhoto: st.shotOpen === 'photo',
+      shotOpen: !!(st.shotOpen && (st.screen === 'phone' || st.screen === 'room')),
+      shotIsFake: st.shotOpen === 'fake', shotIsReal: st.shotOpen === 'real', shotIsPhoto: st.shotOpen === 'photo',
       photoShotCaption: 'Sent by Hanna, ' + this.fmt(this.allDays()[2].start) + '. ' + this.allDays()[2].deskTitle,
       closeShot: () => this.setState({ shotOpen: null }),
       reportOpen: st.reportOpen,
@@ -552,11 +575,6 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       samOpacity: st.flashSam ? 1 : (st.samDead ? 0.55 : 0.9),
       tipSamOpen: st.tip === 'sam', tipGroupOpen: st.tip === 'group',
       tipOpen: st.tip !== null,
-      tipTitle: st.tip === 'sam' ? 'Friendship with Nicole' : 'Popularity in 10b',
-      tipLine1: st.tip === 'sam' ? 'How much Nicole trusts you.' : 'What the class thinks of you.',
-      tipLine2: st.tip === 'sam'
-        ? 'Falls if you ignore her or forward things about her — and if it empties, she stops replying for good.'
-        : 'Rises if you go along with them, falls if you contradict them without proof.',
       roomScroller: (el) => {
         if (!el) return;
         this._room = el;
@@ -616,7 +634,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       segSearchWeight: st.tool === 'search' ? 600 : 400,
       segAiWeight: st.tool === 'ai' ? 600 : 400,
       onList: st.dev === 'gallery',
-      onViewer: st.dev === 'gallery' && st.mediaOpen !== null,
+      onViewer: st.screen === 'phone' && st.dev === 'gallery' && st.mediaOpen !== null,
       playerCols: 'minmax(280px,420px) 1fr',
       media: mediaRows,
       galleryCells: (() => {
@@ -640,9 +658,9 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         }));
       })(),
       openName: openRow.name, openMeta: openRow.meta, openSpec: openRow.spec,
-      openCaption: openRow.caption || '',
-      openIsShotFake: openRow.kind === 'shot' && (openRow.name || '').indexOf('real') === -1,
-      openIsShotReal: openRow.kind === 'shot' && (openRow.name || '').indexOf('real') > -1,
+      openCaption: viewingMedia ? (openRow.caption || '') : '',
+      openIsShotFake: viewingMedia && openRow.kind === 'shot' && (openRow.name || '').indexOf('real') === -1,
+      openIsShotReal: viewingMedia && openRow.kind === 'shot' && (openRow.name || '').indexOf('real') > -1,
       zoomScale: st.zoom ? 2.1 : 1,
       toggleZoom: () => this.setState(s => ({ zoom: !s.zoom })),
       waveBars: Array.from({ length: 28 }, (_, i) => ({ h: (16 + Math.abs(Math.sin(i * 1.7)) * 66).toFixed(0) + 'px' })),
@@ -660,18 +678,18 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         const seen = Object.assign({}, this.state.seen); seen[next] = true;
         this.setState({ mediaOpen: next, seen, zoom: false });
       },
-      openIsVideo: openRow.kind === 'video',
-      openIsImage: openRow.kind === 'image' && !openRow.savedKind,
-      openIsGarden: openRow.savedKind === 'garden', openIsCraft: openRow.savedKind === 'craft',
+      openIsVideo: viewingMedia && openRow.kind === 'video',
+      openIsImage: viewingMedia && openRow.kind === 'image' && !openRow.savedKind,
+      openIsGarden: viewingMedia && openRow.savedKind === 'garden', openIsCraft: viewingMedia && openRow.savedKind === 'craft',
       toastOn: st.toast,
       feedImgOpen: !!st.feedImg,
       feedImgIsGarden: st.feedImg === 'garden', feedImgIsCraft: st.feedImg === 'craft', feedImgIsParty: st.feedImg === 'party',
       feedImgName: { garden: 'nicole_garden.jpg', craft: 'nicole_craft.jpg', party: 'nicole_party_repost.jpg' }[st.feedImg] || '',
       closeFeedImg: () => this.setState({ feedImg: null }),
       saveFeedImg: () => { if (st.feedImg) this.saveImage(st.feedImg); },
-      openIsAudio: openRow.kind === 'audio', openIsShot: openRow.kind === 'shot',
-      openChecks: openRow.day === st.day ? openItemChecks : [],
-      openNoChecks: !(openRow.day === st.day && openItemChecks.length),
+      openIsAudio: viewingMedia && openRow.kind === 'audio', openIsShot: viewingMedia && openRow.kind === 'shot',
+      openChecks: viewingMedia && openRow.day === st.day ? openItemChecks : [],
+      openNoChecks: !(viewingMedia && openRow.day === st.day && openItemChecks.length),
       closeMedia: () => this.setState({ mediaOpen: null }),
       archive: [
         { day: 1, kind: 'video', note: 'Forwarded by Hanna. 7 seconds.' },
@@ -1005,23 +1023,97 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       recBtnBg: st.recBusy ? C.accent : C.accent,
       recLevel: (st.recBusy ? st.recLevel : 0) + '%',
       recAllow: () => this.recAllow(), recToggle: () => this.recToggle(),
-      recDecline: () => {
-        this.wipeAudio();
-        const inIntro = st.screen === 'introchat';
-        this.setState(s2 => ({ recOpen: false, recPhase: 'intro', voiceSent: false, used: Object.assign({}, s2.used, { sendvoice: true }) }),
-          () => { if (inIntro) this._it = setTimeout(() => this.introStep(), 500); });
-      },
-      start: () => this.setState({ screen: 'name', nameDraft: '' }, () => { const el = this.nameRef.current; if (el) el.focus(); }),
+      recDecline: () => this.skipRecording(),
+      skipRecording: () => this.skipRecording(),
+      start: () => this.beginExperience('start'),
       hasSave: !!savedGame,
       savePlayerName: this.savedPlayerName(savedGame),
       savePlayerAvatar: this.savedPlayerAvatar(savedGame),
       saveProgressLabel: this.describeSave(savedGame),
-      continueGame: () => this.continueGame(),
-      startOver: () => this.startOver(),
-      isNameEntry: st.screen === 'name', nameDraft: st.nameDraft, nameRef: this.nameRef,
-      onNameChange: (e) => this.setState({ nameDraft: e.target.value.replace(/[^A-Za-z \-]/g, '').slice(0, 16) }),
-      onNameKey: (e) => { if (e.key === 'Enter') this.submitName(); },
-      submitName: () => this.submitName(),
+      continueGame: () => this.beginExperience('continue'),
+      startOver: () => this.beginExperience('startOver'),
+      showTitleCast: st.screen === 'title',
+      titleLpMod: st.titleLeaving ? 'is-leaving' : '',
+      titleLeadParts: this.titleLeadParts(st.titleLeadShown),
+      titleCaretOn: st.screen === 'title' && !st.titleLeaving,
+      openEndingsGallery: () => this.openEndingsGallery(),
+      closeEndingsGallery: () => this.closeEndingsGallery(),
+      endingsGalleryOpen: !!st.endingsGalleryOpen,
+      endingsGalleryMod: st.endingsGalleryClosing ? 'is-closing' : '',
+      endingsUnlockedCount: Object.keys(st.unlockedEndings || {}).length,
+      endingsTotalCount: this.endingDefs().length,
+      hasUnlockedEnding: Object.keys(st.unlockedEndings || {}).length > 0,
+      endingGalleryRows: this.endingDefs().map(def => {
+        const unlocked = !!(st.unlockedEndings && st.unlockedEndings[def.id]);
+        return {
+          id: def.id,
+          title: unlocked ? def.title : '???',
+          body: unlocked ? def.text : 'Keep playing to unlock this ending.',
+          image: def.image || 'assets/ending_default.webp',
+          unlocked,
+          locked: !unlocked,
+          cardMod: unlocked ? 'is-unlocked' : 'is-locked',
+          opacity: unlocked ? 1 : 0.55
+        };
+      }),
+      notebookOpen: !!st.notebookOpen,
+      notebookAnimClass: st.notebookAnim ? 'is-opening' : '',
+      notebookBookClass: notebookShowShelf ? 'is-shelf' : '',
+      notebookDateDay: this.diaryDateParts(st.notebookDayKey).day,
+      notebookDateNum: this.diaryDateParts(st.notebookDayKey).date,
+      notebookSleepMode: st.notebookMode === 'sleep',
+      notebookShowShelf,
+      notebookShowIntro,
+      notebookShowMap,
+      notebookShowDay,
+      notebookShowReflection,
+      notebookHasTabs: notebookShowDay && notebookTabs.length > 1,
+      notebookTabs,
+      notebookShelfBooks: this.notebookShelfBooks(),
+      notebookMilCells: this.notebookMilCells(),
+      relationMap,
+      rmapNodes: relationMap.nodes,
+      rmapEdges: relationMap.edges,
+      rmapNotes: relationMap.notes,
+      rmapLegend: relationMap.legend,
+      rmapHasFocus: relationMap.hasFocus,
+      rmapNoFocus: relationMap.noFocus,
+      rmapFocusName: relationMap.focusName,
+      rmapFocusFacts: relationMap.focusFacts,
+      rmapFocusEmpty: relationMap.focusEmpty,
+      rmapHint: relationMap.hint,
+      notebookShowLead: st.notebookMode !== 'sleep',
+      notebookLeadText: notebookShowReflection && this.isPastDiaryKey(st, st.notebookDayKey)
+        ? 'Looking back at that night.'
+        : 'Things I still need to look into before I sleep.',
+      notebookRows: this.notebookRows(st, st.notebookDayKey),
+      notebookGot,
+      nbNote: (st.verdictNote && st.verdictNote[st.notebookDayKey]) || '',
+      nbNoteChange: (e) => this.setVerdictNote(st.notebookDayKey, e && e.target ? e.target.value : ''),
+      nbSetReal: () => this.setVerdict(st.notebookDayKey, 'real'),
+      nbSetFake: () => this.setVerdict(st.notebookDayKey, 'fake'),
+      nbSetContext: () => this.setVerdict(st.notebookDayKey, 'context'),
+      nbSetUnsure: () => this.setVerdict(st.notebookDayKey, 'unsure'),
+      nbRealFill: notebookFills.nbRealFill,
+      nbFakeFill: notebookFills.nbFakeFill,
+      nbContextFill: notebookFills.nbContextFill,
+      nbUnsureFill: notebookFills.nbUnsureFill,
+      nbRealClass: notebookFills.nbRealClass,
+      nbFakeClass: notebookFills.nbFakeClass,
+      nbContextClass: notebookFills.nbContextClass,
+      nbUnsureClass: notebookFills.nbUnsureClass,
+      closeNotebook: () => this.closeNotebook(),
+      openNotebook: () => this.openNotebookManual(),
+      notebookContinueLabel: st.notebookMode === 'sleep'
+        ? (st.day === 4 ? 'Continue' : 'Next day')
+        : (notebookShowShelf ? 'Close' : 'Back'),
+      isNameEntry: st.screen === 'name',
+      isAvatarEntry: st.screen === 'avatar',
+      nameDraft: st.nameDraft, nameRef: this.nameRef,
+      onNameChange: (e) => this.setState({ nameDraft: e.target.value.replace(/[^A-Za-z \-']/g, '').slice(0, 16) }),
+      onNameKey: (e) => { if (e.key === 'Enter') this.confirmName(); },
+      confirmName: () => this.confirmName(),
+      submitAvatar: () => this.submitAvatar(),
       pickFemale: () => this.setState({ playerAvatar: 'female' }),
       pickMale: () => this.setState({ playerAvatar: 'male' }),
       noAvatar: !st.playerAvatar, enterOp: st.playerAvatar ? 1 : 0.45,
@@ -1029,17 +1121,39 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       maleRing: st.playerAvatar === 'male' ? '0 0 0 3px ' + C.accent : 'none',
       femaleLift: st.playerAvatar === 'female' ? '-2px' : '0px',
       maleLift: st.playerAvatar === 'male' ? '-2px' : '0px',
+      femaleAvSize: st.playerAvatar === 'female' ? '136px' : '112px',
+      maleAvSize: st.playerAvatar === 'male' ? '136px' : '112px',
+      femaleAvRadius: st.playerAvatar === 'female' ? '68px' : '56px',
+      maleAvRadius: st.playerAvatar === 'male' ? '68px' : '56px',
       meIsFemale: st.playerAvatar !== 'male', meIsMale: st.playerAvatar === 'male',
       isHowTo: st.screen === 'howto', leaveHowTo: () => this.leaveHowTo(),
-      skipIntro: () => { clearTimeout(this._it); this.showDayCard(1); },
+      skipIntro: () => this.skipIntro(),
       isIntroText: st.screen === 'introtext', introReady: st.introReady,
       advanceIntro: () => this.advanceIntro(),
       isIntroChat: st.screen === 'introchat',
       isDayCard: st.screen === 'daycard',
-      dayCardKicker: 'Day ' + (st.pendingDay || 1) + ' · ' + (st.pendingDay === 3
-        ? (st.cardPhase === 'clip' ? 'that evening' : 'the account')
-        : ({ 1: 'the video', 2: 'the photo', 4: 'the voice' }[st.pendingDay] || '')),
-      dayCardDay: st.cardDayName || '', dayCardWhen: st.cardWhen || '',
+      dayCardKicker: 'Day ' + (st.pendingDay || 1),
+      dayCardDay: st.cardDayName || '',
+      dayCardWhen: String(st.cardWhen || '').replace(/(am|pm)$/i, ' $1'),
+      dayCardMarks: (() => {
+        const n = st.pendingDay || 1;
+        const isWedMorning = n === 3 && st.cardPhase !== 'clip';
+        const isWedNight = n === 3 && st.cardPhase === 'clip';
+        // Fill through: Mon 1, Tue 2, Wed night 3, Thu 4. Wed morning = half on 3rd.
+        const filledThrough = n <= 1 ? 0 : n === 2 ? 1 : isWedNight ? 2 : n >= 4 ? 3 : -1;
+        return [0, 1, 2, 3, 4].map(i => {
+          let mod = 'is-future';
+          if (isWedMorning) {
+            if (i < 2) mod = 'is-past';
+            else if (i === 2) mod = 'is-half';
+          } else if (i < filledThrough) {
+            mod = 'is-past';
+          } else if (i === filledThrough) {
+            mod = 'is-current';
+          }
+          return { id: i, mod };
+        });
+      })(),
       introLines: this.BACKSTORY.slice(0, st.introLine).map(t => ({ text: t })),
       introRef: this.introRef, introTyping: st.introTyping,
       introTypingJustify: (this.P_LOG[st.introMsg] || {}).mine ? 'flex-end' : 'flex-start',
@@ -1063,25 +1177,34 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       barsShown: st.day >= 1 ? 1 : 0,
 
       openPhone: () => {
-        this.setState({ dev: null, threadOpen: null, actionsOpen: false, screen: 'phone', phoneOpenedToday: true });
+        this.openPhone({ dev: null, threadOpen: null });
         if (tier === 'gone' && !st.ghostTypedToday) {
           this.setState({ ghostTypedToday: true });
           setTimeout(() => this.setState({ dmGhostTyping: true }), 1400);
           setTimeout(() => this.setState({ dmGhostTyping: false }), 4400);
         }
       },
-      backToTitle: () => { this.saveGame(); this.setState({ screen: 'title', confirmSleep: false }); },
-
-      backToRoom: () => {
-        const owed = st.dm.some(m => !m.mine && !m.sys && m.today);
-        if (st.screen === 'phone' && st.tab === 'dm' && !st.dmAnsweredToday
-            && !st.onReadCharged && tier !== 'gone' && owed) {
-          this.setState(s => ({ onReadCharged: true, dm: s.dm.concat([{ who: 'System', sys: true, text: 'Seen ' + this.fmt(s.min) }]) }));
-          this.rel(-10, 0, null);
-          this.log('— you left her on read');
-        }
-        this.setState(s => ({ screen: 'room', actionsOpen: false, ignored: s.screen === 'phone' && s.openedGroup && !s.actedToday }));
+      backToTitle: () => {
+        this.saveGame();
+        clearTimeout(this._phoneClose);
+        this.setState({
+          screen: 'title',
+          phoneClosing: false,
+          titleLeaving: false,
+          titleLeadShown: '',
+          titleLeadDone: false,
+          confirmSleep: false,
+          mediaOpen: null,
+          shotOpen: null,
+          feedImg: null,
+          reportOpen: false,
+          pickerOpen: false,
+          dev: null,
+          threadOpen: null
+        });
       },
+
+      backToRoom: () => this.closePhone(),
       tabGroup: () => this.setState({ tab: 'group', actionsOpen: false, openedGroup: true }),
       tabDm: () => this.setState({ tab: 'dm', actionsOpen: false }),
       flipPhoto: () => this.setState({ photoUp: !st.photoUp }),
@@ -1090,7 +1213,13 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         const s0 = this.state;
         if (s0.day === 4 && s0.writeStatus === null) {
           this.setPhase('finalMessage');
-          this.setState({ screen: 'phone', dev: 'chats', threadOpen: 'group', writeIn: true, min: 23 * 60 + 20, unread: 0, phoneOpenedToday: true });
+          this.openPhone({
+            dev: 'chats',
+            threadOpen: 'group',
+            writeIn: true,
+            min: 23 * 60 + 20,
+            unread: 0
+          });
           return;
         }
         console.log('[bed] confirm on day ' + s0.day + ', writeStatus=' + s0.writeStatus);
@@ -1098,24 +1227,14 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       },
       cancelSleep: () => this.setState({ confirmSleep: false }),
       doSleep: () => this.endDay(),
-      restart: () => this.setState({
-        screen: 'title', day: 1, min: this.DAYS[1].start, done: {}, used: {},
-        hints: { 1: [], 2: [], 3: [], 4: [], 5: [] }, certainty: { 1: 'unchecked', 2: 'unchecked', 3: 'unchecked', 4: 'unchecked', 5: 'unchecked' },
-        credibility: 0, credibilityLost: false, voiceSent: false, reason: '',
-        pStage: -1, introLine: 0, introMsg: 0, introTyping: false, introReady: false, samSilent: false,
-        dmCloseTyping: false, dmCloseExtra: null, dmCloseReady: false, variant: Math.floor(Math.random() * 2),
-        replayShown: false, postedWed: false,
-        recOpen: false, recPhase: 'intro', recIdx: 0, recBusy: false, recLevel: 0, recTrying: false, recAttempts: 0, recTrying: false, recAttempts: 0,
-        minCheck: 0, minReact: 0, postsWith: 0, postsWithout: 0, dmChances: 0, endStep: 1, gamePhase: 'playing',
-        apology: false, reported: false, clipBack: false, phase: 'evening', sharedCount: 3,
-        profMenuOpen: false, reportReasonOpen: false, reportToast: false, reportedAccounts: {}, reportedFake: false, socInfoOpen: false,
-        actedToday: false, openedGroup: false, ignored: false, dmAnsweredToday: false, phoneOpenedToday: false,
-        shareTick: 0, shareHalved: false, fading: false, tool: 'player', socTab: 'feed', socProfileKey: null, socPostId: null, socInfoOpen: false, mediaOpen: null, seen: {}, zoom: false, dev: null, threadOpen: null, galleryNew: false, chatFlash: false,
-        writeIn: false, writeText: '', writeStatus: null, chatDraft: '', chatBusy: false, actionsOpen: false, chatGroupLeft: 4, chatDmLeft: 3, llmUsedReplies: [], llmReplySeed: 0,
-        dragItem: null, pickIdx: null, pickerOpen: false, pickerMode: 'search', searched: {}, aiPickIdx: null, aiStage: 'idle', aiStep: 0, actionLog: [], reactionTimes: [],
-        final: { post: null, fwd: null, tell: null }, sam: 50, group: 50, pushIdx: 0, flashSam: false, flashGroup: false, samDead: false,
-        stats: { forwards: 0, reacts: 0, checks: 0, fast: 0, dmAnswered: 0, believed: 0, dismissed: 0, stopped: 0, fastest: null, sift: { investigate: 0, coverage: 0, trace: 0 }, chat: { dm: 0, group: 0, questioning: 0, pile_on: 0, supportive: 0, neutral: 0 } }
-      })
+      restart: () => {
+        const meta = this.readMeta();
+        this.clearSavedGame();
+        this.setState(this.freshGameState({
+          screen: 'title',
+          unlockedEndings: meta.unlockedEndings || {}
+        }));
+      }
     };
   }
 });

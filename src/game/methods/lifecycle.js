@@ -1,5 +1,14 @@
 window.GameMethods = Object.assign(window.GameMethods || {}, {
   componentDidMount() {
+    const meta = this.readMeta();
+    if (meta && meta.unlockedEndings) {
+      this.setState({ unlockedEndings: meta.unlockedEndings });
+    }
+    this._prevScreen = this.state.screen;
+    if (this.state.screen === 'title') this.beginTitleLead();
+    if (this.state.screen === 'room' || this.state.screen === 'phone') {
+      this.preloadRoomBg(this.roomBgFor(this.state.day, this.state.phase, !!this.state.phoneOpenedToday));
+    }
     if (this.LLM_CHAT_ENABLED) {
       console.log('[chat-llm] preloading chat model');
       this.ensureLlm(false);
@@ -42,6 +51,10 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     window.removeEventListener('keydown', this._keys);
     window.removeEventListener('beforeunload', this._bye);
     clearTimeout(this._saveTimer);
+    clearTimeout(this._titleLeave);
+    clearTimeout(this._titleType);
+    clearTimeout(this._endingsClose);
+    clearTimeout(this._phoneClose);
     this.saveGame();
     this.wipeAudio();
     clearTimeout(this._n1); clearTimeout(this._n2);
@@ -52,6 +65,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
   wipeAudio() {
     try { if (this._stream) this._stream.getTracks().forEach(t => t.stop()); } catch (e) {}
+    this.stopTitleWriteSfx();
     this.stopAudio(false);
     this._ttsRun = (this._ttsRun || 0) + 1;
     this._ttsPreparePromise = null;
@@ -64,8 +78,18 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     this._stream = null; this._rec = null; this._real = null; this._splice = null;
   },
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     this.scheduleSave();
+    // Runtime only passes prevProps; track screen ourselves so title lead
+    // restarts every time we return to the title screen.
+    const prevScreen = this._prevScreen;
+    this._prevScreen = this.state.screen;
+    if (this.state.screen === 'title' && prevScreen !== 'title' && !this.state.titleLeaving) {
+      this.beginTitleLead();
+    }
+    if (this.state.screen === 'room' || this.state.screen === 'phone') {
+      this.preloadRoomBg(this.roomBgFor(this.state.day, this.state.phase, !!this.state.phoneOpenedToday));
+    }
     if (this._scrollToPost && this.state.dev === 'social') {
       const want = this._scrollToPost;
       requestAnimationFrame(() => {

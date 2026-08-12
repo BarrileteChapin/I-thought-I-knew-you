@@ -44,6 +44,24 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     return base.replace(/\.webp$/, '_first.webp');
   },
 
+  // Prefetch the room still; hotspots stay hidden until this src is ready.
+  preloadRoomBg(src) {
+    if (!src) return;
+    if (this.state.roomBgReadySrc === src) return;
+    if (this._roomBgLoadSrc === src) return;
+    this._roomBgLoadSrc = src;
+    const img = new Image();
+    const done = () => {
+      if (this._roomBgLoadSrc !== src) return;
+      this._roomBgLoadSrc = null;
+      if (this.state.roomBgReadySrc !== src) this.setState({ roomBgReadySrc: src });
+    };
+    img.onload = done;
+    img.onerror = done;
+    img.src = src;
+    if (img.complete) done();
+  },
+
   clamp(v) { return Math.max(0, Math.min(100, v)); },
 
   // Resolve a --c-* token to its computed value (needed when JS must parse hex).
@@ -103,5 +121,39 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       if (m.text) return (m.mine ? 'You: ' : (m.sys ? '' : m.who + ': ')) + m.text.split('{name}').join(this.name());
     }
     return '';
+  },
+
+  openPhone(extra) {
+    clearTimeout(this._phoneClose);
+    this.setState(Object.assign({
+      screen: 'phone',
+      phoneClosing: false,
+      phoneOpenedToday: true,
+      actionsOpen: false
+    }, extra || {}));
+  },
+
+  closePhone() {
+    if (this.state.screen !== 'phone' || this.state.phoneClosing) return;
+    const st = this.state;
+    const tier = this.samTier();
+    const owed = st.dm.some(m => !m.mine && !m.sys && m.today);
+    if (st.tab === 'dm' && !st.dmAnsweredToday && !st.onReadCharged && tier !== 'gone' && owed) {
+      this.setState(s => ({
+        onReadCharged: true,
+        dm: s.dm.concat([{ who: 'System', sys: true, text: 'Seen ' + this.fmt(s.min) }])
+      }));
+      this.rel(-10, 0, null);
+      this.log('— you left her on read');
+    }
+    this.setState(s => ({
+      phoneClosing: true,
+      actionsOpen: false,
+      ignored: s.openedGroup && !s.actedToday
+    }));
+    clearTimeout(this._phoneClose);
+    this._phoneClose = setTimeout(() => {
+      this.setState({ screen: 'room', phoneClosing: false });
+    }, 300);
   }
 });

@@ -1,15 +1,27 @@
 const DAY3_CLONE_TEXT = 'I think Nicole is just jealous of Nele. She loves gossiping as well.';
 
 window.GameMethods = Object.assign(window.GameMethods || {}, {
-  openRecorder() { this.setState({ recOpen: true, recPhase: 'intro', recIdx: 0, recBusy: false, recLevel: 0 }); },
+  openRecorder() {
+    this.setState({
+      recOpen: true, recPhase: 'intro', recIdx: 0, recBusy: false, recLevel: 0,
+      recPending: true, recTrying: false, recAttempts: 0
+    });
+  },
 
   async recAllow() {
     if (this.state.recTrying) return;
     const nav = navigator.mediaDevices;
     const framed = window.self !== window.top;
-    if (!nav || !nav.getUserMedia || typeof window.MediaRecorder === 'undefined') {
-      console.log('[mic] no getUserMedia / MediaRecorder on this device');
-      this.setState({ recPhase: 'failed' });
+    const secure = typeof window.isSecureContext === 'boolean'
+      ? window.isSecureContext
+      : (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1');
+    const getUserMedia = nav && (nav.getUserMedia
+      ? nav.getUserMedia.bind(nav)
+      : (nav.webkitGetUserMedia ? nav.webkitGetUserMedia.bind(nav) : null));
+    if (!secure || !getUserMedia || typeof window.MediaRecorder === 'undefined') {
+      console.log('[mic] unavailable', { secure, hasGum: !!getUserMedia, hasMR: typeof window.MediaRecorder !== 'undefined' });
+      // Insecure HTTP / missing API — not the same as "no hardware mic".
+      this.setState({ recPhase: framed ? 'framed' : 'blocked' });
       return;
     }
     const attempts = this.state.recAttempts + 1;
@@ -17,15 +29,33 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const settle = (patch) => setTimeout(() => this.setState(Object.assign({ recTrying: false }, patch)), 400);
     try {
       console.log('[mic] requesting, attempt ' + attempts + ', framed=' + framed);
-      this._stream = await nav.getUserMedia({ audio: true });
+      this._stream = await getUserMedia({ audio: true });
       console.log('[mic] granted');
       this._ctx = new (window.AudioContext || window.webkitAudioContext)();
-      settle({ recPhase: 'record', recIdx: 0 });
+      settle({ recPhase: 'record', recIdx: 0, recAttempts: 0 });
       return;
     } catch (e) {
-      console.log('[mic] failed: ' + e.name + ' — ' + e.message);
-      if (e.name === 'NotFoundError' || e.name === 'OverconstrainedError') { settle({ recPhase: 'failed' }); return; }
-      if (attempts >= 2) { console.log('[mic] two attempts failed, continuing without voice'); settle({ recPhase: 'failed' }); return; }
+      const name = (e && e.name) || '';
+      console.log('[mic] failed: ' + name + ' — ' + (e && e.message));
+      // Permission / policy — keep asking; do not claim the device has no mic.
+      if (name === 'NotAllowedError' || name === 'PermissionDeniedError' || name === 'SecurityError') {
+        settle({ recPhase: framed ? 'framed' : 'blocked' });
+        return;
+      }
+      // Some Android builds mis-report denial as NotFoundError before a prompt.
+      if (name === 'NotFoundError' || name === 'OverconstrainedError') {
+        if (attempts < 2) {
+          settle({ recPhase: framed ? 'framed' : 'blocked' });
+          return;
+        }
+        settle({ recPhase: 'failed' });
+        return;
+      }
+      if (attempts >= 3) {
+        console.log('[mic] repeated failures, offering typed fallback');
+        settle({ recPhase: 'failed' });
+        return;
+      }
       settle({ recPhase: framed ? 'framed' : 'blocked' });
     }
   },
@@ -92,12 +122,30 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     this._stream = null;
     const inIntro = this.state.screen === 'introchat';
     this.setState(s => ({
-      recOpen: false, recPhase: 'intro', recBusy: false, voiceSent: true,
+      recOpen: false, recPhase: 'intro', recBusy: false, recPending: false, voiceSent: true,
       chat: inIntro ? s.chat : s.chat.concat([{ who: 'You', mine: true, kind: 'voice', dur: '0:10', audio: 'real', caption: 'You, reading it out.' }])
     }), () => { if (inIntro) this._it = setTimeout(() => this.introStep(), 800); });
     if (!inIntro) this.advance(1);
     this.log('— you sent your own voice');
     this.prepareVoiceClone();
+  },
+
+  // Leave the mic sheet without a recording (permission blocked, no mic, or user skip).
+  skipRecording() {
+    this.wipeAudio();
+    const inIntro = this.state.screen === 'introchat';
+    this.setState(s => ({
+      recOpen: false,
+      recPhase: 'intro',
+      recBusy: false,
+      recPending: false,
+      voiceSent: false,
+      used: Object.assign({}, s.used, { sendvoice: true })
+    }), () => {
+      if (inIntro) this._it = setTimeout(() => this.introStep(), 500);
+    });
+    if (!inIntro) this.advance(1);
+    this.log('— you skipped the voice note');
   },
 
   prepareVoiceClone() {
@@ -206,6 +254,33 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     if (shouldUpdate && this.state.playingAudioKey !== null) {
       this.setState({ playingAudioKey: null });
     }
+  },
+
+  startTitleWriteSfx() {
+    this.stopTitleWriteSfx();
+    try {
+      const audio = new Audio('assets/freesound_community-writing-on-paper-29376.mp3');
+      audio.loop = true;
+      audio.volume = 0.28;
+      audio.preload = 'auto';
+      this._titleWriteAudio = audio;
+      const playing = audio.play();
+      if (playing && typeof playing.catch === 'function') {
+        playing.catch(() => {
+          if (this._titleWriteAudio === audio) this._titleWriteAudio = null;
+        });
+      }
+    } catch (e) {
+      this._titleWriteAudio = null;
+    }
+  },
+
+  stopTitleWriteSfx() {
+    const audio = this._titleWriteAudio;
+    this._titleWriteAudio = null;
+    if (!audio) return;
+    try { audio.pause(); audio.currentTime = 0; } catch (e) {}
+    try { audio.removeAttribute('src'); audio.load(); } catch (e) {}
   },
 
   playFile(src, key) {

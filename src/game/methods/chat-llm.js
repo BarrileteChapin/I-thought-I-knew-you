@@ -369,6 +369,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       llmStatus: this._llmReady ? 'Replying...' : 'Model loading; using a fallback if needed'
     }));
     this.recordChatBehaviour(tab, text);
+    this.maybeCompleteAskTasksFromChat(tab, text);
     this.advance(2);
     if (tab === 'dm') this.setState(s => ({ dm: s.dm.concat([mine]) }));
     else this.setState(s => ({ chat: s.chat.concat([mine]) }));

@@ -56,8 +56,11 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
   doReport(which) {
     const wrong = which !== 'new';
+    const fake = which === 'new' || which === 'both';
     this.setState(s => ({
-      reportOpen: false, reportChoice: which, reportedWrong: s.reportedWrong || wrong,
+      reportOpen: false, reportChoice: which,
+      reportedWrong: s.reportedWrong || wrong,
+      reportedFake: s.reportedFake || fake,
       actedToday: true, ignored: false,
       chat: s.chat.concat([{ who: 'You', mine: true, text: which === 'both' ? 'reported both' : which === 'new' ? 'reported the new one' : 'reported the old one' }])
     }));
@@ -80,9 +83,12 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     this.setPhase('ending');
     const s = this.state;
     const t = s.samDead ? 'locked' : s.sam < 35 ? 'low' : 'high';
-    console.log('[ending] entering, tier=' + t);
+    const endingId = this.finalCardId(s, s.stats || {});
+    console.log('[ending] entering, tier=' + t + ', ending=' + endingId);
+    this.unlockEnding(endingId);
     clearTimeout(this._e1); clearTimeout(this._e2); clearTimeout(this._e3);
     this.setState({ screen: 'end', endStep: 1, confirmSleep: false, writeIn: false,
+      notebookOpen: false, pendingAfterNotebook: false, endingId,
       dmCloseReady: t !== 'high', dmCloseTyping: t === 'high', dmCloseExtra: null });
     if (t === 'high') {
       this._e1 = setTimeout(() => this.setState({ dmCloseTyping: false }), 2600);
@@ -141,33 +147,38 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     ];
   },
 
-  endingCards() {
+  endingDefs() {
     const img = 'assets/ending_default.webp';
+    const name = this.name ? this.name() : 'Alex';
     return [
-      { text: 'You waited for the truth. Then you spoke it aloud. She heard you twice.', image: img },
-      { text: 'You told the truth to the room. The room grew quieter around you.', image: img },
-      { text: 'You were the only one who knew. And you kept it between the two of you.', image: img },
-      { text: 'A few words in the dark. None in the light.', image: img },
-      { text: 'You found the crack in their story. You let them keep telling it.', image: img },
-      { text: 'I thought I knew you, ' + this.name() + '.', image: img }
+      { id: 'perfect', title: 'Perfect week', text: 'You did every careful thing the week asked of you. She felt it.', image: img },
+      { id: 'spoke-aloud', title: 'Spoke it aloud', text: 'You waited for the truth. Then you spoke it aloud. She heard you twice.', image: img },
+      { id: 'told-the-room', title: 'Told the room', text: 'You told the truth to the room. The room grew quieter around you.', image: img },
+      { id: 'kept-private', title: 'Kept it private', text: 'You were the only one who knew. And you kept it between the two of you.', image: img },
+      { id: 'words-in-dark', title: 'Words in the dark', text: 'A few words in the dark. None in the light.', image: img },
+      { id: 'let-them-tell', title: 'Let them keep telling it', text: 'You found the crack in their story. You let them keep telling it.', image: img },
+      { id: 'thought-i-knew', title: 'I thought I knew you', text: 'I thought I knew you, ' + name + '.', image: img }
     ];
   },
 
-  finalCard(st, s) {
-    const cards = this.endingCards();
-    const { checks, dmCount, publiclySupported, nicoleHigh, groupOk } = this.endingSignals(st, s);
+  endingCards() {
+    return this.endingDefs().filter(c => c.id !== 'perfect');
+  },
 
-    // 1 — investigated, stood up in public, kept Nicole, class still mostly ok
-    if (checks >= 4 && publiclySupported && nicoleHigh && groupOk) return cards[0];
-    // 2 — investigated, stood up in public, kept Nicole, but the class cooled on you
-    if (checks >= 4 && publiclySupported && nicoleHigh) return cards[1];
-    // 3 — investigated enough, stayed private: lots of DMs, Nicole still trusts you
-    if (checks >= 2 && !publiclySupported && dmCount >= 3 && nicoleHigh) return cards[2];
-    // 4 — investigated enough, some private contact, little public courage
-    if (checks >= 2 && !publiclySupported && dmCount >= 1) return cards[3];
-    // 5 — investigated, but did not turn that into care (public or private)
-    if (checks >= 2) return cards[4];
-    // 6 — else / little investigation
-    return cards[5];
+  finalCardId(st, s) {
+    if (this.tasksAllComplete(st)) return 'perfect';
+    const { checks, dmCount, publiclySupported, nicoleHigh, groupOk } = this.endingSignals(st, s);
+    if (checks >= 4 && publiclySupported && nicoleHigh && groupOk) return 'spoke-aloud';
+    if (checks >= 4 && publiclySupported && nicoleHigh) return 'told-the-room';
+    if (checks >= 2 && !publiclySupported && dmCount >= 3 && nicoleHigh) return 'kept-private';
+    if (checks >= 2 && !publiclySupported && dmCount >= 1) return 'words-in-dark';
+    if (checks >= 2) return 'let-them-tell';
+    return 'thought-i-knew';
+  },
+
+  finalCard(st, s) {
+    const id = st.endingId || this.finalCardId(st, s);
+    const defs = this.endingDefs();
+    return defs.find(c => c.id === id) || defs[defs.length - 1];
   }
 });

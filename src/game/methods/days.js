@@ -7,24 +7,20 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     if (hadDm && !st.dmAnsweredToday) { dSam -= 18; this.log('— you left her waiting'); }
     if (!st.actedToday) { dSam -= 10; dGroup -= 10; this.share(8); this.log('— you did nothing'); }
     else if (st.openedGroup && st.ignored) { dSam -= 5; dGroup -= 5; this.log('— you scrolled past'); }
-    this.setState({ confirmSleep: false, fading: true });
+    this.setState({ confirmSleep: false, fading: true, notebookOpen: false, pendingAfterNotebook: false });
     this.rel(dSam, dGroup, endReason);
     setTimeout(() => {
       if (this.state.sam < 16) this.setState({ samDead: true, samSilent: true, sam: 0 });
-      const d = this.state.day;
-      if (d === 3 && this.state.phase === 'morning') this.showDayCard(3, 'clip');
-      else if (d === 4) this.enterEnding();
-      else this.showDayCard(d + 1);
+      this.openNotebookAfterSleep();
     }, 700);
     setTimeout(() => this.setState({ fading: false }), 1600);
   },
 
   showDayCard(n, phase) {
     this.stopAudio();
-    this.setState({ fading: false });
+    this.setState({ fading: false, continueResumeScreen: null });
     const ph = phase || (n === 3 ? 'morning' : 'evening');
-    const d = (n === 3 && ph === 'clip') ? this.DAY_YOU : this.allDays()[n];
-    this.setState({ screen: 'daycard', pendingDay: n, cardPhase: ph, cardDayName: d.dayName, cardWhen: this.fmt(d.start) });
+    this.setState(Object.assign({ screen: 'daycard' }, this.dayCardViewFor(n, ph)));
     clearTimeout(this._dc);
     this._dc = setTimeout(() => this.startDay(n, ph), 2600);
   },
@@ -72,7 +68,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       tab: quietPhase ? 'dm' : 'group', used: {}, reactedToday: false,
       lastRead: { group: baseGroup, dm: st.dm.length },
       newMarkAt: null, showNewPill: false,
-      actedToday: false, openedGroup: false, ignored: false, dmAnsweredToday: false, phoneOpenedToday: false, playingAudioKey: null,
+      actedToday: false, openedGroup: false, ignored: false, dmAnsweredToday: false, phoneOpenedToday: false, phoneClosing: false, playingAudioKey: null,
       shareTick: 0, shareHalved: false, tool: 'player', socTab: 'feed', socProfileKey: null, socPostId: null, socInfoOpen: false, mediaOpen: null, seen: {}, zoom: false, dev: null, threadOpen: null, galleryNew: false, chatFlash: false,
       writeIn: false, writeText: '', writeStatus: null, chatDraft: '', chatBusy: false, actionsOpen: false, chatGroupLeft: 4, chatDmLeft: 3,
       dragItem: null, pickIdx: null, pickerOpen: false, pickerMode: 'search', searched: {}, aiPickIdx: null, aiStage: 'idle', aiStep: 0,
