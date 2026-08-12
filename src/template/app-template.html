@@ -354,7 +354,7 @@
   <sc-if value="{{ confirmSleepOpen }}" hint-placeholder-val="{{ false }}">
   <div style="position:absolute;inset:0;z-index:var(--z-modal);background:var(--c-ink-faint);display:flex;align-items:center;justify-content:center;">
     <div style="position:relative;z-index:calc(var(--z-modal) + 1);background:var(--c-panel);padding:34px 36px;width:min(420px,86%);animation:fadeup var(--dur-fast) var(--ease);">
-      <div style="font-size:var(--fs-title);font-weight:600;margin-bottom:24px;color:var(--c-ink);text-align:center;">{{ sleepTitle }}</div>
+      <div style="font-size:var(--fs-title);font-weight:600;margin-bottom:24px;color:var(--c-ink);text-align:center;white-space:pre-line;line-height:1.35;">{{ sleepTitle }}</div>
       <div style="display:flex;gap:12px;">
         <button sc-camel-on-click="{{ doSleep }}" class="g-btn g-btn-primary g-btn-primary-sm" style="flex:1;min-width:0;text-align:center;">{{ sleepConfirmLabel }}</button>
         <button sc-camel-on-click="{{ cancelSleep }}" class="g-btn g-btn-secondary" style="flex:1;min-width:0;text-align:center;">Not yet</button>

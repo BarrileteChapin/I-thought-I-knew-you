@@ -540,7 +540,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       photoUp: st.photoUp, photoBg: st.photoUp ? C.ink : C.panel,
       confirmSleepOpen: st.confirmSleep,
       sleepTitle: st.day === 4
-        ? 'That' + "'" + 's the week. Go to sleep?'
+        ? 'That' + "'" + 's the week.\nGo to sleep?'
         : (st.day === 3 && st.phase === 'morning')
           ? 'Go to school?'
           : 'Go to sleep?',
