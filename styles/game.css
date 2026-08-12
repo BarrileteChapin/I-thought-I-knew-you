@@ -704,7 +704,7 @@ button:focus-visible {
   position: relative;
   flex: 0 0 auto;
   width: 100%;
-  padding: 28px 22px 48px;
+  padding: 24px 16px 24px;
   border: 1px solid rgba(74, 66, 56, .16);
   background: rgba(255, 255, 255, .42);
   box-sizing: border-box;
@@ -1300,8 +1300,8 @@ video.g-notebook-got-media {
 .g-notebook-verdict {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 8px;
+  gap: 2px;
+  margin: 2px 0 8px;
   flex: 0 0 auto;
 }
 
@@ -1310,15 +1310,16 @@ video.g-notebook-got-media {
   align-items: center;
   gap: 12px;
   width: 100%;
-  min-height: 48px;
+  min-height: 44px;
   box-sizing: border-box;
-  background: rgba(255, 255, 255, 0.42);
-  border: 1.5px solid rgba(58, 50, 38, 0.28);
-  border-radius: 8px;
-  padding: 12px 14px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 8px 2px;
   font-family: var(--font-body);
   font-size: 15px;
-  line-height: 1.3;
+  font-weight: 400;
+  line-height: 1.35;
   color: #3A3226;
   text-align: left;
   cursor: pointer;
@@ -1326,22 +1327,18 @@ video.g-notebook-got-media {
 }
 
 .g-notebook-verdict-opt:active {
-  transform: translateY(1px);
-  background: rgba(255, 255, 255, 0.62);
+  opacity: 0.7;
 }
 
 .g-notebook-verdict-opt.is-on {
-  background: rgba(107, 93, 66, 0.14);
-  border-color: #6B5D42;
   color: #2B2418;
-  font-weight: 600;
 }
 
 .g-notebook-verdict-dot {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  border: 2px solid #6B5D42;
+  border: 1.5px solid #6B5D42;
   box-sizing: border-box;
   flex: 0 0 auto;
 }
@@ -1747,7 +1744,7 @@ video.g-notebook-got-media {
 
 .g-daycard-mark.is-half {
   background: linear-gradient(
-    to top right,
+    to top left,
     transparent 0%,
     transparent 49.5%,
     var(--c-accent) 50.5%,

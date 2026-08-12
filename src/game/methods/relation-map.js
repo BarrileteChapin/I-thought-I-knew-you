@@ -53,7 +53,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       mia: { x: 18, y: 52 },
       nele: { x: 22, y: 88 },
       hanna: { x: 78, y: 62 },
-      lea: { x: 78, y: 86 },
+      lea: { x: 78, y: 92 },
       laura: { x: 50, y: 112 }
     };
 

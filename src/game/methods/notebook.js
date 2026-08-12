@@ -392,6 +392,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     }
     if (key === 'clip') {
       const src = s.cloneAudioSrc || null;
+      const canPlay = !!src || !!this._splice;
       return [{
         id: 'got-clip',
         isVideo: false, isImage: false, isAudio: true,
@@ -399,11 +400,18 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         meta: when + ' · sent by Nicole',
         caption: '',
         bars,
-        spec: playing ? 'playing' : '0:09',
+        spec: !canPlay
+          ? (s.ttsStatus === 'failed' ? 'unavailable' : 'preparing')
+          : (playing
+            ? 'playing'
+            : (s.cloneAudioDuration ? this.audioDurationLabel(s.cloneAudioDuration) : '0:09')),
         open: () => {
-          if (!src) return;
-          if (this.state.playingAudioKey === audioKey) this.stopAudio();
-          else this.playFile(src, audioKey);
+          if (this.state.playingAudioKey === audioKey) {
+            this.stopAudio();
+            return;
+          }
+          if (src) this.playFile(src, audioKey);
+          else if (this._splice) this.playBuf('splice', audioKey);
         }
       }];
     }
