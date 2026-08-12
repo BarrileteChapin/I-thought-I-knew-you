@@ -281,7 +281,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         P('d3a', '@hanna.k', '30m', 'so she made a second account. cool cool', { likes: 29, replies: 8, thread: [
           R('@mia.h', 'those are her old photos'), R('@nele.b', 'the account is 2 days old. just saying.')
         ] }),
-        P('f2', '@n.krueger', '1h', 'mia' + "'" + 's cake is always dry, someone had to say it', { likes: 52, replies: 9, thread: [
+        P('f2', '@n.krueger', '1h', 'lea only agrees with hanna because she' + "'" + 's scared of her, everyone sees it', { likes: 52, replies: 9, thread: [
           R('@mia.h', 'wow ok'), R('@hanna.k', 'nicole what')
         ] }),
         P('f3', '@n.krueger', '2h', 'hanna talks about people the second they leave the room', { likes: 44, replies: 11, thread: [
