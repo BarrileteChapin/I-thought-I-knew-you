@@ -1727,11 +1727,12 @@
 <div style="width:100%;height:100%;display:flex;flex-direction:column;">
   <div class="g-end-fadein" style="flex:1;min-height:0;overflow-y:auto;padding:64px var(--space-screen-x) 20px;">
   <div style="height:2px;background:var(--c-accent);width:96px;margin-bottom:26px;"></div>
-  <div style="display:flex;flex-direction:column;gap:2px;background:var(--c-line);margin-bottom:26px;">
+  <div class="g-end-sift-grid">
     <sc-for list="{{ moves }}" as="mv" hint-placeholder-count="4">
-      <div style="background:var(--c-frame);padding:18px var(--space-screen-x);display:flex;justify-content:space-between;align-items:baseline;gap:20px;">
-        <div style="font-size:17px;color:var(--c-ink);">{{ mv.label }}</div>
-        <div style="font-size:16px;color:var(--c-accent);text-align:right;">{{ mv.value }}</div>
+      <div class="g-end-sift-cell">
+        <img src="{{ mv.icon }}" alt="" width="48" height="48" class="g-end-sift-icon" decoding="sync">
+        <div class="g-end-sift-title">{{ mv.title }}</div>
+        <div class="g-end-sift-value">{{ mv.value }}</div>
       </div>
     </sc-for>
   </div>
