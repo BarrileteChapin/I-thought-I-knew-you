@@ -347,8 +347,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const s = st || this.state;
     const key = dayKey != null ? dayKey : (s.notebookDayKey != null ? s.notebookDayKey : this.taskDayKey(s));
     const bars = Array.from({ length: 18 }, (_, i) => ({ h: (6 + ((i * 37) % 16)) + 'px' }));
-    const date = this.diaryDateParts(key);
-    const when = date.day + ', ' + date.date;
+    const when = this.taskDayLabel(key);
     const audioKey = 'nb-got-' + key;
     const playing = s.playingAudioKey === audioKey;
 
@@ -437,19 +436,42 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const s = st || this.state;
     const key = dayKey != null ? dayKey : s.notebookDayKey;
     const v = (s.verdict && s.verdict[key]) || null;
-    const on = '#6B5D42';
-    const off = 'transparent';
     const cls = (id) => 'g-notebook-verdict-opt' + (v === id ? ' is-on' : '');
     return {
-      nbRealFill: v === 'real' ? on : off,
-      nbFakeFill: v === 'fake' ? on : off,
-      nbContextFill: v === 'context' ? on : off,
-      nbUnsureFill: v === 'unsure' ? on : off,
       nbRealClass: cls('real'),
       nbFakeClass: cls('fake'),
-      nbContextClass: cls('context'),
-      nbUnsureClass: cls('unsure')
+      nbContextClass: cls('context')
     };
+  },
+
+  verdictLabel(id) {
+    return ({
+      real: 'Real',
+      context: 'Real, but out of context',
+      fake: 'Fake'
+    })[id] || '';
+  },
+
+  // Ending recap rows (Mon–Thu media). Clip night keeps its own diary verdict but is not listed here.
+  endingVerdictRows(st) {
+    const s = st || this.state;
+    const defs = [
+      { key: 1, eyebrow: 'Monday · The video' },
+      { key: 2, eyebrow: 'Tuesday · The photo' },
+      { key: 3, eyebrow: 'Wednesday · The account' },
+      { key: 4, eyebrow: 'Thursday · The voice' }
+    ];
+    const cls = (dayKey, id) => {
+      const v = (s.verdict && s.verdict[dayKey]) || null;
+      return 'g-end-verdict-opt' + (v === id ? ' is-on' : '');
+    };
+    return defs.map(d => ({
+      id: 'ev-' + d.key,
+      eyebrow: d.eyebrow,
+      realClass: cls(d.key, 'real'),
+      contextClass: cls(d.key, 'context'),
+      fakeClass: cls(d.key, 'fake')
+    }));
   },
 
   openNotebookManual() {
@@ -480,9 +502,18 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     this._nbAnim = setTimeout(() => this.setState({ notebookAnim: false }), 900);
   },
 
+  sleepVerdictReady(st) {
+    const s = st || this.state;
+    if (s.notebookMode !== 'sleep') return true;
+    const key = this.taskDayKey(s);
+    return !!(s.verdict && s.verdict[key]);
+  },
+
   closeNotebook() {
     const st = this.state;
     const pending = st.pendingAfterNotebook;
+    // Sleep reflection: need a verdict for tonight before advancing.
+    if (pending && !this.sleepVerdictReady(st)) return;
     // From a book (manual), return to the shelf instead of leaving the desk.
     if (!pending && st.notebookMode === 'manual' && st.notebookSection !== 'shelf') {
       this.backToNotebookShelf();

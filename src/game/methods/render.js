@@ -382,6 +382,9 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const notebookFills = this.notebookVerdictFills(st, st.notebookDayKey);
     const notebookTabs = this.notebookDayTabs(st);
     const notebookShowReflection = this.notebookShowReflection(st);
+    const notebookVerdictEditable = notebookShowReflection && !this.isPastDiaryKey(st, st.notebookDayKey);
+    const notebookVerdictReadonly = notebookShowReflection && !notebookVerdictEditable;
+    const notebookContinueBlocked = st.notebookMode === 'sleep' && !this.sleepVerdictReady(st);
     const notebookShowShelf = st.notebookSection === 'shelf';
     const notebookShowIntro = st.notebookSection === 'intro';
     const notebookShowMap = st.notebookSection === 'map';
@@ -975,23 +978,24 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       deleteWrite: () => this.setState({ writeIn: false, writeStatus: 'deleted', screen: 'room', dev: null, threadOpen: null }),
       isStanding: st.screen === 'end' && st.endStep === 1,
       isWriteBack: st.screen === 'end' && st.endStep === 2,
+      isVerdictReview: st.screen === 'end' && st.endStep === 3,
       writeBackHasText: st.writeStatus !== null && !!(st.writeText || '').trim(),
       writeBackText: (st.writeText || '').trim(),
       writeBackLine: st.writeStatus === 'sent' ? 'You wrote this, and you sent it.'
         : (st.writeStatus === 'deleted' && (st.writeText || '').trim()) ? 'You wrote this, and you deleted it.'
         : 'You didn' + "'" + 't write anything.',
-      isLedger: st.screen === 'end' && st.endStep === 3,
-      isOmissions: st.screen === 'end' && st.endStep === 4,
-      isMoves: st.screen === 'end' && st.endStep === 5,
-      isLastCard: st.screen === 'end' && st.endStep === 6,
-      isInvitation: st.screen === 'end' && st.endStep === 7,
+      isLedger: st.screen === 'end' && st.endStep === 4,
+      isOmissions: st.screen === 'end' && st.endStep === 5,
+      isMoves: st.screen === 'end' && st.endStep === 6,
+      isLastCard: st.screen === 'end' && st.endStep === 7,
+      isInvitation: st.screen === 'end' && st.endStep === 8,
       showEndBack: st.screen === 'end' && st.endStep > 1,
       alwaysTrue: true,
       nextSection: () => {
         const n = this.state.endStep + 1;
         console.log('[endingScreen] ' + this.state.endStep + ' → ' + n);
         this.setState({ endStep: n });
-        if (n === 6) { this.setState({ replayShown: false }); setTimeout(() => this.setState({ replayShown: true }), 3000); }
+        if (n === 7) { this.setState({ replayShown: false }); setTimeout(() => this.setState({ replayShown: true }), 3000); }
       },
       prevSection: () => {
         const n = Math.max(1, this.state.endStep - 1);
@@ -1015,6 +1019,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       groupStandingLine: st.group < 35 ? 'Two people stopped replying to you this week.'
         : st.group >= 65 ? 'Nobody in the group has anything against you.' : '',
       ledger: this.ledger(st, s),
+      endingVerdictRows: this.endingVerdictRows(st),
       checkingLabel: endSig.checks === 0 ? 'No fact-checks'
         : endSig.checks + (endSig.checks === 1 ? ' fact-check' : ' fact-checks')
           + (endSig.checks >= 4 ? ' — heavy' : endSig.checks >= 2 ? ' — medium' : ''),
@@ -1083,14 +1088,15 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       notebookOpen: !!st.notebookOpen,
       notebookAnimClass: st.notebookAnim ? 'is-opening' : '',
       notebookBookClass: notebookShowShelf ? 'is-shelf' : '',
-      notebookDateDay: this.diaryDateParts(st.notebookDayKey).day,
-      notebookDateNum: this.diaryDateParts(st.notebookDayKey).date,
+      notebookDateDay: this.taskDayLabel(st.notebookDayKey),
       notebookSleepMode: st.notebookMode === 'sleep',
       notebookShowShelf,
       notebookShowIntro,
       notebookShowMap,
       notebookShowDay,
       notebookShowReflection,
+      notebookVerdictEditable,
+      notebookVerdictReadonly,
       notebookHasTabs: notebookShowDay && notebookTabs.length > 1,
       notebookTabs,
       notebookShelfBooks: this.notebookShelfBooks(),
@@ -1112,25 +1118,19 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         : 'Things I still need to look into before I sleep.',
       notebookRows: this.notebookRows(st, st.notebookDayKey),
       notebookGot,
-      nbNote: (st.verdictNote && st.verdictNote[st.notebookDayKey]) || '',
-      nbNoteChange: (e) => this.setVerdictNote(st.notebookDayKey, e && e.target ? e.target.value : ''),
       nbSetReal: () => this.setVerdict(st.notebookDayKey, 'real'),
       nbSetFake: () => this.setVerdict(st.notebookDayKey, 'fake'),
       nbSetContext: () => this.setVerdict(st.notebookDayKey, 'context'),
-      nbSetUnsure: () => this.setVerdict(st.notebookDayKey, 'unsure'),
-      nbRealFill: notebookFills.nbRealFill,
-      nbFakeFill: notebookFills.nbFakeFill,
-      nbContextFill: notebookFills.nbContextFill,
-      nbUnsureFill: notebookFills.nbUnsureFill,
       nbRealClass: notebookFills.nbRealClass,
       nbFakeClass: notebookFills.nbFakeClass,
       nbContextClass: notebookFills.nbContextClass,
-      nbUnsureClass: notebookFills.nbUnsureClass,
       closeNotebook: () => this.closeNotebook(),
       openNotebook: () => this.openNotebookManual(),
       notebookContinueLabel: st.notebookMode === 'sleep'
         ? (st.day === 4 ? 'Continue' : 'Next day')
         : (notebookShowShelf ? 'Close' : 'Back'),
+      notebookContinueDisabled: notebookContinueBlocked,
+      notebookContinueOp: notebookContinueBlocked ? 0.45 : 1,
       isNameEntry: st.screen === 'name',
       isAvatarEntry: st.screen === 'avatar',
       nameDraft: st.nameDraft, nameRef: this.nameRef,
