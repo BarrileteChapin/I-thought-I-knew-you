@@ -114,7 +114,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const itemName = { 1: 'IMG_4471.mp4', 2: 'nicole_party.jpg', 3: 'clip_you.m4a', 4: 'voice_nicole.m4a' }[st.day];
     const all = this.allDays();
     const rows = [
-      { day: 1, item: 1, kind: 'video', who: 'Hanna', spec: '0:07', caption: 'Nicole, filmed at a party: “…she' + "'" + 's honestly the most pathetic person in our year.”' },
+      { day: 1, item: 1, kind: 'video', who: 'Hanna', spec: '0:07', caption: 'Nicole, filmed at a party: “…Nele' + "'" + 's honestly the most pathetic person in our year.”' },
       { day: 2, item: 2, kind: 'image', who: 'Hanna', spec: '1024 × 1024' },
       { day: 3, item: 3, kind: 'shot', name: 'screenshot_2847.png', who: 'Hanna', spec: 'image' },
       { day: 3, item: 5, gate: st.clipBack, kind: 'audio', name: 'clip_you.m4a', who: 'Nicole', when: 'Wednesday, 10:15pm', spec: '0:09' },
