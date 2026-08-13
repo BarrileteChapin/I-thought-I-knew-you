@@ -133,7 +133,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     if (!reply) return;
     if (reply.late) {
       this.setState(s => ({ min: s.min + 60 }));
-      setTimeout(() => this.setState(s => ({ dm: s.dm.concat([{ who: 'Nicole', text: reply.text }]) })), 900);
+      setTimeout(() => this.setState(s => ({ dm: s.dm.concat([{ who: 'Nicole', text: reply.text, generated: !!reply.generated }]) })), 900);
       return null;
     }
     return reply;

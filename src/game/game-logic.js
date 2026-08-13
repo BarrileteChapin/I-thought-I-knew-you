@@ -32,7 +32,7 @@ class Component extends DCLogic {
     dmAnsweredToday: false, phoneOpenedToday: false, phoneClosing: false, shareTick: 0, shareHalved: false, fading: false,
     tool: 'player', socTab: 'feed', socProfileKey: null, socPostId: null, socInfoOpen: false, mediaOpen: null, seen: {}, zoom: false, dev: null, threadOpen: null, galleryNew: false, chatFlash: false,
     lastRead: { group: 0, dm: 0 }, newMarkAt: null, showNewPill: false,
-    writeIn: false, writeText: '', writeStatus: null, chatDraft: '', chatBusy: false, llmStatus: '', actionsOpen: false, chatGroupLeft: 4, chatDmLeft: 3, llmUsedReplies: [], llmReplySeed: 0,
+    writeIn: false, writeText: '', writeStatus: null, chatDraft: '', chatBusy: false, llmStatus: '', actionsOpen: false, chatGroupLeft: 5, chatDmLeft: 5, llmUsedReplies: [], llmReplySeed: 0,
     dragItem: null, pickIdx: null, pickerOpen: false, pickerMode: 'search', searched: {}, aiPickIdx: null, aiStage: 'idle', aiStep: 0, actionLog: [], reactionTimes: [],
     arrival: 0, reactedToday: false, samSilent: false, apology: false,
     reported: false, clipBack: false, phase: 'evening', groupUnread: 0, final: { post: null, fwd: null, tell: null },
