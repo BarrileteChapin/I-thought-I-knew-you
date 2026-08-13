@@ -226,8 +226,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         'She and Hanna are usually together.'
       ],
       nele: [
-        'Nele is in the class next door.',
-        'She does not seem to like Nicole much.',
+        'Nele\'s name has started showing up around Nicole.',
+        'She was in 10b with you until she moved to 10a, and you\'re still friends.',
         k.neleJealous && day >= 2 && openedGroup
           ? 'Hanna brought her up with the photo and said Nele was at home crying.'
           : null,
