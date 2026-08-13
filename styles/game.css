@@ -746,7 +746,7 @@ button:focus-visible {
   position: relative;
   flex: 0 0 auto;
   width: 100%;
-  padding: 24px 16px 24px;
+  padding: 0 16px;
   border: 1px solid rgba(74, 66, 56, .16);
   background: rgba(255, 255, 255, .42);
   box-sizing: border-box;
@@ -756,8 +756,8 @@ button:focus-visible {
 .g-rmap-stage {
   position: relative;
   width: 100%;
-  aspect-ratio: 100 / 132;
-  min-height: 460px;
+  aspect-ratio: 100 / 118;
+  min-height: 420px;
 }
 
 .g-rmap-edges {
@@ -918,7 +918,7 @@ button:focus-visible {
 .g-rmap-legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 14px;
+  gap: 4px 14px;
   padding: 2px 4px;
 }
 
