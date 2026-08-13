@@ -6,7 +6,6 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const day = s.day || 1;
     const clip = day === 3 && s.phase === 'clip';
     const cert1 = (s.certainty && s.certainty[1]) || 'unchecked';
-    const searchedParty = !!(s.searched && (s.searched['nicole_party.jpg'] || s.searched['nicole_party_repost.jpg']));
     return {
       youNicole: true,
       benitoEx: true,
@@ -18,9 +17,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       benitoQuiet: day >= 1,
       // Designer truth (Benito filmed) stays soft until the player has asked around.
       benitoFilmedHint: !!D.d1jonas && (day >= 2 || cert1 !== 'unchecked'),
-      nele: day >= 2 || clip || day >= 3,
-      neleJealous: day >= 2 || clip,
-      laura: day >= 2 && (!!D.d2rev || searchedParty || day >= 3)
+      nele: true,
+      neleJealous: day >= 2 || clip
     };
   },
 
@@ -45,7 +43,6 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const H = 132;
 
     // Positions in viewBox units (x: 0–W, y: 0–H). Nodes convert y → % of stage height.
-    // Keep Laura high enough that name + "(off-screen)" stay inside .g-rmap.
     const pos = {
       you: { x: 18, y: 18 },
       nicole: { x: 50, y: 42 },
@@ -53,8 +50,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       mia: { x: 18, y: 52 },
       nele: { x: 22, y: 88 },
       hanna: { x: 78, y: 62 },
-      lea: { x: 78, y: 92 },
-      laura: { x: 50, y: 112 }
+      lea: { x: 78, y: 92 }
     };
 
     // Avatar radius in viewBox units (approx. for non-square stretch) — shorten lines to the rim.
@@ -76,7 +72,6 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         top: (p.y / H * 100) + '%',
         selected: focus === id,
         select: () => this.relationMapSelect(id),
-        isLaura: id === 'laura',
         isYou: id === 'you',
         hero,
         offscreen: !!extra && !!extra.offscreen,
@@ -91,8 +86,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       node('mia', 'Mia', '#00B89C', this.faceOf('Mia'), k.classmates),
       node('nele', 'Nele', '#A39E98', this.faceOf('Nele'), k.nele),
       node('hanna', 'Hanna', '#E01B1B', this.faceOf('Hanna'), k.classmates),
-      node('lea', 'Lea', '#E01B1B', this.faceOf('Lea'), k.classmates),
-      node('laura', 'Laura', '#B0A99E', '', k.laura, { offscreen: true, sub: '(off-screen)' })
+      node('lea', 'Lea', '#E01B1B', this.faceOf('Lea'), k.classmates)
     ].map(n => Object.assign(n, {
       nodeClass: [
         'g-rmap-node',
@@ -235,14 +229,9 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       nele: [
         day >= 2 && openedGroup
           ? 'Nele. Hanna brought her up with the photo — said Nele was at home crying.'
-          : (k.nele ? 'Nele\'s name has started showing up around Nicole.' : null),
+          : 'Nele\'s name has started showing up around Nicole. You know her from before — she was in 10b with you until she moved to 10a — and you\'re still friends.',
         k.neleJealous && day >= 2 && openedGroup
           ? 'You don\'t know the full story between Nicole and Nele — only what people are implying in chat.'
-          : null
-      ],
-      laura: [
-        k.laura
-          ? 'Laura isn\'t really in this week\'s chat — but the photo reverse-search pointed at her birthday last summer.'
           : null
       ]
     };
