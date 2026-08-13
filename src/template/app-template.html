@@ -493,11 +493,11 @@
         </div>
       </sc-if>
       <div class="g-notebook-date">
-        <span class="g-notebook-date-day">{{ notebookDateDay }}</span><span class="g-notebook-date-num">, {{ notebookDateNum }}</span>
+        <span class="g-notebook-date-day">{{ notebookDateDay }}</span>
       </div>
       <sc-if value="{{ notebookShowLead }}" hint-placeholder-val="{{ true }}">
         <div class="g-notebook-note">
-          <img src="assets/circle_handwritten.webp" alt="" width="20" height="20" class="g-notebook-note-mark" decoding="sync">
+          <span class="g-notebook-note-mark" aria-hidden="true"></span>
           <div class="g-notebook-note-text">{{ notebookLeadText }}</div>
         </div>
       </sc-if>
@@ -507,19 +507,21 @@
         <sc-if value="{{ notebookShowReflection }}" hint-placeholder-val="{{ false }}">
           <div class="g-notebook-section-title">What I did</div>
         </sc-if>
-        <sc-for list="{{ notebookRows }}" as="q" hint-placeholder-count="2">
-          <div class="g-notebook-row" style="opacity:{{ q.opacity }};">
-            <sc-if value="{{ q.done }}" hint-placeholder-val="{{ false }}">
-              <span class="g-notebook-check is-done">✓</span>
-            </sc-if>
-            <sc-if value="{{ q.notDone }}" hint-placeholder-val="{{ true }}">
-              <span class="g-notebook-check"></span>
-            </sc-if>
-            <div class="g-notebook-row-label">{{ q.label }}</div>
-          </div>
-        </sc-for>
+        <div class="g-notebook-rows">
+          <sc-for list="{{ notebookRows }}" as="q" hint-placeholder-count="2">
+            <div class="g-notebook-row" style="opacity:{{ q.opacity }};">
+              <sc-if value="{{ q.done }}" hint-placeholder-val="{{ false }}">
+                <img src="assets/check-square.svg" alt="" width="18" height="18" class="g-notebook-check is-done" decoding="sync">
+              </sc-if>
+              <sc-if value="{{ q.notDone }}" hint-placeholder-val="{{ true }}">
+                <img src="assets/square.svg" alt="" width="18" height="18" class="g-notebook-check" decoding="sync">
+              </sc-if>
+              <div class="g-notebook-row-label">{{ q.label }}</div>
+            </div>
+          </sc-for>
+        </div>
         <sc-if value="{{ notebookShowReflection }}" hint-placeholder-val="{{ false }}">
-          <div class="g-notebook-section-title g-notebook-section-title-spaced">What I got</div>
+          <div class="g-notebook-section-title">What I got</div>
           <sc-for list="{{ notebookGot }}" as="mi" hint-placeholder-count="1">
             <div class="g-notebook-got">
               <sc-if value="{{ mi.isVideo }}" hint-placeholder-val="{{ false }}">
@@ -548,35 +550,34 @@
               <div class="g-notebook-got-meta">{{ mi.meta }}</div>
             </div>
           </sc-for>
-          <div class="g-notebook-section-title g-notebook-section-title-spaced">What I think it is</div>
-          <div class="g-notebook-verdict">
-            <button sc-camel-on-click="{{ nbSetReal }}" class="{{ nbRealClass }}" type="button">
-              <span class="g-notebook-verdict-dot" style="background:{{ nbRealFill }};"></span>Real
-            </button>
-            <button sc-camel-on-click="{{ nbSetFake }}" class="{{ nbFakeClass }}" type="button">
-              <span class="g-notebook-verdict-dot" style="background:{{ nbFakeFill }};"></span>Fake
-            </button>
-            <button sc-camel-on-click="{{ nbSetContext }}" class="{{ nbContextClass }}" type="button">
-              <span class="g-notebook-verdict-dot" style="background:{{ nbContextFill }};"></span>Real, but out of context
-            </button>
-            <button sc-camel-on-click="{{ nbSetUnsure }}" class="{{ nbUnsureClass }}" type="button">
-              <span class="g-notebook-verdict-dot" style="background:{{ nbUnsureFill }};"></span>I don't know yet
-            </button>
-          </div>
-          <textarea value="{{ nbNote }}" sc-camel-on-change="{{ nbNoteChange }}" placeholder="(optional note)" rows="3" class="g-notebook-note-field"></textarea>
+          <div class="g-notebook-section-title">What do you think that actually was?</div>
+          <sc-if value="{{ notebookVerdictEditable }}" hint-placeholder-val="{{ true }}">
+            <div class="g-notebook-verdict">
+              <button sc-camel-on-click="{{ nbSetReal }}" class="{{ nbRealClass }}" type="button">Real</button>
+              <button sc-camel-on-click="{{ nbSetContext }}" class="{{ nbContextClass }}" type="button">Real, but out of context</button>
+              <button sc-camel-on-click="{{ nbSetFake }}" class="{{ nbFakeClass }}" type="button">Fake</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ notebookVerdictReadonly }}" hint-placeholder-val="{{ false }}">
+            <div class="g-notebook-verdict is-readonly" aria-readonly="true">
+              <div class="{{ nbRealClass }}">Real</div>
+              <div class="{{ nbContextClass }}">Real, but out of context</div>
+              <div class="{{ nbFakeClass }}">Fake</div>
+            </div>
+          </sc-if>
         </sc-if>
       </div>
     </div>
     </div>
     </sc-if>
   </div>
-  <button sc-camel-on-click="{{ closeNotebook }}" class="g-btn g-btn-primary g-btn-screen g-notebook-close">{{ notebookContinueLabel }}</button>
+  <button sc-camel-on-click="{{ closeNotebook }}" disabled="{{ notebookContinueDisabled }}" class="g-btn g-btn-primary g-btn-screen g-notebook-close" style="opacity:{{ notebookContinueOp }};">{{ notebookContinueLabel }}</button>
 </div>
 </sc-if>
 
 <sc-if value="{{ reportOpen }}" hint-placeholder-val="{{ false }}">
-<div style="position:absolute;left:3%;right:3%;top:2%;bottom:2%;border-radius:var(--r-phone);z-index:var(--z-phone);background:var(--c-ink-heavy);display:flex;align-items:center;justify-content:center;padding:24px;">
-  <div style="width:100%;border:2px solid var(--c-line);background:var(--c-white);padding:30px;">
+<div sc-camel-on-click="{{ reportCancel }}" style="position:absolute;top:0;right:0;bottom:0;left:0;z-index:var(--z-phone);background:rgba(10,10,12,.72);display:flex;align-items:center;justify-content:center;padding:20px var(--space-screen-x);box-sizing:border-box;">
+  <div sc-camel-on-click="{{ stopClick }}" style="width:100%;max-width:400px;border:2px solid var(--c-line);background:var(--c-white);padding:30px;box-sizing:border-box;">
     <div style="font-size:20px;color:var(--c-ink);margin-bottom:22px;">Report which account?</div>
     <div style="display:flex;flex-direction:column;gap:9px;">
       <button sc-camel-on-click="{{ reportNew }}" class="g-btn g-btn-choice">@n.kruger — the new one</button>
@@ -777,8 +778,8 @@
 </sc-if>
 
 <sc-if value="{{ shotOpen }}" hint-placeholder-val="{{ false }}">
-<div style="position:absolute;left:3%;right:3%;top:2%;bottom:2%;border-radius:var(--r-phone);z-index:85;background:var(--c-ink-heavy);display:flex;align-items:center;justify-content:center;padding:24px;">
-  <div style="width:100%;max-height:92vh;overflow-y:auto;border:2px solid var(--c-line);background:var(--c-white);">
+<div sc-camel-on-click="{{ closeShot }}" style="position:absolute;top:0;right:0;bottom:0;left:0;z-index:90;background:rgba(10,10,12,.72);display:flex;align-items:center;justify-content:center;padding:20px var(--space-screen-x);box-sizing:border-box;">
+  <div sc-camel-on-click="{{ stopClick }}" style="width:100%;max-width:400px;max-height:min(88%, 78dvh);overflow-y:auto;border:2px solid var(--c-line);background:var(--c-white);box-sizing:border-box;">
     <sc-if value="{{ shotIsFake }}" hint-placeholder-val="{{ false }}">
       <img src="assets/screenshot-fake.webp" alt="" style="display:block;width:100%;height:auto;">
       <div style="padding:14px 20px;font-size:var(--fs-sm);color:var(--c-muted);">Sent by Hanna, 4:40pm. screenshot_2847.png</div>
@@ -1660,6 +1661,33 @@
   <sc-if value="{{ writeBackHasText }}" hint-placeholder-val="{{ false }}">
     <div style="border-left:2px solid var(--c-accent);padding:6px 0 6px 18px;font-size:20px;line-height:1.55;color:var(--c-ink);text-wrap:pretty;">{{ writeBackText }}</div>
   </sc-if>
+  </div>
+  <div style="flex:0 0 auto;padding:14px var(--space-screen-x) 20px;background:var(--c-frame);border-top:1px solid var(--c-ink-hair);">
+    <div class="g-btn-footer-row">
+      <button sc-camel-on-click="{{ prevSection }}" class="g-btn g-btn-footer-back">Go back</button>
+      <button sc-camel-on-click="{{ nextSection }}" class="g-btn g-btn-footer">Continue</button>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isVerdictReview }}" hint-placeholder-val="{{ false }}">
+<div style="width:100%;height:100%;display:flex;flex-direction:column;">
+  <div class="g-end-fadein" style="flex:1;min-height:0;overflow-y:auto;padding:64px var(--space-screen-x) 20px;">
+  <div style="height:2px;background:var(--c-accent);width:96px;margin-bottom:26px;"></div>
+  <h2 style="font-size:38px;font-weight:700;margin:0 0 38px;letter-spacing:-.01em;color:var(--c-ink);">What you said</h2>
+  <div class="g-end-verdict-list">
+    <sc-for list="{{ endingVerdictRows }}" as="row" hint-placeholder-count="4">
+      <div class="g-end-verdict-row">
+        <div class="g-end-verdict-eyebrow">{{ row.eyebrow }}</div>
+        <div class="g-end-verdict-choices is-readonly" aria-readonly="true">
+          <div class="{{ row.realClass }}">Real</div>
+          <div class="{{ row.contextClass }}">Real, but out of context</div>
+          <div class="{{ row.fakeClass }}">Fake</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
   </div>
   <div style="flex:0 0 auto;padding:14px var(--space-screen-x) 20px;background:var(--c-frame);border-top:1px solid var(--c-ink-hair);">
     <div class="g-btn-footer-row">
