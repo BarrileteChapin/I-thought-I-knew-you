@@ -22,7 +22,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const ph = phase || (n === 3 ? 'morning' : 'evening');
     this.setState(Object.assign({ screen: 'daycard' }, this.dayCardViewFor(n, ph)));
     clearTimeout(this._dc);
-    this._dc = setTimeout(() => this.startDay(n, ph), 2600);
+    this._dc = setTimeout(() => this.startDay(n, ph), 1600);
   },
 
   startDay(n, phase) {
@@ -77,6 +77,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       arrival: Date.now(), confirmSleep: false, sharedCount: shared, reason: '',
       pushIdx: st.pushIdx + (st.group < 35 ? 1 : 0),
       msgToast: null, msgToastVisible: false, socToast: null, socToastVisible: false, cameraPush: false,
+      hintsOpen: false,
       dayEnter: true
     }, () => {
       requestAnimationFrame(() => this.setState({ dayEnter: false }));

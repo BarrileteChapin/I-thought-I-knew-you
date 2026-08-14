@@ -54,6 +54,8 @@ class Component extends DCLogic {
     pendingAfterNotebook: false,
     verdict: { 1: null, 2: null, 3: null, clip: null, 4: null },
     verdictNote: { 1: '', 2: '', 3: '', clip: '', 4: '' },
+    hintsOpen: false,
+    nbHintsSeen: { 1: false, 2: false, 3: false, clip: false, 4: false },
     endingsGalleryOpen: false, endingsGalleryClosing: false, unlockedEndings: {},
     titleLeaving: false,
     titleLeadShown: '',

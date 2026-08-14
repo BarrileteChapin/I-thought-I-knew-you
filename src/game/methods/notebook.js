@@ -11,15 +11,13 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       { id: 'd2sam', label: 'Ask Nicole about the photo', kind: 'done' }
     ],
     3: [
-      { id: 'd3side', label: 'Compare the two accounts', kind: 'done' },
-      { id: 'reportedFake', label: 'Report the fake account', kind: 'flag' }
+      { id: 'd3side', label: 'Compare the two accounts', kind: 'done' }
     ],
     clip: [
-      { id: 'd4cmp', label: 'Compare the voice to the original', kind: 'done' },
-      { id: 'd4slow', label: 'Listen again, slowly', kind: 'done' }
+      { id: 'd4cmp', label: 'Compare the voice to the original', kind: 'done' }
     ],
     4: [
-      { id: 'd5where', label: 'Ask where she was tonight', kind: 'done' },
+      { id: 'd5where', label: 'Ask the group where she was tonight', kind: 'done' },
       { id: 'd5listen', label: 'Listen to the voice twice', kind: 'done' }
     ]
   },
@@ -174,6 +172,100 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     ].map(b => Object.assign(b, {
       cardClass: 'g-notebook-shelf-card is-' + b.tone
     }));
+  },
+
+  // One hint per diary slot (Wed morning vs Wed evening are separate).
+  // Reveals automatically once that slot's checklist is complete.
+  DAY_HINTS: {
+    1: {
+      title: 'Day 1',
+      body: 'Ask Mia — she was at the party too, and she might have the whole video.'
+    },
+    2: {
+      title: 'Day 2',
+      body: 'Check the comments under Nicole\'s social media post. Oh — and you can download photos from there too.'
+    },
+    3: {
+      title: 'Day 3 — morning',
+      body: 'Check the account details — who created the account.'
+    },
+    clip: {
+      title: 'Day 3 — evening',
+      body: 'Saw a news thing — new AI tools can clone a voice from just a short recording. Speaking of AI — someone said Benito won a school prize for some AI project last term.'
+    },
+    4: {
+      title: 'Day 4',
+      body: 'AI checkers aren\'t always right. Green doesn\'t mean true.'
+    }
+  },
+
+  emptyNbHintsSeen() {
+    return { 1: false, 2: false, 3: false, clip: false, 4: false };
+  },
+
+  hintSlotKey(st) {
+    return this.taskDayKey(st);
+  },
+
+  dayHintReady(st, dayKey) {
+    const s = st || this.state;
+    const key = dayKey != null ? dayKey : this.hintSlotKey(s);
+    const tasks = this.tasksForDay(key);
+    if (!tasks.length) return false;
+    return tasks.every(t => this.isTaskComplete(s, t));
+  },
+
+  // Checklist done for this slot → show hint.svg (resets each morning / evening).
+  hintAvailable(st) {
+    return this.dayHintReady(st);
+  },
+
+  maybeAutoUnlockTodayHint(st) {
+    const s = st || this.state;
+    const key = this.hintSlotKey(s);
+    if (!this.dayHintReady(s, key)) return;
+    if ((s.nbHintsSeen || {})[key]) return;
+    clearTimeout(this._hintAuto);
+    this._hintAuto = setTimeout(() => this.unlockHint(key), 0);
+  },
+
+  openHints() {
+    this.maybeAutoUnlockTodayHint();
+    this.setState({ hintsOpen: true, tip: null });
+  },
+
+  closeHints() {
+    this.setState({ hintsOpen: false });
+  },
+
+  unlockHint(dayKey) {
+    const key = dayKey != null ? dayKey : this.hintSlotKey();
+    if (!this.DAY_HINTS[key]) return;
+    if ((this.state.nbHintsSeen || {})[key]) return;
+    if (!this.dayHintReady(this.state, key)) return;
+    this.setState(s => ({
+      nbHintsSeen: Object.assign({}, this.emptyNbHintsSeen(), s.nbHintsSeen || {}, { [key]: true })
+    }));
+  },
+
+  hintsRows(st) {
+    const s = st || this.state;
+    const key = this.hintSlotKey(s);
+    const def = this.DAY_HINTS[key];
+    if (!def) return [];
+    this.maybeAutoUnlockTodayHint(s);
+    const seen = Object.assign({}, this.emptyNbHintsSeen(), s.nbHintsSeen || {});
+    const ready = this.dayHintReady(s, key);
+    const revealed = ready || !!seen[key];
+    const locked = !revealed;
+    return [{
+      id: 'hint-' + key,
+      title: def.title,
+      body: def.body,
+      revealed,
+      locked,
+      btnLabel: "Finish today's checklist to unlock this hint."
+    }];
   },
 
   notebookTabLabel(key) {
@@ -482,7 +574,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       notebookDayKey: this.taskDayKey(),
       notebookMapFocus: null,
       notebookAnim: true,
-      pendingAfterNotebook: false
+      pendingAfterNotebook: false,
+      hintsOpen: false
     });
     clearTimeout(this._nbAnim);
     this._nbAnim = setTimeout(() => this.setState({ notebookAnim: false }), 900);
@@ -496,7 +589,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       notebookDayKey: this.taskDayKey(),
       notebookAnim: true,
       pendingAfterNotebook: true,
-      fading: false
+      fading: false,
+      hintsOpen: false
     });
     clearTimeout(this._nbAnim);
     this._nbAnim = setTimeout(() => this.setState({ notebookAnim: false }), 900);

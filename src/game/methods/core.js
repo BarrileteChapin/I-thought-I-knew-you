@@ -129,7 +129,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       screen: 'phone',
       phoneClosing: false,
       phoneOpenedToday: true,
-      actionsOpen: false
+      actionsOpen: false,
+      hintsOpen: false
     }, extra || {}));
   },
 

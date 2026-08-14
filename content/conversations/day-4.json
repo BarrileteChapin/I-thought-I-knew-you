@@ -67,7 +67,7 @@
       "thread": "group",
       "cost": 6,
       "say": "where was nicole tonight? does anyone actually know?",
-      "label": "Ask where she was tonight",
+      "label": "Ask the group where she was tonight",
       "effect": "confirm",
       "sift": "investigate",
       "result": "Mia: she was at my nan's until 10, my whole family saw her"

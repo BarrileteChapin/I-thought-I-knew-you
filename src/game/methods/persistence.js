@@ -33,7 +33,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       shotOpen: null,
       feedImg: null,
       reportOpen: false,
-      pickerOpen: false
+      pickerOpen: false,
+      hintsOpen: false
     });
   },
 
@@ -168,6 +169,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       pendingAfterNotebook: false,
       verdict: { 1: null, 2: null, 3: null, clip: null, 4: null },
       verdictNote: { 1: '', 2: '', 3: '', clip: '', 4: '' },
+      hintsOpen: false,
+      nbHintsSeen: { 1: false, 2: false, 3: false, clip: false, 4: false },
       endingsGalleryOpen: false, endingsGalleryClosing: false,
       unlockedEndings: meta.unlockedEndings || {},
       titleLeaving: false,
@@ -294,6 +297,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       fading: false,
       verdict: Object.assign({ 1: null, 2: null, 3: null, clip: null, 4: null }, saved.verdict || {}),
       verdictNote: Object.assign({ 1: '', 2: '', 3: '', clip: '', 4: '' }, saved.verdictNote || {}),
+      hintsOpen: false,
+      nbHintsSeen: Object.assign({ 1: false, 2: false, 3: false, clip: false, 4: false }, saved.nbHintsSeen || {}),
       notebookSection: (saved.notebookSection === 'intro' || saved.notebookSection === 'map' || saved.notebookSection === 'day')
         ? saved.notebookSection
         : 'shelf'
@@ -317,7 +322,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
           return;
         }
         this.setState({ screen: resume }, () => this.resumeAfterLoad());
-      }, 2600);
+      }, 1600);
     });
   },
 

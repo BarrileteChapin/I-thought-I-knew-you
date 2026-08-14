@@ -238,6 +238,46 @@ a:hover {
   animation: fadeup var(--dur-fade, .9s) var(--ease, ease) both;
 }
 
+.g-end-truth-kicker {
+  font-size: var(--fs-caption);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--c-ink-dim);
+  margin: 0 0 12px;
+}
+
+.g-end-truth-title {
+  font-size: 38px;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  color: var(--c-ink);
+  margin: 0 0 14px;
+}
+
+.g-end-truth-lead {
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  color: var(--c-muted);
+  max-width: 42ch;
+  margin: 0 0 22px;
+}
+
+.g-end-truth-frame {
+  width: 100%;
+  max-width: 520px;
+  border: 2px solid var(--c-line);
+  background: var(--c-black);
+  overflow: hidden;
+}
+
+.g-end-truth-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  vertical-align: top;
+  background: var(--c-black);
+}
+
 .g-end-sift-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -2031,4 +2071,109 @@ video.g-notebook-got-media {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+
+/* Hint mark over room lamp (only after today's hint unlocks) */
+.g-room-hint-mark {
+  position: absolute;
+  z-index: 5;
+  height: auto;
+  display: block;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, .25));
+}
+
+/* Hints dialog (room lamp) */
+.g-hints-scrim {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 87;
+  background: var(--c-ink-faint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px var(--space-screen-x);
+  box-sizing: border-box;
+}
+
+.g-hints-panel {
+  position: relative;
+  z-index: 1;
+  width: min(420px, 86%);
+  box-sizing: border-box;
+  background: var(--c-panel);
+  padding: 34px 36px;
+  animation: fadeup var(--dur-fast) var(--ease);
+}
+
+.g-hints-title {
+  font-size: var(--fs-title);
+  font-weight: 600;
+  color: var(--c-ink);
+  margin: 0 0 22px;
+  text-align: center;
+  line-height: 1.25;
+}
+
+.g-hints-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.g-hints-card {
+  box-sizing: border-box;
+  background: var(--c-white);
+  border: 1px solid var(--c-line);
+  padding: 16px 18px 18px;
+}
+
+.g-hints-card-name {
+  font-size: var(--fs-body);
+  font-weight: 600;
+  color: var(--c-ink);
+  line-height: 1.3;
+}
+
+.g-hints-card-body {
+  margin-top: 10px;
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  color: var(--c-ink);
+  text-wrap: pretty;
+}
+
+.g-hints-lock-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 108px;
+}
+
+.g-hints-lock {
+  display: block;
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  opacity: 0.75;
+}
+
+.g-hints-locked-msg {
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+  color: var(--c-muted);
+  text-align: center;
+  text-wrap: balance;
+}
+
+.g-hints-close {
+  display: block;
+  width: 100%;
+  margin-top: 22px;
+  padding: 0;
+  text-align: center;
 }
