@@ -385,6 +385,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const notebookVerdictEditable = notebookShowReflection && !this.isPastDiaryKey(st, st.notebookDayKey);
     const notebookVerdictReadonly = notebookShowReflection && !notebookVerdictEditable;
     const notebookContinueBlocked = st.notebookMode === 'sleep' && !this.sleepVerdictReady(st);
+    this.maybeAutoUnlockTodayHint(st);
     const notebookShowShelf = st.notebookSection === 'shelf';
     const notebookShowIntro = st.notebookSection === 'intro';
     const notebookShowMap = st.notebookSection === 'map';
@@ -744,8 +745,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       myHandle: '@' + (this.name() || 'you').toLowerCase().replace(/[^a-z0-9]+/g, '_'),
       socFeed: socTab === 'feed' && !st.socProfileKey && !st.socPostId,
       socEmpty: false,
-      socProfile: !!st.socProfileKey,
-      socPost: !st.socProfileKey && socTab !== 'profile' && !!st.socPostId,
+      socProfile: !!st.socProfileKey && !st.socPostId,
+      socPost: !!st.socPostId,
       feed: (() => {
         const visible = feedPosts.filter(p => !p.profileOnly);
         const todayCount = visible.filter(p => p.day === st.day).length;
@@ -793,7 +794,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
        profPostList: prof ? feedPosts.filter(p => p.handle === prof.handle).map(p => ({
          id: p.id, text: p.text || '[photo]', ago: p.ago, likes: p.likes, replies: p.replies,
          hasPhoto: !!p.photo, isGarden: !!p.garden, isCraft: !!p.craft, dated: p.dated || '',
-         openPost: () => this.setState({ socPostId: p.id, socProfileKey: null, socInfoOpen: false, socTab: 'feed' }),
+         openPost: () => this.setState({ socPostId: p.id, socInfoOpen: false }),
          openGarden: () => this.setState({ feedImg: 'garden' }),
          openCraft: () => this.setState({ feedImg: 'craft' }),
          openParty: () => this.setState({ feedImg: 'party' })
@@ -811,7 +812,13 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         name: nm(r.handle), avatar: r.avatar || av(r.handle),
         ago: ['4h', '3h', '2h'][i] || '1h', likes: [2, 1, 4, 3][i] || 1
       })),
-       backToFeed: () => this.setState({ socProfileKey: null, socPostId: null, socInfoOpen: false, socTab: 'feed' }),
+       backToFeed: () => {
+         if (this.state.socPostId) {
+           this.setState({ socPostId: null, socInfoOpen: false });
+           return;
+         }
+         this.setState({ socProfileKey: null, socPostId: null, socInfoOpen: false, socTab: 'feed' });
+       },
       tabAiBg: st.tool === 'ai' ? C.accentSoft : 'transparent',
       aiDead: false, aiOp: 1,
       playerChecks, aiChecks,
@@ -987,21 +994,13 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       isLedger: st.screen === 'end' && st.endStep === 4,
       isOmissions: st.screen === 'end' && st.endStep === 5,
       isMoves: st.screen === 'end' && st.endStep === 6,
-      isLastCard: st.screen === 'end' && st.endStep === 7,
-      isInvitation: st.screen === 'end' && st.endStep === 8,
+      isTruthVideo: st.screen === 'end' && st.endStep === 7 && this.showsEndingTruthVideo(),
+      isLastCard: st.screen === 'end' && st.endStep === 8,
+      isInvitation: st.screen === 'end' && st.endStep === 9,
       showEndBack: st.screen === 'end' && st.endStep > 1,
       alwaysTrue: true,
-      nextSection: () => {
-        const n = this.state.endStep + 1;
-        console.log('[endingScreen] ' + this.state.endStep + ' → ' + n);
-        this.setState({ endStep: n });
-        if (n === 7) { this.setState({ replayShown: false }); setTimeout(() => this.setState({ replayShown: true }), 3000); }
-      },
-      prevSection: () => {
-        const n = Math.max(1, this.state.endStep - 1);
-        console.log('[endingScreen] ' + this.state.endStep + ' → ' + n);
-        this.setState({ endStep: n });
-      },
+      nextSection: () => this.advanceEndingSection(1),
+      prevSection: () => this.advanceEndingSection(-1),
       dmCloseSub: (st.samDead ? 'locked' : st.sam < 35 ? 'low' : 'high') === 'locked' ? 'last seen Wednesday' : 'last seen Thursday',
       dmCloseMsgs: st.dm.slice(-8).map((m, k) => ({
         id: k, who: m.who, text: (m.text || m.caption || '').split('{name}').join(this.name()),
@@ -1113,9 +1112,16 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       rmapFocusEmpty: relationMap.focusEmpty,
       rmapHint: relationMap.hint,
       notebookShowLead: st.notebookMode !== 'sleep',
-      notebookLeadText: notebookShowReflection && this.isPastDiaryKey(st, st.notebookDayKey)
-        ? 'Looking back at that night.'
-        : 'Things I still need to look into before I sleep.',
+      notebookLeadText: (() => {
+        if (notebookShowReflection && this.isPastDiaryKey(st, st.notebookDayKey)) {
+          if (st.notebookDayKey === 3) return 'Looking back at that morning.';
+          return 'Looking back at that night.';
+        }
+        if (st.day === 3 && st.phase === 'morning') {
+          return 'Things I still need to look into before I go.';
+        }
+        return 'Things I still need to look into before I sleep.';
+      })(),
       notebookRows: this.notebookRows(st, st.notebookDayKey),
       notebookGot,
       nbSetReal: () => this.setVerdict(st.notebookDayKey, 'real'),
@@ -1126,6 +1132,11 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       nbContextClass: notebookFills.nbContextClass,
       closeNotebook: () => this.closeNotebook(),
       openNotebook: () => this.openNotebookManual(),
+      hintsOpen: !!st.hintsOpen,
+      hintsRows: this.hintsRows(st),
+      hintAvailable: this.hintAvailable(st),
+      openHints: () => this.openHints(),
+      closeHints: () => this.closeHints(),
       notebookContinueLabel: st.notebookMode === 'sleep'
         ? (st.day === 4 ? 'Continue' : 'Next day')
         : (notebookShowShelf ? 'Close' : 'Back'),

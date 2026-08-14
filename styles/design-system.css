@@ -183,6 +183,14 @@
   --hot-nb-am-l: 50%;
   --hot-nb-am-t: 72%;
   --hot-nb-am-w: 28%;
+  /* Desk lamp hotspot (blue circle + tap) */
+  --hot-lamp-l: 46.5%;
+  --hot-lamp-t: 7.5%;
+  --hot-lamp-w: 12%;
+  /* hint.svg overlay (tune separately from lamp) */
+  --hot-hint-l: 54.5%;
+  --hot-hint-t: 13%;
+  --hot-hint-w: 3%;
 
   /* Brand / action */
   --c-accent: #0b68da;

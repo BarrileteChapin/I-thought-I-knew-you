@@ -154,7 +154,6 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const img = 'assets/ending_default.webp';
     const name = this.name ? this.name() : 'Alex';
     return [
-      { id: 'perfect', title: 'Perfect week', text: 'You did every careful thing the week asked of you. She felt it.', image: img },
       { id: 'spoke-aloud', title: 'Spoke it aloud', text: 'You waited for the truth. Then you spoke it aloud. She heard you twice.', image: img },
       { id: 'told-the-room', title: 'Told the room', text: 'You told the truth to the room. The room grew quieter around you.', image: img },
       { id: 'kept-private', title: 'Kept it private', text: 'You were the only one who knew. And you kept it between the two of you.', image: img },
@@ -165,17 +164,25 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   },
 
   endingCards() {
-    return this.endingDefs().filter(c => c.id !== 'perfect');
+    return this.endingDefs();
+  },
+
+  // Diary-task stand-in for the old "checks >= 2" gate.
+  diaryTasksSome(st) {
+    return this.taskScore(st).done >= 2;
   },
 
   finalCardId(st, s) {
-    if (this.tasksAllComplete(st)) return 'perfect';
-    const { checks, dmCount, publiclySupported, nicoleHigh, groupOk } = this.endingSignals(st, s);
-    if (checks >= 4 && publiclySupported && nicoleHigh && groupOk) return 'spoke-aloud';
-    if (checks >= 4 && publiclySupported && nicoleHigh) return 'told-the-room';
-    if (checks >= 2 && !publiclySupported && dmCount >= 3 && nicoleHigh) return 'kept-private';
-    if (checks >= 2 && !publiclySupported && dmCount >= 1) return 'words-in-dark';
-    if (checks >= 2) return 'let-them-tell';
+    const { dmCount, publiclySupported, nicoleHigh, groupOk } = this.endingSignals(st, s);
+    const allTasks = this.tasksAllComplete(st);
+    const someTasks = this.diaryTasksSome(st);
+    // spoke-aloud absorbs former "perfect" (all diary tasks) + top social path.
+    if (allTasks && publiclySupported && nicoleHigh && groupOk) return 'spoke-aloud';
+    if (allTasks && publiclySupported && nicoleHigh) return 'told-the-room';
+    if (allTasks) return 'spoke-aloud';
+    if (someTasks && !publiclySupported && dmCount >= 3 && nicoleHigh) return 'kept-private';
+    if (someTasks && !publiclySupported && dmCount >= 1) return 'words-in-dark';
+    if (someTasks) return 'let-them-tell';
     return 'thought-i-knew';
   },
 
@@ -183,5 +190,27 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const id = st.endingId || this.finalCardId(st, s);
     const defs = this.endingDefs();
     return defs.find(c => c.id === id) || defs[defs.length - 1];
+  },
+
+  // Spoke-aloud only: insert a truth-video beat before the polaroid card.
+  END_STEP_TRUTH_VIDEO: 7,
+  END_STEP_LAST_CARD: 8,
+
+  showsEndingTruthVideo(st) {
+    const s = st || this.state;
+    const id = s.endingId || this.finalCardId(s, s.stats || {});
+    return id === 'spoke-aloud';
+  },
+
+  advanceEndingSection(delta) {
+    let n = this.state.endStep + delta;
+    if (n === this.END_STEP_TRUTH_VIDEO && !this.showsEndingTruthVideo()) n += delta;
+    n = Math.max(1, n);
+    console.log('[endingScreen] ' + this.state.endStep + ' → ' + n);
+    this.setState({ endStep: n });
+    if (n === this.END_STEP_LAST_CARD) {
+      this.setState({ replayShown: false });
+      setTimeout(() => this.setState({ replayShown: true }), 3000);
+    }
   }
 });

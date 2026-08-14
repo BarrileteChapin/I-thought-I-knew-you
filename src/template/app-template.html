@@ -313,6 +313,12 @@
 
         <div style="position:absolute;left:var(--hot-nb-l);top:var(--hot-nb-t);width:var(--hot-nb-w);aspect-ratio:1;border-radius:var(--r-full);background:var(--hot-glow);pointer-events:none;"></div>
         <button sc-camel-on-click="{{ openNotebook }}" title="notebook" style-after="content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:100%;height:100%;min-width:88px;min-height:88px;" style="z-index:6;position:absolute;left:var(--hot-nb-l);top:var(--hot-nb-t);width:var(--hot-nb-w);aspect-ratio:1;border-radius:var(--r-full);background:transparent;border:0;padding:0;"></button>
+
+        <div style="position:absolute;left:var(--hot-lamp-l);top:var(--hot-lamp-t);width:var(--hot-lamp-w);aspect-ratio:1;border-radius:var(--r-full);background:var(--hot-glow);pointer-events:none;"></div>
+        <sc-if value="{{ hintAvailable }}" hint-placeholder-val="{{ false }}">
+          <img src="assets/hint.svg" alt="" class="g-room-hint-mark" style="left:var(--hot-hint-l);top:var(--hot-hint-t);width:var(--hot-hint-w);" decoding="sync">
+        </sc-if>
+        <button sc-camel-on-click="{{ openHints }}" title="lamp" style-after="content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:100%;height:100%;min-width:88px;min-height:88px;" style="z-index:6;position:absolute;left:var(--hot-lamp-l);top:var(--hot-lamp-t);width:var(--hot-lamp-w);aspect-ratio:1;border-radius:var(--r-full);background:transparent;border:0;padding:0;"></button>
       </sc-if>
 
       <sc-if value="{{ isMorningRoom }}" hint-placeholder-val="{{ false }}">
@@ -330,6 +336,12 @@
 
         <div style="position:absolute;left:var(--hot-nb-am-l);top:var(--hot-nb-am-t);width:var(--hot-nb-am-w);aspect-ratio:1;border-radius:var(--r-full);background:var(--hot-glow);pointer-events:none;"></div>
         <button sc-camel-on-click="{{ openNotebook }}" title="notebook" style-after="content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:100%;height:100%;min-width:88px;min-height:88px;" style="z-index:6;position:absolute;left:var(--hot-nb-am-l);top:var(--hot-nb-am-t);width:var(--hot-nb-am-w);aspect-ratio:1;border-radius:var(--r-full);background:transparent;border:0;padding:0;"></button>
+
+        <div style="position:absolute;left:var(--hot-lamp-l);top:var(--hot-lamp-t);width:var(--hot-lamp-w);aspect-ratio:1;border-radius:var(--r-full);background:var(--hot-glow);pointer-events:none;"></div>
+        <sc-if value="{{ hintAvailable }}" hint-placeholder-val="{{ false }}">
+          <img src="assets/hint.svg" alt="" class="g-room-hint-mark" style="left:var(--hot-hint-l);top:var(--hot-hint-t);width:var(--hot-hint-w);" decoding="sync">
+        </sc-if>
+        <button sc-camel-on-click="{{ openHints }}" title="lamp" style-after="content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:100%;height:100%;min-width:88px;min-height:88px;" style="z-index:6;position:absolute;left:var(--hot-lamp-l);top:var(--hot-lamp-t);width:var(--hot-lamp-w);aspect-ratio:1;border-radius:var(--r-full);background:transparent;border:0;padding:0;"></button>
       </sc-if>
       </sc-if>
 
@@ -374,6 +386,33 @@
         <button sc-camel-on-click="{{ doSleep }}" class="g-btn g-btn-primary g-btn-primary-sm" style="flex:1;min-width:0;text-align:center;">{{ sleepConfirmLabel }}</button>
         <button sc-camel-on-click="{{ cancelSleep }}" class="g-btn g-btn-secondary" style="flex:1;min-width:0;text-align:center;">Not yet</button>
       </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ hintsOpen }}" hint-placeholder-val="{{ false }}">
+  <div sc-camel-on-click="{{ closeHints }}" class="g-hints-scrim">
+    <div sc-camel-on-click="{{ stopClick }}" class="g-hints-panel">
+      <div class="g-hints-title">Hints</div>
+      <sc-for list="{{ hintsRows }}" as="h" hint-placeholder-count="1">
+        <div class="g-hints-item">
+          <div class="g-hints-card">
+            <div class="g-hints-card-name">{{ h.title }}</div>
+            <sc-if value="{{ h.revealed }}" hint-placeholder-val="{{ false }}">
+              <div class="g-hints-card-body">{{ h.body }}</div>
+            </sc-if>
+            <sc-if value="{{ h.locked }}" hint-placeholder-val="{{ true }}">
+              <div class="g-hints-lock-wrap" aria-hidden="true">
+                <img src="assets/lock-key.svg" alt="" class="g-hints-lock" width="48" height="48" decoding="sync">
+              </div>
+            </sc-if>
+          </div>
+          <sc-if value="{{ h.locked }}" hint-placeholder-val="{{ true }}">
+            <div class="g-hints-locked-msg">{{ h.btnLabel }}</div>
+          </sc-if>
+        </div>
+      </sc-for>
+      <button sc-camel-on-click="{{ closeHints }}" type="button" class="g-btn g-btn-ghost g-hints-close">Close</button>
     </div>
   </div>
   </sc-if>
@@ -1768,6 +1807,28 @@
   </div>
   <p style="font-size:var(--fs-lead);line-height:1.55;margin:0 0 10px;color:var(--c-ink);max-width:52ch;">{{ siftLine }}</p>
   <a href="https://www.smu.ca/webfiles/SIFT_Method_final.pdf" target="_blank" rel="noopener noreferrer" style="font-size:var(--fs-sm);color:var(--c-muted);text-decoration:underline;text-underline-offset:2px;">SIFT by Mike Caulfield, CC BY 4.0.</a>
+  </div>
+  <div style="flex:0 0 auto;padding:14px var(--space-screen-x) 20px;background:var(--c-frame);border-top:1px solid var(--c-ink-hair);">
+    <div class="g-btn-footer-row">
+      <button sc-camel-on-click="{{ prevSection }}" class="g-btn g-btn-footer-back">Go back</button>
+      <button sc-camel-on-click="{{ nextSection }}" class="g-btn g-btn-footer">Continue</button>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isTruthVideo }}" hint-placeholder-val="{{ false }}">
+<div style="width:100%;height:100%;display:flex;flex-direction:column;">
+  <div class="g-end-fadein g-end-truth" style="flex:1;min-height:0;overflow-y:auto;padding:40px var(--space-screen-x) 20px;">
+    <div class="g-end-truth-kicker">What actually happened</div>
+    <h2 class="g-end-truth-title">The whole clip</h2>
+    <p class="g-end-truth-lead">Placeholder — swap this file for the truth reveal later.</p>
+    <div class="g-end-truth-frame">
+      <video class="g-end-truth-video" controls="{{ true }}" playsinline="{{ true }}" preload="metadata">
+        <source src="assets/nicole_day0_full.webm" type="video/webm">
+        <source src="assets/nicole_day0_full.mp4" type="video/mp4">
+      </video>
+    </div>
   </div>
   <div style="flex:0 0 auto;padding:14px var(--space-screen-x) 20px;background:var(--c-frame);border-top:1px solid var(--c-ink-hair);">
     <div class="g-btn-footer-row">
