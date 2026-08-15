@@ -5,9 +5,13 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     this.setState({ llmStatus: text });
   },
 
-  chatContextSection() {
+  chatContextSection(publicOnly) {
     const source = String((window.GameData && window.GameData.chatContext) || '');
-    const heading = new RegExp('(^|\\n)#\\s*' + this.state.day + '\\.', 'i').exec(source);
+    let heading = null;
+    if (publicOnly) {
+      heading = new RegExp('(^|\\n)#\\s*' + this.state.day + '\\.[^\\n]*\\(public\\)', 'i').exec(source);
+    }
+    if (!heading) heading = new RegExp('(^|\\n)#\\s*' + this.state.day + '\\.', 'i').exec(source);
     if (!heading) return source.replace(/\s+/g, ' ').trim().slice(0, 700);
     const start = heading.index;
     const next = source.indexOf('\n# ', start + heading[0].length);
@@ -16,16 +20,17 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
   chatRecentContext(tab) {
     const list = tab === 'dm' ? this.state.dm : this.state.chat;
-    return list.filter(m => !m.sys).slice(-4, -1).map(m => {
-      const text = (m.text || m.caption || '').replace(/\s+/g, ' ').trim();
+    return list.filter(m => !m.sys).slice(-7, -1).map(m => {
+      const text = (m.text || m.caption || '').replace(/\s+/g, ' ').trim().split('{name}').join(this.name());
       return text ? m.who + ': ' + text : '';
-    }).filter(Boolean).join(' | ').slice(-420);
+    }).filter(Boolean).join(' | ').slice(-600);
   },
 
   chatTone(text) {
     const t = String(text || '').toLowerCase();
+    if (/\b(don'?t|dont|never|can'?t|cant|stop)\s+(trust|believe)/.test(t)) return 'pile_on';
     if (/\b(check|checked|source|maybe|could|cut|whole|posted|last summer|last july|one year|six fingers|bot|clean|audio|room|breath|which is which|actually checked|original|compare|proof|evidence)\b/.test(t)) return 'questioning';
-    if (/\b(support|believe|believed|innocent|sorry|defend|leave her alone|not okay|are you (ok|okay|alright)|i believe|with you|on your side|isn'?t okay|isnt okay)\b/.test(t)) return 'supportive';
+    if (/\b(support|believe|believed|trust|innocent|sorry|defend|leave her alone|not okay|are you (ok|okay|alright)|i believe|with you|on your side|isn'?t okay|isnt okay)\b/.test(t)) return 'supportive';
     if (/\b(pathetic|liar|deserve|cancel|shame|exposed|caught|no shame)\b/.test(t)) return 'pile_on';
     if (/\b(fake|real)\b/.test(t) && /\b(she|her|nicole)\b/.test(t) && !/\b(not|isn'?t|isnt|account)\b/.test(t)) return 'pile_on';
     return 'neutral';
@@ -109,6 +114,45 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     return pool[(this.state.llmReplySeed || 0) % pool.length];
   },
 
+  // Cheap video-topic pre-filter (day 1 follow-ups after the check is done).
+  d1VideoTopic(text) {
+    const t = String(text || '').toLowerCase();
+    return /(video|clip|the full|full video|whole thing|see (the|it|more)|show (me|us|the|it)|send|share|more of|(is there|any) more|what (actually )?happened|prove it|longer|original)/.test(t);
+  },
+
+  // Ask the local model whether the player wants the full Day-1 video.
+  // Falls back to keywords when the model is not ready or fails.
+  async d1VideoIntent(text) {
+    if (!this._llmReady || !this._wllama) return this.d1VideoRequest(text);
+    const line = String(text || '').replace(/\s+/g, ' ').trim().slice(0, 160);
+    try {
+      const result = await this._wllama.createChatCompletion({
+        messages: [
+          { role: 'system', content: 'You are deciding if one message in a teen class group chat asks to see the full video of Nicole at the party. The full video shows what really happened: Nicole was repeating what someone else said. Answer with exactly one word: yes or no. Yes means the player wants the video, the clip, or more of what happened in it. No means the message only asks something else, like who was at the party.' },
+          { role: 'user', content: 'Recent chat: ' + (this.chatRecentContext('group') || 'none') + '. Message to judge: "' + line + '"' }
+        ],
+        max_tokens: 4,
+        temperature: 0,
+        top_k: 40,
+        top_p: 0.9,
+        penalty_repeat: 1,
+        seed: 0,
+        stop: ['\n']
+      });
+      const out = String(this.extractChatText(result) || '').toLowerCase();
+      if (/\byes\b/.test(out)) return true;
+      if (/\bno\b/.test(out)) return false;
+    } catch (e) {
+      console.warn('[chat-llm] video intent failed; using keyword fallback', e);
+    }
+    return this.d1VideoRequest(text);
+  },
+
+  sendD1Video() {
+    this.setState(s => ({ d1VideoSent: true }));
+    setTimeout(() => this.setState(s => ({ chat: s.chat.concat([{ who: 'Mia', kind: 'video', full: true, caption: 'hold on. Here is the full video' }]) })), 900);
+  },
+
   chatVoice(who) {
     return {
       Nicole: 'personal, worried, direct, lowercase, and like a real fifteen-year-old texting quickly',
@@ -121,27 +165,36 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
   chatPromptMessages(who, playerText, tab, seed) {
     const day = this.allDays()[this.state.day] || this.day();
-    const context = this.chatContextSection();
+    const context = this.chatContextSection(tab !== 'dm');
     const recent = this.chatRecentContext(tab) || 'No earlier messages in this thread.';
     const line = String(playerText || '').replace(/\s+/g, ' ').trim().slice(0, 160);
     const seedLine = String(seed || '').replace(/\s+/g, ' ').trim().slice(0, 100);
     const focus = this.chatFocus(playerText);
     const example = this.chatExample(who);
     const privateRule = tab === 'dm'
-      ? 'This is a private message to Nicole. Answer the exact player message in first person. Do not greet, welcome, or give vague reassurance.'
-      : 'This is the class group chat. Reply as one participant, not as a narrator.';
+      ? 'This is a private message to Nicole. Answer the exact player message in first person. Do not greet, welcome, or give vague reassurance. The player can only send text — never ask them to send a photo, video, clip, or voice note.'
+      : 'This is the class group chat. Reply as one participant, not as a narrator. The player can only send text — never ask them to send a photo, video, clip, or voice note.';
+    const nicoleState = who === 'Nicole'
+      ? ({
+          high: 'Nicole trusts the player and is open but worried.',
+          ok: 'Nicole is guarded and brief.',
+          low: 'Nicole is hurt, distant, and curt.'
+        })[this.samTier()] || ''
+      : '';
     const system = [
       'You are ' + who + ' in a realistic teen chat.',
       'Day ' + this.state.day + ': ' + (day.dayName || day.name || day.deskTitle || 'the current rumor') + '.',
+      'Topic today: ' + (day.name || day.deskTitle) + '. Stay on this topic.',
       'Voice: ' + this.chatVoice(who) + '.',
       privateRule,
+      nicoleState,
       'Use only these facts. Do not invent events or reveal everything at once.',
       'Reply directly to the player. Never narrate the player, the conversation, or the scene.',
       'Never say "the player", "the user", "the voice", "the conversation", or "as if".',
       'Do not answer with only agreement. Write one natural lowercase message, maximum 14 words.',
       'Day facts: ' + context,
       'Recent: ' + recent
-    ].join(' ');
+    ].filter(Boolean).join(' ');
     return [
       { role: 'system', content: system },
       { role: 'user', content: 'Player said: "' + example.player + '"\nFocus: ' + this.chatFocus(example.player) + '\nWrite a new reply as ' + who + '.' },
@@ -149,7 +202,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       { role: 'user', content: [
         'Player said: "' + line + '"',
         'Focus: ' + focus + '.',
-        'Idea to adapt (keep the meaning and stance, change the wording so it directly answers the player): "' + seedLine + '"',
+        'Rewrite this idea in your own words, changing at least half the words, and use the recent chat above as context (do not repeat it): "' + seedLine + '"',
         'Write a NEW direct reply as ' + who + '. Do not repeat the player and do not copy the idea verbatim.'
       ].join('\n') }
     ];
@@ -171,7 +224,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     if (cut > 0) value = value.slice(0, cut);
     value = value.split(/\r?\n/).map(line => line.trim()).filter(Boolean)[0] || value;
     value = value.replace(/^(Nicole|Hanna|Lea|Mia|Benito|assistant|system)\s*[:,]\s*/i, '');
-    value = value.replace(/["'`]/g, '').replace(/\s+/g, ' ').trim();
+    value = value.replace(/["`]/g, '').replace(/\s+/g, ' ').trim();
     const stop = value.search(/[.!?](?:\s|$)/);
     if (stop > 6 && stop < 140) value = value.slice(0, stop + 1);
     value = value.toLowerCase().slice(0, 140);
@@ -187,7 +240,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     if (!value || value.length < 4 || value.length > 140) return 'length';
     if (/\b(as an ai|language model|cannot assist|dear user|system message)\b/i.test(value)) return 'assistant language';
     if (/\b(the player|the user|players|player's|the conversation|the scene|the message|the voice|as if|we can see|this suggests)\b/i.test(value)) return 'narration';
-    if (this.wordCount(value) > 14) return 'too long';
+    if (this.wordCount(value) > 18) return 'too long';
     if (this.wordCount(value) < 3) return 'too short';
     const a = value.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
     const b = String(playerText || '').toLowerCase().replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
@@ -227,9 +280,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       3: 'account|photo|picture|fake|real|bot|finger|writing',
       4: 'voice|audio|room|breath|clean|record|sound|pause'
     }[this.state.day] || 'check|proof|source';
-    if (this.wordCount(value) <= 5 && !new RegExp('\\b(' + dayWords + ')\\b', 'i').test(value)) return 'off-topic';
-    if (who === 'Mia' && this.wordCount(value) <= 5 && !/[?]/.test(value) && !/\b(maybe|check|source|wait|actually|know)\b/i.test(value)) return 'not Mia';
-    if (who === 'Nicole' && !/\b(i|me|my|you|we|please|dont|don't|not|can)\b/i.test(value)) return 'not Nicole';
+    if (this.wordCount(value) <= 5 && !new RegExp('\\b(' + dayWords + ')\\b', 'i').test(value) && !/[?]/.test(value)) return 'off-topic';
     return '';
   },
 
@@ -464,15 +515,23 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
   recordChatSeed(line) {
     this.setState(s => ({
-      llmUsedReplies: (s.llmUsedReplies || []).concat([line]).slice(-40),
+      llmUsedReplies: (s.llmUsedReplies || []).concat([line]).slice(-60),
       llmReplySeed: (s.llmReplySeed || 0) + 1
     }));
   },
 
-  fallbackChatReply(who, text, variant) {
-    const fresh = this.pickChatSeed(who, text, variant);
-    this.recordChatSeed(fresh);
-    return fresh;
+  fallbackChatReply(who, text, variant, seed) {
+    let first = null;
+    for (let v = variant || 0; v < (variant || 0) + 5; v++) {
+      const line = this.pickChatSeed(who, text, v);
+      if (!first) first = line;
+      if (!this.chatReplyReason(line, text, who, seed)) {
+        this.recordChatSeed(line);
+        return line;
+      }
+    }
+    this.recordChatSeed(first);
+    return first;
   },
 
   async generateChatReply(who, text, tab) {
@@ -483,11 +542,11 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     }
     const seed = this.pickChatSeed(who, text, 0);
     try {
-      for (let attempt = 0; attempt < 2; attempt++) {
+      for (let attempt = 0; attempt < 3; attempt++) {
         const result = await this._wllama.createChatCompletion({
           messages: this.chatPromptMessages(who, text, tab, seed),
           max_tokens: 32,
-          temperature: attempt === 0 ? 0.4 : 0.65,
+          temperature: attempt === 0 ? 0.4 : attempt === 1 ? 0.7 : 0.95,
           top_k: 40,
           top_p: 0.9,
           penalty_repeat: 1.1,
@@ -501,16 +560,15 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
           console.log('[chat-llm] reply accepted (model' + (attempt ? ', retry' : '') + ') ' + who + ': ' + reply);
           return reply;
         }
-        console.log('[chat-llm] rejected model reply (' + reason + ') ' + who + ': ' + JSON.stringify(reply) + (attempt ? '; falling back' : '; retrying'));
+        console.log('[chat-llm] rejected model reply (' + reason + ') ' + who + ': ' + JSON.stringify(reply) + (attempt === 2 ? '; falling back' : '; retrying'));
       }
-      this.recordChatSeed(seed);
-      console.log('[chat-llm] using fallback after retries ' + who + ': ' + seed);
-      return seed;
+      const fallback = this.fallbackChatReply(who, text, 1, seed);
+      console.log('[chat-llm] using fallback after retries ' + who + ': ' + fallback);
+      return fallback;
     } catch (error) {
       console.warn('[chat-llm] generation failed; using fallback for ' + who, error);
       this.setLlmStatus('Generation failed; using offline replies');
-      this.recordChatSeed(seed);
-      return seed;
+      return this.fallbackChatReply(who, text, 1, seed);
     }
   },
 
@@ -532,15 +590,27 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       llmStatus: this._llmReady ? 'Replying...' : 'Model loading; using a fallback if needed'
     }));
     this.recordChatBehaviour(tab, text);
-    this.maybeCompleteAskTasksFromChat(tab, text);
+    const askMatch = this.maybeCompleteAskTasksFromChat(tab, text);
     this.advance(2);
     if (tab === 'dm') this.setState(s => ({ dm: s.dm.concat([mine]) }));
     else this.setState(s => ({ chat: s.chat.concat([mine]) }));
 
     await new Promise(resolve => setTimeout(resolve, 220));
     if (generation !== this._chatGeneration) return;
-    const who = this.chatReplyWho(tab, text);
-    const replyText = await this.generateChatReply(who, text, tab);
+    const who = (askMatch && askMatch.id === 'd1mia') ? 'Mia' : this.chatReplyWho(tab, text);
+    let wantVideo = false;
+    let replyText;
+    if (askMatch && askMatch.id === 'd1mia') {
+      wantVideo = this.state.day === 1 && !this.state.d1VideoSent
+        ? await this.d1VideoIntent(text)
+        : false;
+      if (generation !== this._chatGeneration) return;
+      replyText = wantVideo
+        ? 'one sec'
+        : String(askMatch.result || '').split(':').slice(1).join(':').trim();
+    } else {
+      replyText = await this.generateChatReply(who, text, tab);
+    }
     if (generation !== this._chatGeneration) return;
 
     if (tab === 'dm') {
@@ -550,6 +620,13 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       if (reply) this.setState(s => ({ dm: s.dm.concat([reply]) }));
     } else {
       this.setState(s => ({ chat: s.chat.concat([{ who, text: replyText, generated: true }]) }));
+      if (wantVideo) {
+        this.sendD1Video();
+      } else if (this.state.day === 1 && !this.state.d1VideoSent && this.d1VideoTopic(text)) {
+        const followVideo = await this.d1VideoIntent(text);
+        if (generation !== this._chatGeneration) return;
+        if (followVideo) this.sendD1Video();
+      }
     }
     const keepError = /offline|failed/i.test(String(this.state.llmStatus || ''));
     this.setState({ chatBusy: false, llmStatus: keepError ? this.state.llmStatus : '' });
@@ -678,7 +755,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
           await wllama.createChatCompletion({
             messages: [{ role: 'user', content: 'Say exactly: ok noted' }],
             max_tokens: 6,
-            temperature: 0.2,
+            temperature: 0.3,
             top_k: 8,
             top_p: 0.85
           });

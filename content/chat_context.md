@@ -9,3 +9,15 @@ The new account copies Nicole's name, photos, and style. The images may show obv
 
 # 4. Day - Voice
 The voice message is cloned. Real Nicole sounds like a phone recording in a room, with breathing, uneven pauses, and background noise. The fake is unnaturally clean and regular. Hanna and Lea oppose Nicole; Benito stays silent. Mia may change her mind if the player notices the clean AI-like sound. Nicole's real style is casual, direct, and imperfect.
+
+# 1. Day - Video (public)
+Hanna posted a video from Mia's party last summer. In it, Nicole calls Nele pathetic. Most of the class believes it and keeps sharing it. Mia was at the party. An AI checker says it is authentic and a reverse search finds nothing.
+
+# 2. Day - Picture (public)
+Hanna posted a photo of Nicole out at a party last night. People believe it. Nicole says she was at home. Mia questions the evidence.
+
+# 3. Day - Second Account (public)
+A new account with Nicole's name and photos is posting. Hanna and Lea call it hers. Mia is not sure.
+
+# 4. Day - Voice (public)
+Hanna posted a voice note of Nicole hoping Nele never comes back. An AI checker says it is authentic.
