@@ -37,7 +37,7 @@ class Component extends DCLogic {
     arrival: 0, reactedToday: false, samSilent: false, apology: false,
     reported: false, clipBack: false, phase: 'evening', groupUnread: 0, final: { post: null, fwd: null, tell: null },
     sam: 50, group: 50, pushIdx: 0, flashSam: false, flashGroup: false, samDead: false, reason: '',
-    voiceSent: false, pStage: -1, introLine: 0, introMsg: 0, introTyping: false, introReady: false,
+    voiceSent: false, d1VideoSent: false, pStage: -1, introLine: 0, introMsg: 0, introTyping: false, introReady: false,
     ttsStatus: 'idle', ttsProgress: 0, cloneAudioSrc: null, cloneAudioDuration: 0,
     pendingDay: 1, cardPhase: 'evening', cardDayName: '', cardWhen: '', continueResumeScreen: null, variant: 0,
     playerName: 'Alex', nameDraft: '', playerAvatar: null,

@@ -323,7 +323,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       return /who (filmed|recorded|shot|took)|who'?s (filming|recording)/.test(t);
     },
     d2sam(t) {
-      return /(photo|picture|\bpic\b|were you out|out last night|last night|is that you|that (photo|picture))/.test(t);
+      return /(photo|picture|\bpic\b|is (this|that) (really )?you|were you (there|out)|did you (go|post)|explain|your side|happened|last night|out last night)/.test(t);
     },
     d3sam(t) {
       return /(account|profile|is that yours|is that you|did you (make|post|delete)|fake account)/.test(t);
@@ -337,6 +337,15 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         || (/anyone (actually )?know/.test(t) && /(nicole|she|her|tonight)/.test(t))
         || /where was/.test(t);
     }
+  },
+
+  // Video-request intent for day 1 — only these get the full clip back.
+  d1VideoRequest(text) {
+    const t = String(text || '').toLowerCase().replace(/\s+/g, ' ').trim();
+    return (/(video|clip)/.test(t) && /(full|whole|where|send|share|see|show|longer|original|post)/.test(t))
+      || /can you (share|send)/.test(t)
+      || /share (it|the)/.test(t)
+      || /send (it|the|us|me)/.test(t);
   },
 
   matchAskCheckFromChat(tab, text) {

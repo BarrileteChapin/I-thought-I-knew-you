@@ -35,8 +35,9 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     let chat = quietPhase ? st.chat.slice()
       : (n === 1 ? this.P_LOG.filter(m => !m.rec || st.voiceSent).concat([{ who: 'System', sys: true, text: banner }])
         : st.chat.concat([{ who: 'System', sys: true, text: banner }])).concat(d.chat);
-    let dm = (n === 1 ? this.DM_HISTORY.slice() : st.dm.slice().map(m => Object.assign({}, m, { today: false })))
-      .concat(d.dm.map(m => Object.assign({}, m, { today: true })));
+    let dm = (n === 1 ? this.DM_HISTORY.slice() : st.dm.slice().map(m => Object.assign({}, m, { today: false })));
+    if (n > 1) dm = dm.concat([{ who: 'System', sys: true, text: banner }]);
+    dm = dm.concat(d.dm.map(m => Object.assign({}, m, { today: true })));
     let shared = n === 1 ? 3 : st.sharedCount + Math.round((ph === 'clip' && n === 3 ? 3 : (st.group >= 70 ? 9 : 6)) * (st.group >= 70 ? 1.5 : 1));
     if (n > 1 && st.group < 35 && !quietPhase) {
       chat = chat.concat([this.PUSHBACK[st.pushIdx % this.PUSHBACK.length]]);

@@ -149,7 +149,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       final: { post: null, fwd: null, tell: null },
       sam: 50, group: 50, pushIdx: 0, flashSam: false, flashGroup: false,
       samDead: false, reason: '',
-      voiceSent: false, pStage: -1, introLine: 0, introMsg: 0, introTyping: false,
+      voiceSent: false, d1VideoSent: false, pStage: -1, introLine: 0, introMsg: 0, introTyping: false,
       introReady: false,       pendingDay: 1, cardPhase: 'evening', cardDayName: '',
       cardWhen: '', continueResumeScreen: null, variant: Math.floor(Math.random() * 2),
       playerName: 'Alex', nameDraft: '', playerAvatar: null,

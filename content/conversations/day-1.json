@@ -79,7 +79,7 @@
       "label": "Ask Mia, she was at that party",
       "effect": "confirm",
       "sift": "investigate",
-      "result": "Mia: that's not what happened, someone else said that"
+      "result": "Mia: i was at the party and standing right there next to her"
     }
   ]
 }
