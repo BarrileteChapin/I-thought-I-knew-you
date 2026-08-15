@@ -151,15 +151,15 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   },
 
   endingDefs() {
-    const img = 'assets/ending_default.webp';
+    const fallback = 'assets/ending_default.webp';
     const name = this.name ? this.name() : 'Alex';
     return [
-      { id: 'spoke-aloud', title: 'Spoke it aloud', text: 'You waited for the truth. Then you spoke it aloud. She heard you twice.', image: img },
-      { id: 'told-the-room', title: 'Told the room', text: 'You told the truth to the room. The room grew quieter around you.', image: img },
-      { id: 'kept-private', title: 'Kept it private', text: 'You were the only one who knew. And you kept it between the two of you.', image: img },
-      { id: 'words-in-dark', title: 'Words in the dark', text: 'A few words in the dark. None in the light.', image: img },
-      { id: 'let-them-tell', title: 'Let them keep telling it', text: 'You found the crack in their story. You let them keep telling it.', image: img },
-      { id: 'thought-i-knew', title: 'I thought I knew you', text: 'I thought I knew you, ' + name + '.', image: img }
+      { id: 'spoke-aloud', title: 'Spoke it aloud', text: 'You waited for the truth. Then you spoke it aloud. She heard you twice.', image: fallback },
+      { id: 'told-the-room', title: 'Told the room', text: 'You told the truth to the room. The room grew quieter around you.', image: 'assets/ending_2.webp' },
+      { id: 'kept-private', title: 'Kept it private', text: 'You were the only one who knew. And you kept it between the two of you.', image: 'assets/ending_3.webp' },
+      { id: 'words-in-dark', title: 'Words in the dark', text: 'A few words in the dark. None in the light.', image: 'assets/ending_4.webp' },
+      { id: 'let-them-tell', title: 'Let them keep telling it', text: 'You found the crack in their story. You let them keep telling it.', image: 'assets/ending_5.webp' },
+      { id: 'thought-i-knew', title: 'I thought I knew you', text: 'I thought I knew you, ' + name + '.', image: fallback }
     ];
   },
 
