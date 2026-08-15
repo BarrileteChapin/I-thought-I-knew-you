@@ -154,23 +154,23 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       {
         id: 'day',
         title: 'Diary',
-        tone: 'diary',
+        cover: 'assets/book_1.webp',
         open: () => this.openNotebookBook('day')
       },
       {
         id: 'intro',
-        title: 'Media Literacy\nHandbook',
-        tone: 'mil',
+        title: 'Media Literacy Handbook',
+        cover: 'assets/book_2.webp',
         open: () => this.openNotebookBook('intro')
       },
       {
         id: 'map',
-        title: 'Album\nClass 10b',
-        tone: 'album',
+        title: 'Album Class 10b',
+        cover: 'assets/book_3.webp',
         open: () => this.openNotebookBook('map')
       }
     ].map(b => Object.assign(b, {
-      cardClass: 'g-notebook-shelf-card is-' + b.tone
+      cardClass: 'g-notebook-shelf-card'
     }));
   },
 

@@ -657,17 +657,14 @@ button:focus-visible {
 
 .g-notebook-shelf-card {
   position: relative;
-  display: flex;
-  align-items: stretch;
+  display: block;
   aspect-ratio: 3 / 4;
   width: 100%;
   padding: 0;
   border: 0;
+  background: transparent;
   box-shadow: 0 10px 28px rgba(0, 0, 0, .28);
-  text-align: center;
   cursor: pointer;
-  font: inherit;
-  color: #111;
   overflow: hidden;
 }
 
@@ -675,71 +672,13 @@ button:focus-visible {
   transform: translateY(1px) scale(0.99);
 }
 
-.g-notebook-shelf-spine {
-  flex: 0 0 12%;
-  max-width: 22px;
-}
-
-.g-notebook-shelf-face {
-  flex: 1 1 auto;
-  min-width: 0;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 14% 10% 18%;
-  box-sizing: border-box;
-}
-
-.g-notebook-shelf-name {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: clamp(13px, 3.6vw, 16px);
-  line-height: 1.2;
-  color: #111;
-  white-space: pre-line;
-  text-align: center;
-}
-
-.g-notebook-shelf-lines {
-  position: absolute;
-  left: 16%;
-  right: 16%;
-  bottom: 14%;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-
-.g-notebook-shelf-lines > span {
+.g-notebook-shelf-cover {
   display: block;
-  height: 2px;
-  background: #111;
-}
-
-.g-notebook-shelf-card.is-diary {
-  background: #4EC4F0;
-}
-
-.g-notebook-shelf-card.is-diary .g-notebook-shelf-spine {
-  background: #2F7EB8;
-}
-
-.g-notebook-shelf-card.is-mil {
-  background: #E83A8A;
-}
-
-.g-notebook-shelf-card.is-mil .g-notebook-shelf-spine {
-  background: #F5A0C4;
-}
-
-.g-notebook-shelf-card.is-album {
-  background: #8FD63A;
-}
-
-.g-notebook-shelf-card.is-album .g-notebook-shelf-spine {
-  background: #C6EF8A;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
 }
 
 .g-notebook-intro {

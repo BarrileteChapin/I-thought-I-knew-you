@@ -426,15 +426,8 @@
       <div class="g-notebook-shelf">
         <div class="g-notebook-shelf-grid">
           <sc-for list="{{ notebookShelfBooks }}" as="book" hint-placeholder-count="3">
-            <button sc-camel-on-click="{{ book.open }}" type="button" class="{{ book.cardClass }}">
-              <span class="g-notebook-shelf-spine" aria-hidden="true"></span>
-              <span class="g-notebook-shelf-face">
-                <span class="g-notebook-shelf-name">{{ book.title }}</span>
-                <span class="g-notebook-shelf-lines" aria-hidden="true">
-                  <span></span>
-                  <span></span>
-                </span>
-              </span>
+            <button sc-camel-on-click="{{ book.open }}" type="button" class="{{ book.cardClass }}" title="{{ book.title }}">
+              <img src="{{ book.cover }}" alt="{{ book.title }}" class="g-notebook-shelf-cover" decoding="sync">
             </button>
           </sc-for>
         </div>

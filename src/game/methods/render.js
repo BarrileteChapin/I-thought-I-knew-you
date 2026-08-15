@@ -1077,7 +1077,10 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
           id: def.id,
           title: unlocked ? def.title : '???',
           body: unlocked ? def.text : 'Keep playing to unlock this ending.',
-          image: def.image || 'assets/ending_default.webp',
+          // Locked endings always use the placeholder — unique art is a spoiler.
+          image: unlocked
+            ? (def.image || 'assets/ending_default.webp')
+            : 'assets/ending_default.webp',
           unlocked,
           locked: !unlocked,
           cardMod: unlocked ? 'is-unlocked' : 'is-locked',
