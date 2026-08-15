@@ -487,7 +487,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         const result = await this._wllama.createChatCompletion({
           messages: this.chatPromptMessages(who, text, tab, seed),
           max_tokens: 32,
-          temperature: attempt === 0 ? 0.4 : 0.65,
+          temperature: attempt === 0 ? 0.4 : 0.7,
           top_k: 40,
           top_p: 0.9,
           penalty_repeat: 1.1,
@@ -532,14 +532,14 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       llmStatus: this._llmReady ? 'Replying...' : 'Model loading; using a fallback if needed'
     }));
     this.recordChatBehaviour(tab, text);
-    this.maybeCompleteAskTasksFromChat(tab, text);
+    const askMatch = this.maybeCompleteAskTasksFromChat(tab, text);
     this.advance(2);
     if (tab === 'dm') this.setState(s => ({ dm: s.dm.concat([mine]) }));
     else this.setState(s => ({ chat: s.chat.concat([mine]) }));
 
     await new Promise(resolve => setTimeout(resolve, 220));
     if (generation !== this._chatGeneration) return;
-    const who = this.chatReplyWho(tab, text);
+    const who = (askMatch && askMatch.id === 'd1mia') ? 'Mia' : this.chatReplyWho(tab, text);
     const replyText = await this.generateChatReply(who, text, tab);
     if (generation !== this._chatGeneration) return;
 
@@ -550,6 +550,9 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       if (reply) this.setState(s => ({ dm: s.dm.concat([reply]) }));
     } else {
       this.setState(s => ({ chat: s.chat.concat([{ who, text: replyText, generated: true }]) }));
+      if (askMatch && askMatch.id === 'd1mia') {
+        setTimeout(() => this.setState(s => ({ chat: s.chat.concat([{ who: 'Mia', kind: 'video', full: true, caption: 'hold on. Here is the full video' }]) })), 900);
+      }
     }
     const keepError = /offline|failed/i.test(String(this.state.llmStatus || ''));
     this.setState({ chatBusy: false, llmStatus: keepError ? this.state.llmStatus : '' });
@@ -678,7 +681,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
           await wllama.createChatCompletion({
             messages: [{ role: 'user', content: 'Say exactly: ok noted' }],
             max_tokens: 6,
-            temperature: 0.2,
+            temperature: 0.3,
             top_k: 8,
             top_p: 0.85
           });

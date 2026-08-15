@@ -310,10 +310,14 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   // Free-text chat → mark matching phone "ask" checks done (so Diary ticks).
   ASK_CHAT_MATCHERS: {
     d1mia(t) {
-      return (/\bmia\b/.test(t) && /(party|there|said|happen|true|actually|what)/.test(t))
+      return (/\bmia\b/.test(t) && /(party|there|said|happen|true|actually|what|video|share|send)/.test(t))
         || /(who was|anyone|were you).{0,24}(at |there|party)/.test(t)
         || /at (the|that) party/.test(t)
-        || /(what (did |she |nicole ).{0,24}(say|said)|is that what)/.test(t);
+        || /(what (did |she |nicole ).{0,24}(say|said)|is that what)/.test(t)
+        || (/(video|clip)/.test(t) && /(full|whole|where|send|share|see|show|longer|original|post)/.test(t))
+        || /can you (share|send)/.test(t)
+        || /share (it|the)/.test(t)
+        || /send (it|the|us|me)/.test(t);
     },
     d1jonas(t) {
       return /who (filmed|recorded|shot|took)|who'?s (filming|recording)/.test(t);
@@ -341,15 +345,19 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const thread = tab === 'dm' ? 'dm' : 'group';
     const day = this.day();
     const checks = (day && day.checks) || [];
+    let first = null;
     for (let i = 0; i < checks.length; i++) {
       const c = checks[i];
       if (!c || c.where !== 'phone') continue;
       if ((c.thread || 'group') !== thread) continue;
       if (this.state.done && this.state.done[c.id]) continue;
       const match = this.ASK_CHAT_MATCHERS[c.id];
-      if (match && match(t)) return c;
+      if (match && match(t)) {
+        if (c.id === 'd1mia') return c;
+        if (!first) first = c;
+      }
     }
-    return null;
+    return first;
   },
 
   // Mark phone-check done + certainty/sift (no scripted reply — LLM already answered).

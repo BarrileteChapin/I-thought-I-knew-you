@@ -887,6 +887,12 @@
         <div style="font-size:22px;line-height:1.4;color:var(--c-ink);margin-bottom:24px;">“{{ recLine }}”</div>
         <div style="display:flex;align-items:center;gap:14px;">
           <button sc-camel-on-click="{{ recToggle }}" style="flex:0 0 64px;background:{{ recBtnBg }};color:var(--c-white);border:0;width:64px;height:64px;padding:0;border-radius:var(--r-full);font-size:var(--fs-sm);font-weight:700;">{{ recBtnLabel }}</button>
+          <sc-if value="{{ recRecording }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:0 0 auto;display:flex;align-items:center;gap:6px;animation:pulse 1.6s ease-in-out infinite;">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="var(--c-danger)" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
+              <span style="font-size:var(--fs-caption);letter-spacing:.12em;text-transform:uppercase;color:var(--c-danger);">rec</span>
+            </div>
+          </sc-if>
           <div style="flex:1;height:4px;background:var(--c-panel);border-radius:2px;"><div style="height:4px;border-radius:2px;background:var(--c-accent);width:{{ recLevel }};transition:width .1s linear;"></div></div>
         </div>
       </div>
@@ -1025,8 +1031,8 @@
                   <div style="font-size:var(--fs-caption);font-weight:700;color:{{ m.lightWho }};margin-bottom:3px;">{{ m.who }}</div>
                 </sc-if>
                 <sc-if value="{{ m.isVideo }}" hint-placeholder-val="{{ false }}">
-                  <video controls="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;min-width:210px;max-width:250px;height:auto;border-radius:10px;background:var(--c-ink);"><source src="assets/nicole_day0.webm" type="video/webm"><source src="assets/nicole_day0.mp4" type="video/mp4"></video>
-                  <div style="font-size:var(--fs-caption);color:var(--c-muted);margin-top:5px;">video · 0:07</div>
+                  <video controls="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;min-width:210px;max-width:250px;height:auto;border-radius:10px;background:var(--c-ink);"><source src="{{ m.videoSrcWebm }}" type="video/webm"><source src="{{ m.videoSrcMp4 }}" type="video/mp4"></video>
+                  <div style="font-size:var(--fs-caption);color:var(--c-muted);margin-top:5px;">{{ m.videoSpec }}</div>
                   <div style="font-size:var(--fs-md);color:var(--c-ink);margin-top:5px;line-height:1.45;">{{ m.caption }}</div>
                 </sc-if>
                 <sc-if value="{{ m.isShot }}" hint-placeholder-val="{{ false }}">

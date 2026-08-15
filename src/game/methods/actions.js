@@ -264,6 +264,9 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         dm = dm.concat([said].concat(r ? [r] : []));
       } else {
         chat = chat.concat([said, { who: who, text: body }]);
+        if (pc.id === 'd1mia') {
+          chat = chat.concat([{ who: 'Mia', kind: 'video', full: true, caption: 'hold on. Here is the full video' }]);
+        }
       }
       this.setState({ done });
       setTimeout(() => { this.bumpHint(pc.item || this.state.day, pc.effect, pc.id); this.advance(pc.cost); this.log('— you asked around'); }, 0);
