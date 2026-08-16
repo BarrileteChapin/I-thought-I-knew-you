@@ -154,6 +154,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       cardWhen: '', continueResumeScreen: null, variant: Math.floor(Math.random() * 2),
       playerName: 'Alex', nameDraft: '', playerAvatar: null,
       dmCloseTyping: false, dmCloseExtra: null, dmCloseReady: false, replayShown: false,
+      truthVideoPlaying: false,
       dmGhostTyping: false, ghostTypedToday: false, onReadCharged: false,
       shotOpen: null, sawFake: false, sawReal: false, reportOpen: false,
       reportChoice: null, reportedWrong: false, tip: null,
@@ -223,11 +224,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       this.beginCinematic();
     } else if (st.screen === 'introchat') {
       this._it = setTimeout(() => this.introStep(), 500);
-    } else if (st.screen === 'end' && !st.dmCloseReady) {
-      const tier = st.samDead ? 'locked' : st.sam < 35 ? 'low' : 'high';
-      this.setState(tier === 'high'
-        ? { dmCloseReady: true, dmCloseTyping: false, dmCloseExtra: { text: 'i saw what you posted. thank you.' } }
-        : { dmCloseReady: true, dmCloseTyping: false });
+    } else if (st.screen === 'end') {
+      this.resumeEndingScreen(st);
     }
   },
 
@@ -290,6 +288,22 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const day = saved.day || 1;
     const phase = saved.phase || (day === 3 ? 'morning' : 'evening');
     const card = preview ? this.dayCardViewFor(day, phase) : {};
+    // Ending saves always resume at step 1 (full ending sequence from the start).
+    const endingPatch = (saved.screen === 'end' || saved.screen === 'final') ? {
+      endStep: 1,
+      endingId: this.FORCE_BEST_ENDING
+        ? 'spoke-aloud'
+        : (saved.endingId || null),
+      gamePhase: 'ending',
+      truthVideoPlaying: false,
+      replayShown: false,
+      dmCloseReady: false,
+      dmCloseTyping: false
+    } : {};
+    if (saved.screen === 'end' || saved.screen === 'final') {
+      console.log('[continue] resume ending from step 1 (was saved at step '
+        + (saved.endStep || 1) + ')');
+    }
     this.setState(Object.assign({}, saved, {
       unlockedEndings: meta.unlockedEndings || {},
       endingsGalleryOpen: false,
@@ -303,7 +317,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       notebookSection: (saved.notebookSection === 'intro' || saved.notebookSection === 'map' || saved.notebookSection === 'day')
         ? saved.notebookSection
         : 'shelf'
-    }, card, preview ? {
+    }, endingPatch, card, preview ? {
       screen: 'daycard',
       continueResumeScreen: resumeScreen
     } : {

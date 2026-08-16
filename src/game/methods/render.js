@@ -40,8 +40,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         mineFemale: !!m.mine && st.playerAvatar === 'female', mineMale: !!m.mine && st.playerAvatar === 'male',
         theirs: !m.mine && !m.sys, avatar: this.faceOf(m.who),
         isVideo: m.kind === 'video', isPhoto: m.kind === 'photo', isVoice: m.kind === 'voice', isTypedShot: m.kind === 'typedshot',
-        videoSrcWebm: m.full ? 'assets/nicole_day0_full.webm' : 'assets/nicole_day0.webm',
-        videoSrcMp4: m.full ? 'assets/nicole_day0_full.mp4' : 'assets/nicole_day0.mp4',
+        isFullVideo: m.kind === 'video' && !!m.full,
+        isShortVideo: m.kind === 'video' && !m.full,
         videoSpec: m.full ? 'video · 0:22' : 'video · 0:07',
         isShot: m.kind === 'shot', isProfileShot: m.shot === 'profile', isCommentShot: m.shot === 'comment',
         openShot: () => { this.setState({ shotOpen: 'fake', sawFake: true }); this.maybeCompare('fake'); },
@@ -1001,21 +1001,22 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       onWrite: (e) => this.setState({ writeText: (e.target.value || '').slice(0, 400) }),
       sendWrite: () => this.sendWrite(),
       deleteWrite: () => this.setState({ writeIn: false, writeStatus: 'deleted', screen: 'room', dev: null, threadOpen: null }),
-      isStanding: st.screen === 'end' && st.endStep === 1,
-      isWriteBack: st.screen === 'end' && st.endStep === 2,
-      isVerdictReview: st.screen === 'end' && st.endStep === 3,
+      isStanding: st.screen === 'end' && this.normalizeEndStep(st.endStep, st) === 1,
+      isWriteBack: st.screen === 'end' && this.normalizeEndStep(st.endStep, st) === 2,
+      isVerdictReview: st.screen === 'end' && this.normalizeEndStep(st.endStep, st) === 3,
       writeBackHasText: st.writeStatus !== null && !!(st.writeText || '').trim(),
       writeBackText: (st.writeText || '').trim(),
       writeBackLine: st.writeStatus === 'sent' ? 'You wrote this, and you sent it.'
         : (st.writeStatus === 'deleted' && (st.writeText || '').trim()) ? 'You wrote this, and you deleted it.'
         : 'You didn' + "'" + 't write anything.',
-      isLedger: st.screen === 'end' && st.endStep === 4,
-      isOmissions: st.screen === 'end' && st.endStep === 5,
-      isMoves: st.screen === 'end' && st.endStep === 6,
-      isTruthVideo: st.screen === 'end' && st.endStep === 7 && this.showsEndingTruthVideo(),
-      isLastCard: st.screen === 'end' && st.endStep === 8,
-      isInvitation: st.screen === 'end' && st.endStep === 9,
-      showEndBack: st.screen === 'end' && st.endStep > 1,
+      isLedger: st.screen === 'end' && this.normalizeEndStep(st.endStep, st) === 4,
+      isOmissions: st.screen === 'end' && this.normalizeEndStep(st.endStep, st) === 5,
+      isMoves: st.screen === 'end' && this.normalizeEndStep(st.endStep, st) === 6,
+      isTruthVideo: st.screen === 'end' && this.normalizeEndStep(st.endStep, st) === 7 && this.showsEndingTruthVideo(st),
+      isLastCard: st.screen === 'end' && this.normalizeEndStep(st.endStep, st) === 8,
+      isInvitation: st.screen === 'end' && this.normalizeEndStep(st.endStep, st) === 9,
+      isEndScreen: st.screen === 'end',
+      showEndBack: st.screen === 'end' && this.normalizeEndStep(st.endStep, st) > 1,
       alwaysTrue: true,
       nextSection: () => this.advanceEndingSection(1),
       prevSection: () => this.advanceEndingSection(-1),
@@ -1242,6 +1243,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         }
       },
       backToTitle: () => {
+        // Capture ending progress before leaving — title screens skip auto-save.
         this.saveGame();
         clearTimeout(this._phoneClose);
         this.setState({
@@ -1256,6 +1258,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
           feedImg: null,
           reportOpen: false,
           pickerOpen: false,
+          truthVideoPlaying: false,
           dev: null,
           threadOpen: null
         });

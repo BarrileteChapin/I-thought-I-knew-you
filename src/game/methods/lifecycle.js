@@ -13,7 +13,10 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       console.log('[chat-llm] preloading chat model');
       this.ensureLlm(false);
     }
-    this._bye = () => this.wipeAudio();
+    this._bye = () => {
+      try { this.saveGame(); } catch (e) {}
+      this.wipeAudio();
+    };
     window.addEventListener('pagehide', this._bye);
     this._keys = (e) => {
       const t = e.target;

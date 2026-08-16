@@ -88,12 +88,13 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const s = this.state;
     const t = s.samDead ? 'locked' : s.sam < 35 ? 'low' : 'high';
     const endingId = this.finalCardId(s, s.stats || {});
-    console.log('[ending] entering, tier=' + t + ', ending=' + endingId);
+    console.log('[ending] entering, tier=' + t + ', ending=' + endingId
+      + ', truthVideo=' + this.showsEndingTruthVideo({ endingId }));
     this.unlockEnding(endingId);
     clearTimeout(this._e1); clearTimeout(this._e2); clearTimeout(this._e3);
     this.setState({ screen: 'end', endStep: 1, confirmSleep: false, writeIn: false,
-      notebookOpen: false, pendingAfterNotebook: false, endingId,
-      dmCloseReady: t !== 'high', dmCloseTyping: t === 'high', dmCloseExtra: null });
+      notebookOpen: false, pendingAfterNotebook: false, endingId, truthVideoPlaying: false,
+      dmCloseReady: t !== 'high', dmCloseTyping: t === 'high', dmCloseExtra: null }, () => this.saveGame());
     if (t === 'high') {
       this._e1 = setTimeout(() => this.setState({ dmCloseTyping: false }), 2600);
       this._e2 = setTimeout(() => this.setState({ dmCloseTyping: true }), 3400);
@@ -158,7 +159,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const fallback = 'assets/ending_default.webp';
     const name = this.name ? this.name() : 'Alex';
     return [
-      { id: 'spoke-aloud', title: 'Spoke it aloud', text: 'You waited for the truth. Then you spoke it aloud. She heard you twice.', image: fallback },
+      { id: 'spoke-aloud', title: 'Spoke it aloud', text: 'You waited for the truth. Then you spoke it aloud. She heard you twice.', image: 'assets/ending_1.webp' },
       { id: 'told-the-room', title: 'Told the room', text: 'You told the truth to the room. The room grew quieter around you.', image: 'assets/ending_2.webp' },
       { id: 'kept-private', title: 'Kept it private', text: 'You were the only one who knew. And you kept it between the two of you.', image: 'assets/ending_3.webp' },
       { id: 'words-in-dark', title: 'Words in the dark', text: 'A few words in the dark. None in the light.', image: 'assets/ending_4.webp' },
@@ -176,7 +177,14 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     return this.taskScore(st).done >= 2;
   },
 
+  // TEMP debug: always show the best ending (spoke-aloud). Flip to false before ship.
+  FORCE_BEST_ENDING: false,
+  // TEMP debug: always show the truth-video beat (step 7), even if endingId
+  // would normally skip it. Flip to false before ship.
+  FORCE_ENDING_TRUTH_VIDEO: false,
+
   finalCardId(st, s) {
+    if (this.FORCE_BEST_ENDING) return 'spoke-aloud';
     const { dmCount, publiclySupported, nicoleHigh, groupOk } = this.endingSignals(st, s);
     const allTasks = this.tasksAllComplete(st);
     const someTasks = this.diaryTasksSome(st);
@@ -199,19 +207,73 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   // Spoke-aloud only: insert a truth-video beat before the polaroid card.
   END_STEP_TRUTH_VIDEO: 7,
   END_STEP_LAST_CARD: 8,
+  END_STEP_LAST: 9,
 
   showsEndingTruthVideo(st) {
+    if (this.FORCE_ENDING_TRUTH_VIDEO || this.FORCE_BEST_ENDING) return true;
     const s = st || this.state;
     const id = s.endingId || this.finalCardId(s, s.stats || {});
     return id === 'spoke-aloud';
   },
 
+  // Clamp / coerce saved endStep so Continue lands on a real ending page
+  // (and never on step 7 when that beat is skipped).
+  normalizeEndStep(step, st) {
+    let n = Math.round(Number(step));
+    if (!Number.isFinite(n) || n < 1) n = 1;
+    if (n > this.END_STEP_LAST) n = this.END_STEP_LAST;
+    if (n === this.END_STEP_TRUTH_VIDEO && !this.showsEndingTruthVideo(st)) {
+      n = this.END_STEP_LAST_CARD;
+    }
+    return n;
+  },
+
+  // Re-enter ending after Continue / reload — always from step 1.
+  resumeEndingScreen(st) {
+    const s = st || this.state;
+    const endingId = this.FORCE_BEST_ENDING
+      ? 'spoke-aloud'
+      : (s.endingId || this.finalCardId(s, s.stats || {}));
+    const tier = s.samDead ? 'locked' : s.sam < 35 ? 'low' : 'high';
+    const patch = {
+      screen: 'end',
+      endingId,
+      endStep: 1,
+      truthVideoPlaying: false,
+      replayShown: false,
+      writeIn: false,
+      notebookOpen: false,
+      pendingAfterNotebook: false,
+      dmCloseReady: tier !== 'high',
+      dmCloseTyping: tier === 'high',
+      dmCloseExtra: null
+    };
+    this.setState(patch);
+    clearTimeout(this._e1); clearTimeout(this._e2); clearTimeout(this._e3);
+    if (tier === 'high') {
+      this._e1 = setTimeout(() => this.setState({ dmCloseTyping: false }), 2600);
+      this._e2 = setTimeout(() => this.setState({ dmCloseTyping: true }), 3400);
+      this._e3 = setTimeout(() => this.setState({
+        dmCloseTyping: false,
+        dmCloseReady: true,
+        dmCloseExtra: { text: 'i saw what you posted. thank you.' }
+      }), 6200);
+    }
+  },
+
   advanceEndingSection(delta) {
-    let n = this.state.endStep + delta;
+    const prev = this.normalizeEndStep(this.state.endStep);
+    let n = prev + delta;
     if (n === this.END_STEP_TRUTH_VIDEO && !this.showsEndingTruthVideo()) n += delta;
-    n = Math.max(1, n);
+    n = this.normalizeEndStep(n);
     console.log('[endingScreen] ' + this.state.endStep + ' → ' + n);
-    this.setState({ endStep: n });
+    this.setState({
+      endStep: n,
+      truthVideoPlaying: false
+    }, () => {
+      // Flush immediately — debounced save is lost on refresh/title return.
+      this.saveGame();
+    });
     if (n === this.END_STEP_LAST_CARD) {
       this.setState({ replayShown: false });
       setTimeout(() => this.setState({ replayShown: true }), 3000);

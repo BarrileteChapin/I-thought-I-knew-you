@@ -42,6 +42,7 @@ class Component extends DCLogic {
     pendingDay: 1, cardPhase: 'evening', cardDayName: '', cardWhen: '', continueResumeScreen: null, variant: 0,
     playerName: 'Alex', nameDraft: '', playerAvatar: null,
     dmCloseTyping: false, dmCloseExtra: null, dmCloseReady: false, replayShown: false,
+    truthVideoPlaying: false,
     dmGhostTyping: false, ghostTypedToday: false, onReadCharged: false,
     shotOpen: null, sawFake: false, sawReal: false, reportOpen: false, reportChoice: null, reportedWrong: false,     tip: null,
     heardCloneVoice: false, heardOriginalVoice: false, day4VoicePlays: 0,
