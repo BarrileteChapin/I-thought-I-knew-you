@@ -76,7 +76,7 @@ strong{ color:var(--ink); font-weight:700; }
   font-size:8px; color:var(--ink-faint); letter-spacing:.04em; text-transform:uppercase;
   border-top:.5pt solid var(--line); padding-top:2.5mm;
 }
-.pagenum::before{ content:attr(data-n) " / 16"; }
+.pagenum::before{ content:attr(data-n) " / 18"; }
 
 .section-head{ display:flex; align-items:baseline; gap:8px; margin-bottom:6mm; }
 .section-head .idx{ font-size:26px; font-weight:900; color:var(--paper-alt); -webkit-text-stroke:1px var(--line); }
@@ -224,7 +224,7 @@ ul.clean li::before{ content:"—"; position:absolute; left:0; color:var(--viole
   <div class="cover-content">
     <div class="cover-eyebrow">UNESCO Hackathon Proposal · Critical Thinking &amp; AI Education / Media &amp; Information Literacy</div>
     <h1 class="cover-title">I Thought I<br>Knew You</h1>
-    <p class="cover-tag">A critical-thinking and AI-literacy game disguised as a four-night group-chat mystery — teenagers learn to reason about a deepfake video, a misdated photo, a cloned social account, and a cloned voice, using a friendship they care about as the reason to bother.</p>
+    <p class="cover-tag">A critical-thinking and AI-literacy game disguised as a four-night group-chat mystery — teenagers learn to reason about a video cut to mislead, a misdated photo, a cloned social account, and a cloned voice, using a friendship they care about as the reason to bother.</p>
     <div class="cover-meta">
       <div><span>Team</span><b>— add your names here —</b></div>
       <div><span>Track</span><b>— add hackathon track —</b></div>
@@ -241,32 +241,62 @@ ul.clean li::before{ content:"—"; position:absolute; left:0; color:var(--viole
   <p class="lede">A game about one thing: teaching teenagers to reason carefully about AI-manipulated media, using a friendship they care about as the reason to bother.</p>
 
   <div class="toc-list">
-    <div class="toc-row"><span class="toc-num">01</span><span class="toc-title">The Problem</span><span class="toc-dots"></span><span class="toc-page">03</span></div>
-    <div class="toc-row"><span class="toc-num">02</span><span class="toc-title">Theoretical Background</span><span class="toc-sub">the MIL Index model</span><span class="toc-dots"></span><span class="toc-page">04</span></div>
-    <div class="toc-row"><span class="toc-num">03</span><span class="toc-title">Theoretical Background</span><span class="toc-sub">why people get fooled</span><span class="toc-dots"></span><span class="toc-page">05</span></div>
-    <div class="toc-row"><span class="toc-num">04</span><span class="toc-title">Theoretical Background</span><span class="toc-sub">why it's a story</span><span class="toc-dots"></span><span class="toc-page">06</span></div>
-    <div class="toc-row"><span class="toc-num">05</span><span class="toc-title">Our Solution</span><span class="toc-dots"></span><span class="toc-page">07</span></div>
-    <div class="toc-row"><span class="toc-num">06</span><span class="toc-title">How It Works</span><span class="toc-dots"></span><span class="toc-page">08</span></div>
-    <div class="toc-row"><span class="toc-num">07</span><span class="toc-title">How It Works</span><span class="toc-sub">day by day</span><span class="toc-dots"></span><span class="toc-page">09</span></div>
-    <div class="toc-row"><span class="toc-num">08</span><span class="toc-title">The Notebook</span><span class="toc-dots"></span><span class="toc-page">10</span></div>
-    <div class="toc-row"><span class="toc-num">09</span><span class="toc-title">One Mechanic, Close Up</span><span class="toc-dots"></span><span class="toc-page">11</span></div>
-    <div class="toc-row"><span class="toc-num">10</span><span class="toc-title">Technology</span><span class="toc-dots"></span><span class="toc-page">12</span></div>
-    <div class="toc-row"><span class="toc-num">11</span><span class="toc-title">Educational Impact</span><span class="toc-dots"></span><span class="toc-page">13</span></div>
-    <div class="toc-row"><span class="toc-num">12</span><span class="toc-title">Alignment with the MIL Index</span><span class="toc-dots"></span><span class="toc-page">14</span></div>
-    <div class="toc-row"><span class="toc-num">13</span><span class="toc-title">Roadmap</span><span class="toc-dots"></span><span class="toc-page">15</span></div>
-    <div class="toc-row"><span class="toc-num">14</span><span class="toc-title">Team &amp; Contact</span><span class="toc-dots"></span><span class="toc-page">16</span></div>
+    <div class="toc-row"><span class="toc-num">01</span><span class="toc-title">The Problem</span><span class="toc-dots"></span><span class="toc-page">04</span></div>
+    <div class="toc-row"><span class="toc-num">02</span><span class="toc-title">Theoretical Background</span><span class="toc-sub">the MIL Index model</span><span class="toc-dots"></span><span class="toc-page">05</span></div>
+    <div class="toc-row"><span class="toc-num">03</span><span class="toc-title">Theoretical Background</span><span class="toc-sub">why people get fooled</span><span class="toc-dots"></span><span class="toc-page">06</span></div>
+    <div class="toc-row"><span class="toc-num">04</span><span class="toc-title">Theoretical Background</span><span class="toc-sub">why it's a story</span><span class="toc-dots"></span><span class="toc-page">07</span></div>
+    <div class="toc-row"><span class="toc-num">05</span><span class="toc-title">Our Solution</span><span class="toc-dots"></span><span class="toc-page">08</span></div>
+    <div class="toc-row"><span class="toc-num">06</span><span class="toc-title">How It Works</span><span class="toc-dots"></span><span class="toc-page">09</span></div>
+    <div class="toc-row"><span class="toc-num">07</span><span class="toc-title">How It Works</span><span class="toc-sub">day by day</span><span class="toc-dots"></span><span class="toc-page">10</span></div>
+    <div class="toc-row"><span class="toc-num">08</span><span class="toc-title">The Notebook</span><span class="toc-dots"></span><span class="toc-page">11</span></div>
+    <div class="toc-row"><span class="toc-num">09</span><span class="toc-title">One Mechanic, Close Up</span><span class="toc-dots"></span><span class="toc-page">12</span></div>
+    <div class="toc-row"><span class="toc-num">10</span><span class="toc-title">Technology</span><span class="toc-dots"></span><span class="toc-page">14</span></div>
+    <div class="toc-row"><span class="toc-num">11</span><span class="toc-title">Educational Impact</span><span class="toc-dots"></span><span class="toc-page">15</span></div>
+    <div class="toc-row"><span class="toc-num">12</span><span class="toc-title">Alignment with the MIL Index</span><span class="toc-dots"></span><span class="toc-page">16</span></div>
+    <div class="toc-row"><span class="toc-num">13</span><span class="toc-title">Roadmap</span><span class="toc-dots"></span><span class="toc-page">17</span></div>
+    <div class="toc-row"><span class="toc-num">14</span><span class="toc-title">Team &amp; Contact</span><span class="toc-dots"></span><span class="toc-page">18</span></div>
   </div>
 
   <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="02"></span></div>
 </section>
 
-<!-- ============ PAGE 3 — THE PROBLEM ============ -->
+<!-- ============ PAGE 3 — PROJECT OVERVIEW ============ -->
+<section class="page">
+  <div class="kicker">Project Overview</div>
+  <h1>What this project sets out to do</h1>
+  <p class="lede">A critical-thinking and AI-literacy game that gives teenagers one habit — checking AI-manipulated media before they react — practised through a story they care about, not taught through a quiz.</p>
+
+  <div class="grid2" style="margin-top:7mm; row-gap:8mm;">
+    <div class="card">
+      <h3>The problem</h3>
+      <p style="font-size:10.5px; margin-bottom:0;">Cyberbullying among school students is widespread and rising — and generative AI has made it worse. Manipulated "evidence" (a cut video, a cloned voice, a fake account) now spreads through a class group chat faster than anyone stops to check.</p>
+    </div>
+    <div class="card">
+      <h3>The objective</h3>
+      <p style="font-size:10.5px; margin-bottom:0;">Give students one habit: pause to check AI-manipulated media before they react — turning "check before you forward" from a rule they're told into a reflex they've rehearsed.</p>
+    </div>
+    <div class="card">
+      <h3>The approach</h3>
+      <p style="font-size:10.5px; margin-bottom:0;">A four-night group-chat mystery. Real, checkable manipulations; real social consequences; a friendship as the reason to bother — practised, not lectured.</p>
+    </div>
+    <div class="card">
+      <h3>Who it's for</h3>
+      <p style="font-size:10.5px; margin-bottom:0;">Secondary-school students, ages 13+ — met where manipulated media actually reaches them: forwarded into a class group chat by someone they trust. Trains all five pillars of media &amp; information literacy.</p>
+    </div>
+  </div>
+
+  <div class="pullquote" style="margin-top:9mm;">Success isn't a big score — it's a student who instinctively pauses before forwarding the next thing that lands in their group chat.</div>
+
+  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="03"></span></div>
+</section>
+
+<!-- ============ PAGE 4 — THE PROBLEM ============ -->
 <section class="page">
   <div class="kicker">01 — The Problem</div>
   <h1>You don't need real evidence to hurt someone anymore</h1>
-  <p class="lede">Online harassment is already widespread — up to 60% of women in the Arab States and more than half in Eastern Europe and Central Asia have experienced it (UN Women, 2021). And it's rarely a stranger doing it — it's someone inside the same circle of trust. Generative AI has made that threat far harder to escape: you don't need real evidence anymore. A photo, a voice, even someone's identity can be taken, manipulated, and used against them — a voice cloned from a few seconds of audio, a face swapped into a photo, a caption that reframes a real image into a lie.</p>
+  <p class="lede">Cyberbullying among school students is already widespread — around 1 in 6 teenagers have experienced it in school, and the figure keeps rising, drawn from more than 279,000 adolescents across 44 countries (WHO/Europe, 2024). And unlike bullying inside the school gates, it doesn't end when a student gets home; it follows them onto the phone in their bedroom. It's also rarely a stranger doing it — it's usually a classmate, someone inside the same circle of trust, and much of what they spread isn't even true. More than one in five teenagers say false rumours have been started about them (Pew Research Center, 2022): a story that never happened, pushed around the class until it sticks.</p>
 
-  <p style="margin-top:4mm; font-size:10.5px;">The reasoning skills needed to catch this are teachable — but almost nobody is teaching them where it counts. For a teenager, manipulated media doesn't arrive as a news story to fact-check calmly. It arrives as a video forwarded into a group chat by someone they trust, about someone else they trust, with everyone already reacting before anyone has thought to check anything. That's exactly the problem this game asks a teenager to practise handling.</p>
+  <p style="margin-top:4mm; font-size:10.5px;">Generative AI has made that far easier. Now that any student can fake a voice, a photo, or a video in seconds, roughly one in five secondary schools have already seen a fabricated clip or image turned against a student (RAND, 2024), and two-thirds of school staff say their students have been fooled by one (EdWeek Research Center, 2024). And not all of it is even AI — sometimes it's real footage stripped of its context. Either way, it lands in the class group chat, about a classmate everyone knows, with the group reacting before anyone has checked.</p>
 
   <div class="two-col" style="margin-top:4mm;">
     <div>
@@ -303,7 +333,7 @@ ul.clean li::before{ content:"—"; position:absolute; left:0; color:var(--viole
     <span class="badge">False "AI-authentic" confidence badge</span>
   </div>
 
-  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="03"></span></div>
+  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="04"></span></div>
 </section>
 
 <!-- ============ PAGE 4 — THEORETICAL BACKGROUND I: MIL INDEX ============ -->
@@ -343,7 +373,7 @@ ul.clean li::before{ content:"—"; position:absolute; left:0; color:var(--viole
   <h3 style="margin-top:7mm; margin-bottom:1mm;">Why this exact model, and not a generic one</h3>
   <p style="font-size:10.5px;">This hackathon's own brief is already anchored on the MIL Index, so building against it isn't an add-on for this document — it's the same yardstick judges are already using. Treating "critical thinking" as five distinct, separately-trainable competencies, rather than one vague instinct, is also what makes the game's design falsifiable: each pillar below is tied to a specific, checkable mechanic (section 12), not a vibe.</p>
 
-  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="04"></span></div>
+  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="05"></span></div>
 </section>
 
 <!-- ============ PAGE 5 — THEORETICAL BACKGROUND II: WHY PEOPLE GET FOOLED ============ -->
@@ -378,7 +408,7 @@ ul.clean li::before{ content:"—"; position:absolute; left:0; color:var(--viole
     <div class="card"><span class="tag tag-coral">Inoculation</span><h3 style="margin-top:2.5mm; font-size:11.5px;">Five weakened doses, five debriefs</h3><p style="font-size:9.5px;">Each night is survivable and low-stakes on purpose — that's what makes the resistance it builds transferable later.</p></div>
   </div>
 
-  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="05"></span></div>
+  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="06"></span></div>
 </section>
 
 <!-- ============ PAGE 6 — THEORETICAL BACKGROUND III: WHY A STORY ============ -->
@@ -414,10 +444,13 @@ ul.clean li::before{ content:"—"; position:absolute; left:0; color:var(--viole
     <div class="ref-item"><b>Green, M. C., &amp; Brock, T. C.</b> (2000). The role of transportation in the persuasiveness of public narratives. <em>Journal of Personality and Social Psychology, 79</em>(5), 701–721.</div>
     <div class="ref-item"><b>Kolb, D. A.</b> (1984). <em>Experiential Learning: Experience as the Source of Learning and Development.</em> Prentice-Hall.</div>
     <div class="ref-item"><b>Gee, J. P.</b> (2007). <em>What Video Games Have to Teach Us About Learning and Literacy</em> (2nd ed.). Palgrave Macmillan.</div>
-    <div class="ref-item"><b>UN Women.</b> (2021). <em>Violence Against Women in the Online Space: Insights From a Multi-Country Study in the Arab States.</em> UN Women.</div>
+    <div class="ref-item"><b>EdWeek Research Center.</b> (2024). <em>Educator and student survey on deepfakes in schools.</em> Education Week.</div>
+    <div class="ref-item"><b>Pew Research Center.</b> (2022). <em>Teens and Cyberbullying 2022.</em> Pew Research Center. pewresearch.org/internet/2022/12/15/teens-and-cyberbullying-2022</div>
+    <div class="ref-item"><b>RAND Corporation.</b> (2024). <em>Artificially Intelligent Bullies: Dealing with Deepfakes in K–12 Schools.</em> RAND. rand.org/pubs/research_reports/RRA3930-5.html</div>
+    <div class="ref-item"><b>World Health Organization Regional Office for Europe.</b> (2024). <em>A focus on adolescent peer violence and bullying in Europe, central Asia and Canada</em> (HBSC 2021/2022 survey, Vol. 2). WHO/Europe.</div>
   </div>
 
-  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="06"></span></div>
+  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="07"></span></div>
 </section>
 
 <!-- ============ PAGE 7 — OUR SOLUTION ============ -->
@@ -471,7 +504,7 @@ ul.clean li::before{ content:"—"; position:absolute; left:0; color:var(--viole
 
   <div class="pullquote" style="margin-top:9mm;">Every one of these five scenarios resolves the same way: the truth was checkable the whole time, and the player either checked or didn't. Nothing in the story is unknowable — that's a deliberate design constraint, not a coincidence.</div>
 
-  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="07"></span></div>
+  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="08"></span></div>
 </section>
 
 <!-- ============ PAGE 8 — HOW IT WORKS ============ -->
@@ -508,7 +541,7 @@ ul.clean li::before{ content:"—"; position:absolute; left:0; color:var(--viole
     <div class="card" style="padding:4mm;"><span class="tag tag-amber">Create + Act</span><h3 style="margin-top:1.5mm; font-size:11px;">Message Nicole</h3><p style="font-size:8.5px; margin-bottom:0;">Private and direct, away from pressure.</p></div>
   </div>
 
-  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="08"></span></div>
+  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="09"></span></div>
 </section>
 
 <!-- ============ PAGE 9 — HOW IT WORKS: DAY BY DAY ============ -->
@@ -575,7 +608,7 @@ ul.clean li::before{ content:"—"; position:absolute; left:0; color:var(--viole
     <span class="badge">Report an account — reversible consequence</span>
   </div>
 
-  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="09"></span></div>
+  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="10"></span></div>
 </section>
 
 <!-- ============ PAGE 9B — THE NOTEBOOK ============ -->
@@ -604,7 +637,7 @@ ul.clean li::before{ content:"—"; position:absolute; left:0; color:var(--viole
 
   <p style="margin-top:6mm;">Because the map and handbook only fill in with what's actually been investigated, checking the "Access" and "Analyze" pillars (see section 2) leaves a visible, growing trace the player can revisit — reflection becomes something they build, not something the game tells them happened.</p>
 
-  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="10"></span></div>
+  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="11"></span></div>
 </section>
 
 <!-- ============ PAGE 10 — SPOTLIGHT ============ -->
@@ -636,14 +669,42 @@ ul.clean li::before{ content:"—"; position:absolute; left:0; color:var(--viole
 
   <p style="margin-top:7mm;">The two screens are visually similar on purpose — this is the point. Judges and players alike are meant to have to actually compare them side by side, the same way the in-game "compare accounts" action works, rather than intuit which is fake at a glance.</p>
 
-  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="11"></span></div>
+  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="12"></span></div>
 </section>
 
-<!-- ============ PAGE 11 — TECHNOLOGY ============ -->
+<!-- ============ PAGE 13 — PLAYTESTING ============ -->
+<section class="page">
+  <div class="kicker">Playtesting</div>
+  <h1>What testing changed</h1>
+  <p class="lede">Before calling the game finished, we put the prototype in front of players from the target group — and rebuilt it around what we saw.</p>
+
+  <div class="placeholder-box" style="margin-top:5mm; padding:8mm;">Photo: playtesting the prototype with a target-group player — placeholder</div>
+
+  <h3 style="margin-top:7mm; margin-bottom:1mm;">How we tested</h3>
+  <p style="font-size:10.5px;">We watched three players from the target group work through the game, noting both what landed and where they got stuck. Those pain points shaped what we changed next.</p>
+
+  <h3 style="margin-top:6mm; margin-bottom:2mm;">What we changed</h3>
+  <ul class="clean">
+    <li>Players felt lost at first, unsure what to do — so we added the notebook and clickable hints to give them a clear sense of where to look next.</li>
+    <li>The prototype never showed the full story, so players couldn't tell what was actually true. Now, once they reach 100%, the game reveals the whole situation.</li>
+    <li>Players fixated on finding the culprit, not on which evidence was real or fake — so each day now ends with a "real / real-but-cut / fake" checklist.</li>
+  </ul>
+
+  <h3 style="margin-top:6mm; margin-bottom:1mm;">What worked</h3>
+  <p style="font-size:10.5px;">Players were positively surprised by the story and liked discovering how to check information for themselves. Day 3 — their own voice cloned against them — caught them off guard.</p>
+  <div class="pullquote">"I didn't expect the game to use my own voice against me."<cite>— Playtester 1</cite></div>
+
+  <h3 style="margin-top:6mm; margin-bottom:1mm;">A limitation we're addressing</h3>
+  <p style="font-size:10.5px;">Our ongoing challenge is keeping players focused on analysing the evidence rather than on <em>who did it</em> — the per-day checklist is a first step we're still sharpening.</p>
+
+  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="13"></span></div>
+</section>
+
+<!-- ============ PAGE 14 — TECHNOLOGY ============ -->
 <section class="page">
   <div class="kicker">10 — Technology</div>
   <h1>An AI that runs on the player's device, not a server</h1>
-  <p class="lede">The in-character chat is powered by a small, quantised language model (Falcon-H1-Tiny-90M, ~37&nbsp;MB) run entirely client-side in the browser via WebAssembly, with optional WebGPU acceleration. Every reply is grounded against a short, per-day fact sheet the player never sees, so improvised dialogue can never contradict the "true" version of events. This is also, quietly, AI education in itself: the player is talking to a real, working generative model the whole time — a concrete, hands-on referent for "what an AI actually is" underneath every abstract warning about deepfakes.</p>
+  <p class="lede">The in-character chat is powered by a small, quantised language model (LFM2.5-350M, GGUF Q4_K_M, ~219&nbsp;MB) run entirely client-side in the browser via WebAssembly, with optional WebGPU acceleration. Every reply is grounded against a short, per-day fact sheet the player never sees, so improvised dialogue can never contradict the "true" version of events. This is also, quietly, AI education in itself: the player is talking to a real, working generative model the whole time — a concrete, hands-on referent for "what an AI actually is" underneath every abstract warning about deepfakes.</p>
 
   <div class="two-col" style="margin-top:4mm; align-items:stretch;">
     <div class="card" style="display:flex; flex-direction:column; justify-content:center;">
@@ -672,7 +733,7 @@ ul.clean li::before{ content:"—"; position:absolute; left:0; color:var(--viole
         <rect x="60" y="150" width="180" height="60" rx="6" fill="#e3f3ec" stroke="#1f8f76"/>
         <text x="150" y="175" text-anchor="middle" font-size="9" fill="#1f8f76" font-weight="700">Student's own browser</text>
         <rect x="90" y="185" width="120" height="18" rx="3" fill="#fff" stroke="#1f8f76"/>
-        <text x="150" y="197" text-anchor="middle" font-size="7.5" fill="#15151a">tiny local model (~37MB)</text>
+        <text x="150" y="197" text-anchor="middle" font-size="7.5" fill="#15151a">local model (~219MB)</text>
         <line x1="270" y1="180" x2="240" y2="180" stroke="#c8871f" stroke-width="1.5"/>
         <text x="285" y="183" text-anchor="middle" font-size="7" fill="#c8871f">no</text>
         <text x="285" y="192" text-anchor="middle" font-size="7" fill="#c8871f">server</text>
@@ -684,8 +745,8 @@ ul.clean li::before{ content:"—"; position:absolute; left:0; color:var(--viole
   <h3 style="margin-top:5mm; margin-bottom:2mm;">Model card</h3>
   <table style="font-size:10px;">
     <tbody>
-      <tr><td style="width:24%; padding:2.4mm 3mm;"><strong>Model</strong></td><td style="padding:2.4mm 3mm;">Falcon-H1-Tiny-90M-Instruct, GGUF Q4_K_M quantisation</td></tr>
-      <tr><td style="padding:2.4mm 3mm;"><strong>Footprint</strong></td><td style="padding:2.4mm 3mm;">~37&nbsp;MB, downloaded once and cached in the browser</td></tr>
+      <tr><td style="width:24%; padding:2.4mm 3mm;"><strong>Model</strong></td><td style="padding:2.4mm 3mm;">LFM2.5-350M (LiquidAI), GGUF Q4_K_M quantisation</td></tr>
+      <tr><td style="padding:2.4mm 3mm;"><strong>Footprint</strong></td><td style="padding:2.4mm 3mm;">~219&nbsp;MB, downloaded once and cached in the browser</td></tr>
       <tr><td style="padding:2.4mm 3mm;"><strong>Runtime</strong></td><td style="padding:2.4mm 3mm;">wllama (llama.cpp compiled to WebAssembly), optional WebGPU, CPU fallback</td></tr>
       <tr><td style="padding:2.4mm 3mm;"><strong>Grounding</strong></td><td style="padding:2.4mm 3mm;">A short per-day fact sheet constrains every reply so improvisation can't contradict the true story</td></tr>
       <tr><td style="padding:2.4mm 3mm;"><strong>Guardrails</strong></td><td style="padding:2.4mm 3mm;">Replies breaking character or sounding like an assistant are rejected and retried</td></tr>
@@ -693,7 +754,7 @@ ul.clean li::before{ content:"—"; position:absolute; left:0; color:var(--viole
     </tbody>
   </table>
 
-  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="12"></span></div>
+  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="14"></span></div>
 </section>
 
 <!-- ============ PAGE 12 — EDUCATIONAL IMPACT ============ -->
@@ -725,9 +786,9 @@ ul.clean li::before{ content:"—"; position:absolute; left:0; color:var(--viole
     </div>
   </div>
 
-  <p style="margin-top:5mm; font-size:10px;">The per-check debrief lines above are composed from exactly what was and wasn't verified, so the specific feedback differs player to player. Which of the game's seven authored endings closes the week is then decided by a signal ledger — checks completed, public support, private messages to Nicole, and the resulting relationship — not a simple multiple-choice branch. Endings the player has earned are kept in an in-game gallery, so a completionist can see how differently the week could have gone.</p>
+  <p style="margin-top:5mm; font-size:10px;">The per-check debrief lines above are composed from exactly what was and wasn't verified, so the specific feedback differs player to player. Which of the game's six authored endings closes the week is then decided by a signal ledger — checks completed, public support, private messages to Nicole, and the resulting relationship — not a simple multiple-choice branch. Endings the player has earned are kept in an in-game gallery, so a completionist can see how differently the week could have gone.</p>
 
-  <h3 style="margin-top:6mm; margin-bottom:2.5mm;">Seven endings, chosen by what you did</h3>
+  <h3 style="margin-top:6mm; margin-bottom:2.5mm;">Six endings, chosen by what you did</h3>
   <div class="grid3">
     <div class="card"><span class="tag tag-coral">Worst</span><h3 style="margin-top:2.5mm; font-size:11px;">I thought I knew you</h3><p style="font-size:9.5px;">"I thought I knew you, {name}."</p></div>
     <div class="card"><span class="tag tag-amber">Let them keep telling it</span><p style="font-size:9.5px; margin-top:2.5mm;">"You found the crack in their story. You let them keep telling it."</p></div>
@@ -736,9 +797,8 @@ ul.clean li::before{ content:"—"; position:absolute; left:0; color:var(--viole
     <div class="card"><span class="tag tag-sky">Told the room</span><p style="font-size:9.5px; margin-top:2.5mm;">"You told the truth to the room. The room grew quieter around you."</p></div>
     <div class="card"><span class="tag tag-teal">Spoke it aloud</span><p style="font-size:9.5px; margin-top:2.5mm;">"You waited for the truth. Then you spoke it aloud. She heard you twice."</p></div>
   </div>
-  <p style="font-size:8px; color:var(--ink-faint); margin-top:2mm;">An eighth, unlisted "Perfect week" ending is deliberately withheld from the in-game gallery — earned, not browsed.</p>
 
-  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="13"></span></div>
+  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="15"></span></div>
 </section>
 
 <!-- ============ PAGE 13 — ALIGNMENT WITH THE MIL INDEX ============ -->
@@ -766,7 +826,7 @@ ul.clean li::before{ content:"—"; position:absolute; left:0; color:var(--viole
 
   <p style="margin-top:6mm; font-size:9.5px; color:var(--ink-faint);">Equity note: none of the above requires a server, an account, or reliable connectivity after first load — which matters for Access specifically, since a pillar about "knowing where to find information" is undermined if the tool itself is hard to reach in an under-resourced classroom. This describes thematic alignment with DW Akademie's published MIL Index model; it is not a claim of formal review, partnership, or endorsement.</p>
 
-  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="14"></span></div>
+  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="16"></span></div>
 </section>
 
 <!-- ============ PAGE 14 — ROADMAP ============ -->
@@ -798,7 +858,7 @@ ul.clean li::before{ content:"—"; position:absolute; left:0; color:var(--viole
     <div class="tl-seg"><div class="tl-bar"></div><div class="tl-dot"></div><div class="tl-label">Later</div><div class="tl-sub">Wider rollout, additional scenarios</div></div>
   </div>
 
-  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="15"></span></div>
+  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="17"></span></div>
 </section>
 
 <!-- ============ PAGE 15 — TEAM & CONTACT ============ -->
@@ -828,7 +888,7 @@ ul.clean li::before{ content:"—"; position:absolute; left:0; color:var(--viole
 
   <p style="margin-top:14mm; font-size:9.5px; color:var(--ink-faint); text-align:center;">Thank you for reading. Questions welcome before, during, or after the pitch.</p>
 
-  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="16"></span></div>
+  <div class="pagefoot"><span>I Thought I Knew You — UNESCO Hackathon Proposal</span><span class="pagenum" data-n="18"></span></div>
 </section>
 
 </body>
