@@ -1715,7 +1715,7 @@ video.g-notebook-got-media {
   margin-top: auto;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: center;
 }
 
 .g-title-cta {
@@ -1730,32 +1730,23 @@ video.g-notebook-got-media {
 
 .g-title-cta-secondary {
   width: 100%;
-  margin-top: 14px;
+  margin-top: 8px;
 }
 
-.g-title-save-row {
+.g-title-save-stack {
   width: 100%;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 32px;
-  margin-bottom: 18px;
-}
-
-.g-title-save-meta {
-  flex: 1;
-  min-width: 0;
-  display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
 }
 
 .g-title-save {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
-  margin-bottom: 8px;
-  justify-content: flex-start;
 }
 
 .g-title-save-av {
@@ -1772,7 +1763,7 @@ video.g-notebook-got-media {
   font-size: var(--fs-lead);
   font-weight: 700;
   color: var(--c-ink);
-  text-align: left;
+  text-align: center;
 }
 
 .g-title-save-progress {
@@ -1781,7 +1772,7 @@ video.g-notebook-got-media {
   text-transform: uppercase;
   color: var(--c-accent-bright);
   margin-bottom: 0;
-  text-align: left;
+  text-align: center;
 }
 
 .g-title-start {
@@ -1845,11 +1836,8 @@ video.g-notebook-got-media {
   transition: transform .18s ease, opacity .18s ease;
 }
 
-.g-title-album--inline {
-  margin-top: 0;
-  flex: 0 0 auto;
-  align-self: center;
-  align-items: flex-end;
+.g-title-album--stack {
+  margin-top: 2px;
 }
 
 .g-title-album:hover {

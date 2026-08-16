@@ -57,16 +57,14 @@
     <div class="g-title-actions">
       <sc-if value="{{ hasSave }}" hint-placeholder-val="{{ false }}">
         <div class="g-title-bottom">
-          <div class="g-title-save-row">
-            <div class="g-title-save-meta">
-              <div class="g-title-save">
-                <img src="{{ savePlayerAvatar }}" alt="" class="g-title-save-av">
-                <div class="g-title-save-name">Hi, {{ savePlayerName }}</div>
-              </div>
-              <div class="g-title-save-progress">{{ saveProgressLabel }}</div>
+          <div class="g-title-save-stack">
+            <div class="g-title-save">
+              <img src="{{ savePlayerAvatar }}" alt="" class="g-title-save-av">
+              <div class="g-title-save-name">Hi, {{ savePlayerName }}</div>
             </div>
+            <div class="g-title-save-progress">{{ saveProgressLabel }}</div>
             <sc-if value="{{ hasUnlockedEnding }}" hint-placeholder-val="{{ false }}">
-              <button sc-camel-on-click="{{ openEndingsGallery }}" class="g-title-album g-title-album--inline" title="Endings album">
+              <button sc-camel-on-click="{{ openEndingsGallery }}" class="g-title-album g-title-album--stack" title="Endings album">
                 <img src="assets/album.webp" alt="" class="g-title-album-icon">
                 <span class="g-title-album-label">{{ endingsUnlockedCount }} / {{ endingsTotalCount }}</span>
               </button>
