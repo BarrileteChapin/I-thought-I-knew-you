@@ -207,7 +207,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   // Spoke-aloud only: insert a truth-video beat before the polaroid card.
   END_STEP_TRUTH_VIDEO: 7,
   END_STEP_LAST_CARD: 8,
-  END_STEP_LAST: 9,
+  END_STEP_LAST: 8,
 
   showsEndingTruthVideo(st) {
     if (this.FORCE_ENDING_TRUTH_VIDEO || this.FORCE_BEST_ENDING) return true;
@@ -222,6 +222,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     let n = Math.round(Number(step));
     if (!Number.isFinite(n) || n < 1) n = 1;
     if (n > this.END_STEP_LAST) n = this.END_STEP_LAST;
+    // Legacy saves may still point at the removed invitation step (9).
+    if (n === 9) n = this.END_STEP_LAST_CARD;
     if (n === this.END_STEP_TRUTH_VIDEO && !this.showsEndingTruthVideo(st)) {
       n = this.END_STEP_LAST_CARD;
     }

@@ -1842,24 +1842,9 @@
     <sc-if value="{{ replayShown }}" hint-placeholder-val="{{ false }}">
       <div class="g-btn-footer-row" style="animation:fadeup .6s ease;">
         <button sc-camel-on-click="{{ prevSection }}" class="g-btn g-btn-footer-back">Go back</button>
-        <button sc-camel-on-click="{{ nextSection }}" class="g-btn g-btn-footer">Continue</button>
+        <button sc-camel-on-click="{{ restart }}" class="g-btn g-btn-footer">Play again</button>
       </div>
     </sc-if>
-  </div>
-</div>
-</sc-if>
-
-<sc-if value="{{ isInvitation }}" hint-placeholder-val="{{ false }}">
-<div style="width:100%;height:100%;display:flex;flex-direction:column;">
-  <div class="g-end-fadein" style="flex:1;min-height:0;overflow-y:auto;padding:80px var(--space-screen-x) 20px;">
-  <div style="font-size:var(--fs-title);line-height:1.6;color:var(--c-ink);max-width:40ch;margin-bottom:22px;text-wrap:pretty;">Some of what you saw this week was true. Some of it wasn't.</div>
-  <div style="font-size:var(--fs-title);line-height:1.6;color:var(--c-muted);max-width:40ch;">The game isn't going to tell you which.</div>
-  </div>
-  <div style="flex:0 0 auto;padding:14px var(--space-screen-x) 20px;background:var(--c-frame);border-top:1px solid var(--c-ink-hair);">
-    <div class="g-btn-footer-row">
-      <button sc-camel-on-click="{{ prevSection }}" class="g-btn g-btn-footer-back">Go back</button>
-      <button sc-camel-on-click="{{ restart }}" class="g-btn g-btn-footer">Play again</button>
-    </div>
   </div>
 </div>
 </sc-if>

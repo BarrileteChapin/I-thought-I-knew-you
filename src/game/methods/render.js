@@ -1014,7 +1014,6 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       isMoves: st.screen === 'end' && this.normalizeEndStep(st.endStep, st) === 6,
       isTruthVideo: st.screen === 'end' && this.normalizeEndStep(st.endStep, st) === 7 && this.showsEndingTruthVideo(st),
       isLastCard: st.screen === 'end' && this.normalizeEndStep(st.endStep, st) === 8,
-      isInvitation: st.screen === 'end' && this.normalizeEndStep(st.endStep, st) === 9,
       isEndScreen: st.screen === 'end',
       showEndBack: st.screen === 'end' && this.normalizeEndStep(st.endStep, st) > 1,
       alwaysTrue: true,
