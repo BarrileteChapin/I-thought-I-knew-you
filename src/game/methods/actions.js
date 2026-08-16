@@ -80,16 +80,23 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         ])
       });
     }
-    if (s.day === 4 && !s.apology && s.min >= 16 * 60 + 55) {
-      this.setState({
-        apology: true,
-        chat: s.chat.concat([
-          { who: 'Hanna', kind: 'voice', dur: '0:31', caption: 'Nicole\'s voice, flat: “I did say it. I\'m sorry. I\'ll leave everyone alone.”' },
-          { who: 'Hanna', text: 'she admitted it' },
-          { who: 'Mia', text: 'told you' }
-        ])
-      });
-    }
+    // Day-4 apology: after the diary listen (not a clock). Catch-up if listen already done.
+    if (s.day === 4 && !s.apology && s.done && s.done.d5listen) this.injectDay4Apology();
+  },
+
+  // Hanna forwards Nicole's apology after the player has heard the attacking note twice.
+  injectDay4Apology() {
+    const s = this.state;
+    if (s.day !== 4 || s.apology) return;
+    this.setState({
+      apology: true,
+      chat: s.chat.concat([
+        // No apology audio yet — voice bubble off until an asset exists.
+        // { who: 'Hanna', kind: 'voice', dur: '0:31', caption: 'Nicole\'s voice, flat: “I did say it. I\'m sorry. I\'ll leave everyone alone.”' },
+        { who: 'Hanna', text: 'she admitted it' },
+        { who: 'Mia', text: 'told you' }
+      ])
+    });
   },
 
   bumpHint(dayKey, effect, id) {
