@@ -19,20 +19,21 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const msgsRaw = st.tab === 'group' ? st.chat : st.dm;
     const msgs = msgsRaw.map((m, i) => {
       const audioKey = st.tab + ':' + i;
-      // Prefer live TTS / in-memory splice. Otherwise keep audio:'clone' so play
-      // can restore the player's buffers from IndexedDB before falling back.
+      // Prefer live TTS. While TTS is still running, keep audio:'clone' so play
+      // waits instead of jumping to splice / static fallback early.
       const clonePlay = m.audio === 'clone'
         ? (st.cloneAudioSrc
           ? { mode: 'file', src: st.cloneAudioSrc }
-          : (this._splice ? { mode: 'buf', which: 'splice' } : null))
+          : (this.isDay3ClonePending()
+            ? null
+            : (this._splice ? { mode: 'buf', which: 'splice' } : null)))
         : null;
       const playbackMessage = clonePlay
         ? (clonePlay.mode === 'file'
           ? Object.assign({}, m, { audioSrc: clonePlay.src })
           : Object.assign({}, m, { audio: clonePlay.which }))
         : m;
-      // Always playable: live clone, mic splice, or bundled default wav.
-      const voiceUnavailable = false;
+      const clonePending = m.audio === 'clone' && !st.cloneAudioSrc && this.isDay3ClonePending();
       const isPlaying = m.kind === 'voice' && st.playingAudioKey === audioKey;
       const duration = m.audio === 'clone' && st.cloneAudioDuration
         ? this.audioDurationLabel(st.cloneAudioDuration) : (m.dur || '0:04');
@@ -78,8 +79,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         isText: !m.kind, tick: m.mine && !m.old ? (m.unsent ? '✓' : '✓✓') : '',
         isPlaying, isStopped: !isPlaying,
         voiceUnavailable: false,
-        voiceOpacity: 1,
-        voiceLabel: isPlaying ? 'Stop voice note' : 'Play voice note',
+        voiceOpacity: clonePending ? 0.55 : 1,
+        voiceLabel: clonePending ? 'Generating…' : (isPlaying ? 'Stop voice note' : 'Play voice note'),
         togglePlay: () => this.toggleChatAudio(audioKey, playbackMessage)
       };
     });
@@ -657,7 +658,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         ? 'Preparing your voice clone… ' + st.ttsProgress + '%'
         : st.ttsStatus === 'cloning' ? 'Learning your voice…'
           : st.ttsStatus === 'generating' ? 'Generating the voice note…'
-            : 'The cloned voice is unavailable. Playing the local fallback when possible.',
+            : 'Voice clone unavailable — using the local fallback.',
       memberLine: st.tab === 'group'
         ? (st.day >= 3 ? this.name() + ', Hanna, Mia, Lea, Benito…'
                        : this.name() + ', Nicole, Hanna, Mia, Lea, Benito…') : '',
