@@ -4,8 +4,8 @@
   "feeling": "Certainty",
   "threadSub": "27 members",
   "deskLabel": "Day 4 · the voice",
-  "deskTitle": "voice_nicole.m4a",
-  "url": "file:///downloads/voice_nicole.m4a",
+  "deskTitle": "voice_message_0713.m4a",
+  "url": "file:///downloads/voice_message_0713.m4a",
   "name": "The voice message",
   "truth": "A cloned voice. The AI checker that said “97% authentic” was simply wrong, and it was the most convincing thing anyone posted all week.",
   "tell": "asking where she was — she was somewhere else, with people who saw her",
@@ -15,7 +15,7 @@
     {
       "who": "Hanna",
       "kind": "voice",
-      "dur": "0:22",
+      "dur": "0:11",
       "audioSrc": "assets/audios/4-first_audio.wav",
       "caption": "Nicole's voice: “…honestly I hope she never comes back to school.”"
     },

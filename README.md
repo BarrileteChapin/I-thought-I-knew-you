@@ -126,7 +126,7 @@ Each day file contains the scenario and investigation checks:
 - `checks`: available investigation actions
 
 Each check has a stable `id`, `where`, `cost`, `label`, `effect`, and `result`.
-Do not rename an existing check ID because game state and variants refer to it.
+Do not rename an existing check ID because game state refers to it.
 
 ### DM Choices
 
@@ -144,8 +144,6 @@ Each entry in `dm-options.json` contains:
 
 - `content/rules/pushback.json`: group reactions when the player challenges the
   group
-- `content/rules/variants.json`: alternate scenario outcomes keyed by day and
-  variant number
 
 Rules contain keys used by game logic. Change wording freely, but preserve the
 object structure and IDs unless also updating the corresponding method.

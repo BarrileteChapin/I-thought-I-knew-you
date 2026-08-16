@@ -1,4 +1,7 @@
 window.GameMethods = Object.assign(window.GameMethods || {}, {
+  // Debug: keep room arrival toasts (message + SNS) pinned for CSS position tuning.
+  FORCE_ROOM_TOAST: false,
+
   // Headline shown in the social-media arrival toast, keyed by day — picked
   // to name that day's actual challenge (the reposted photo, the fake
   // account, the cloned voice) rather than just whichever post is newest.
@@ -47,6 +50,10 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     this.setState({ msgToast: { who, text, kind, avatar: face }, msgToastVisible: false }, () => {
       requestAnimationFrame(() => this.setState({ msgToastVisible: true }));
     });
+    if (this.FORCE_ROOM_TOAST) {
+      if (cb) setTimeout(cb, 700);
+      return;
+    }
     this._msgToastHide = setTimeout(() => {
       this.setState({ msgToastVisible: false });
       this._msgToastClear = setTimeout(() => { this.setState({ msgToast: null }); if (cb) cb(); }, 300);
@@ -98,6 +105,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     this.setState({ socToast: { who, text }, socToastVisible: false }, () => {
       requestAnimationFrame(() => this.setState({ socToastVisible: true }));
     });
+    if (this.FORCE_ROOM_TOAST) return;
     this._socToastHide = setTimeout(() => {
       this.setState({ socToastVisible: false });
       this._socToastClear = setTimeout(() => this.setState({ socToast: null }), 300);

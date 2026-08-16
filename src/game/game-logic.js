@@ -13,7 +13,6 @@ class Component extends DCLogic {
   DAY_YOU = window.GameData.conversations.DAY_YOU;
   CINE_SCENES = window.GameData.conversations.CINE_SCENES;
   PUSHBACK = window.GameData.rules.PUSHBACK;
-  VARIANTS = window.GameData.rules.VARIANTS;
 
   clips = [];
   introRef = React.createRef();
@@ -26,20 +25,21 @@ class Component extends DCLogic {
     cinePhase: 'gate', cineIdx: 0, cineActive: false, cineMuted: false, cineFlash: false,
     msgToast: null, msgToastVisible: false, socToast: null, socToastVisible: false, cameraPush: false, dayEnter: false,
     tab: 'group', confirmSleep: false, chat: [], dm: [], sharedCount: 3, playingAudioKey: null,
+    audioPaused: false, audioScrubPct: '0%', audioScrubLabel: '0:00',
     hints: { 1: [], 2: [], 3: [], 4: [], 5: [] }, certainty: { 1: 'unchecked', 2: 'unchecked', 3: 'unchecked', 4: 'unchecked', 5: 'unchecked' },
     done: {}, used: {}, loading: null, loadingPct: 0, credibility: 0,
     credibilityLost: false, actedToday: false, openedGroup: false, ignored: false,
     dmAnsweredToday: false, phoneOpenedToday: false, phoneClosing: false, shareTick: 0, shareHalved: false, fading: false,
     tool: 'player', socTab: 'feed', socProfileKey: null, socPostId: null, socInfoOpen: false, mediaOpen: null, seen: {}, zoom: false, dev: null, threadOpen: null, galleryNew: false, chatFlash: false,
     lastRead: { group: 0, dm: 0 }, newMarkAt: null, showNewPill: false,
-    writeIn: false, writeText: '', writeStatus: null, chatDraft: '', chatBusy: false, llmStatus: '', actionsOpen: false, chatGroupLeft: 5, chatDmLeft: 5, llmUsedReplies: [], llmReplySeed: 0,
+    writeIn: false, writeText: '', writeStatus: null, chatGroupDraft: '', chatDmDraft: '', chatBusy: false, llmStatus: '', actionsOpen: false, chatGroupLeft: 5, chatDmLeft: 5, llmUsedReplies: [], llmReplySeed: 0,
     dragItem: null, pickIdx: null, pickerOpen: false, pickerMode: 'search', searched: {}, aiPickIdx: null, aiStage: 'idle', aiStep: 0, actionLog: [], reactionTimes: [],
     arrival: 0, reactedToday: false, samSilent: false, apology: false,
     reported: false, clipBack: false, phase: 'evening', groupUnread: 0, final: { post: null, fwd: null, tell: null },
     sam: 50, group: 50, pushIdx: 0, flashSam: false, flashGroup: false, samDead: false, reason: '',
     voiceSent: false, d1VideoSent: false, pStage: -1, introLine: 0, introMsg: 0, introTyping: false, introReady: false,
     ttsStatus: 'idle', ttsProgress: 0, cloneAudioSrc: null, cloneAudioDuration: 0,
-    pendingDay: 1, cardPhase: 'evening', cardDayName: '', cardWhen: '', continueResumeScreen: null, variant: 0,
+    pendingDay: 1, cardPhase: 'evening', cardDayName: '', cardWhen: '', continueResumeScreen: null,
     playerName: 'Alex', nameDraft: '', playerAvatar: null,
     dmCloseTyping: false, dmCloseExtra: null, dmCloseReady: false, replayShown: false,
     truthVideoPlaying: false,

@@ -172,10 +172,15 @@
   --hot-phone-am-t: 50%;
   --hot-phone-am-w: 25%;
   /* Message toast anchored above phone (same % box as hotspots) */
-  --hot-toast-l: 17%;
+  --hot-toast-l: 16.5%;
   --hot-toast-t: 56%;
-  --hot-toast-am-l: 30%;
-  --hot-toast-am-t: 50%;
+  --hot-toast-am-l: 27%;
+  --hot-toast-am-t: 51.5%;
+  /* SNS toast anchored below phone */
+  --hot-soc-toast-l: 16.5%;
+  --hot-soc-toast-t: 60%;
+  --hot-soc-toast-am-l: 27%;
+  --hot-soc-toast-am-t: 56%;
   /* Notebook on desk (evening + morning room) */
   --hot-nb-l: 50%;
   --hot-nb-t: 72%;

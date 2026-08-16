@@ -7,15 +7,15 @@
   "deskTitle": "IMG_4471.mp4",
   "url": "file:///downloads/IMG_4471.mp4",
   "name": "The video of Nicole",
-  "truth": "Real footage, cut. In the full version she is repeating, disgusted, something an older student said. One sentence was removed from the front — it starts mid-word.",
+  "truth": "Real footage, cut at both ends. In the full version she is repeating, disgusted, something an older student said. The shared clip is only the middle — it opens on “Nele's honestly…” and stops before she finishes.",
   "tell": "asking Mia, who was standing there when it happened",
   "fake": true,
-  "volunteer": "someone recorded longer than that clip. it starts in the middle.",
+  "volunteer": "someone recorded longer than that clip. it starts and ends in the middle of what i said.",
   "chat": [
     {
       "who": "Hanna",
       "kind": "video",
-      "caption": "Nicole, filmed at a party: “…Nele's honestly the most pathetic person in our year.”"
+      "caption": "Nicole, filmed at a party: “Nele's honestly the most pathetic person in our year…”"
     },
     {
       "who": "Hanna",
@@ -48,7 +48,7 @@
       "label": "Watch it again, slowly",
       "effect": "hint",
       "sift": "coverage",
-      "result": "At 0:00 the sentence starts mid-word. “—thetic person in our year.” Something came before it."
+      "result": "It opens cleanly on “Nele's honestly…” — then cuts off before she finishes. Something came before this clip, and something came after."
     },
     {
       "id": "d1rev",

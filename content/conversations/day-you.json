@@ -4,8 +4,8 @@
   "feeling": "Recognition",
   "threadSub": "27 members",
   "deskLabel": "Day 3 · you",
-  "deskTitle": "clip_you.m4a",
-  "url": "file:///downloads/clip_you.m4a",
+  "deskTitle": "clip_player.m4a",
+  "url": "file:///downloads/clip_player.m4a",
   "name": "The clip of you",
   "truth": "A generated clone of your voice says something you never recorded. It uses the voice note you sent on Sunday as its reference, but the words are new.",
   "tell": "the same check you had all week — asking for the whole thing",
@@ -16,9 +16,9 @@
     {
       "who": "Nicole",
       "kind": "voice",
-      "dur": "0:09",
+      "dur": "0:04",
       "audio": "clone",
-      "ttsText": "I think Nicole is just jealous of-Nele. She loves gossiping as well.",
+      "ttsText": "I think Nicole is just jealous of Nele. She loves gossiping as well.",
       "caption": ""
     },
     {

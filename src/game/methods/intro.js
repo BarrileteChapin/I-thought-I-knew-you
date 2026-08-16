@@ -119,8 +119,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   submitAvatar() {
     if (!this.state.playerAvatar) return;
     this.setState({
-      screen: 'howto', introLine: 0, introMsg: 0, introReady: false,
-      variant: Math.floor(Math.random() * 2)
+      screen: 'howto', introLine: 0, introMsg: 0, introReady: false
     });
   },
 
@@ -187,8 +186,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   introStep() {
     const i = this.state.introMsg;
     if (i >= this.P_LOG.length) {
-      this._it = setTimeout(() => this.setState({ fading: true }), 2800);
-      this._it = setTimeout(() => this.showDayCard(1), 4000);
+      this._it = setTimeout(() => this.setState({ fading: true }), 900);
+      this._it = setTimeout(() => this.showDayCard(1), 1400);
       return;
     }
     const m = this.P_LOG[i];

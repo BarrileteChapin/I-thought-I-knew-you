@@ -33,7 +33,13 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const quietPhase = (n === 3 && ph === 'clip');
     const banner = d.dayName;
     let chat = quietPhase ? st.chat.slice()
-      : (n === 1 ? this.P_LOG.filter(m => !m.rec || st.voiceSent).concat([{ who: 'System', sys: true, text: banner }])
+      : (n === 1
+        ? this.P_LOG
+          .filter(m => !m.rec || st.voiceSent)
+          .map(m => (m.rec
+            ? { who: 'You', mine: true, kind: 'voice', dur: m.dur || '0:10', audio: 'real', caption: m.caption || 'You, reading it out.' }
+            : m))
+          .concat([{ who: 'System', sys: true, text: banner }])
         : st.chat.concat([{ who: 'System', sys: true, text: banner }])).concat(d.chat);
     let dm = (n === 1 ? this.DM_HISTORY.slice() : st.dm.slice().map(m => Object.assign({}, m, { today: false })));
     if (n > 1) dm = dm.concat([{ who: 'System', sys: true, text: banner }]);
@@ -45,7 +51,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     if (n === 4) {
       chat = [
         st.voiceSent
-          ? { who: 'Hanna', kind: 'voice', dur: '0:14', audio: 'splice', caption: 'Your voice: “Nicole' + String.fromCharCode(39) + 's — no I haven' + String.fromCharCode(39) + 't — with her, like always”' }
+          ? { who: 'Hanna', kind: 'voice', dur: '0:04', audio: 'splice', caption: 'Your voice: “Nicole' + String.fromCharCode(39) + 's — no I haven' + String.fromCharCode(39) + 't — with her, like always”' }
           : { who: 'Hanna', kind: 'typedshot', caption: 'A screenshot headed “{name}”, of what you typed on Sunday, cropped one line early.' },
         { who: 'Hanna', text: st.postsWith + st.postsWithout > 0 ? 'of course {name} would defend her' : 'from someone who was supposedly on her side' }
       ].concat(chat);
@@ -69,10 +75,10 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       tab: quietPhase ? 'dm' : 'group', used: {}, reactedToday: false,
       lastRead: { group: baseGroup, dm: st.dm.length },
       newMarkAt: null, showNewPill: false,
-      actedToday: false, openedGroup: false, ignored: false, dmAnsweredToday: false, phoneOpenedToday: false, phoneClosing: false, playingAudioKey: null,
-      shareTick: 0, shareHalved: false, tool: 'player', socTab: 'feed', socProfileKey: null, socPostId: null, socInfoOpen: false, mediaOpen: null, seen: {}, zoom: false, dev: null, threadOpen: null, galleryNew: false, chatFlash: false,
-      writeIn: false, writeText: '', writeStatus: null, chatDraft: '', chatBusy: false, actionsOpen: false, chatGroupLeft: 5, chatDmLeft: 5,
-      dragItem: null, pickIdx: null, pickerOpen: false, pickerMode: 'search', searched: {}, aiPickIdx: null, aiStage: 'idle', aiStep: 0,
+      actedToday: false, openedGroup: false, ignored: false, dmAnsweredToday: false, phoneOpenedToday: false, phoneClosing: false, playingAudioKey: null, audioPaused: false, audioScrubPct: '0%', audioScrubLabel: '0:00',
+      shareTick: 0, shareHalved: false, tool: 'player', socTab: 'feed', socProfileKey: null, socPostId: null, socInfoOpen: false, mediaOpen: null, zoom: false, dev: null, threadOpen: null, chatFlash: false,
+      writeIn: false, writeText: '', writeStatus: null, chatGroupDraft: '', chatDmDraft: '', chatBusy: false, actionsOpen: false, chatGroupLeft: 5, chatDmLeft: 5,
+      dragItem: null, pickIdx: null, pickerOpen: false, pickerMode: 'search', aiPickIdx: null, aiStage: 'idle', aiStep: 0,
       dmGhostTyping: false, ghostTypedToday: false, onReadCharged: false,
       shotOpen: null, sawFake: false, sawReal: false, reportOpen: false,
       arrival: Date.now(), confirmSleep: false, sharedCount: shared, reason: '',
@@ -85,6 +91,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       this.runDayArrival(d.chat, d.dm);
       if (n === 3 && ph === 'clip') this.generateDay3Voice();
       if (n !== st.day) this.runSocialArrival(n);
+      this.debugInjectUnavailableShot();
     });
   }
 });

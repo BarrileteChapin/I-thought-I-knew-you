@@ -4,6 +4,13 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     if (meta && meta.unlockedEndings) {
       this.setState({ unlockedEndings: meta.unlockedEndings });
     }
+    // Drop any toast left pinned by a prior FORCE_ROOM_TOAST debug session.
+    if (!this.FORCE_ROOM_TOAST && (this.state.socToast || this.state.msgToast)) {
+      this.setState({
+        msgToast: null, msgToastVisible: false,
+        socToast: null, socToastVisible: false
+      });
+    }
     this._prevScreen = this.state.screen;
     if (this.state.screen === 'title') this.beginTitleLead();
     if (this.state.screen === 'room' || this.state.screen === 'phone') {
@@ -46,6 +53,15 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     };
     window.addEventListener('keydown', this._keys);
     window.addEventListener('beforeunload', this._bye);
+    setTimeout(() => this.debugInjectUnavailableShot(), 0);
+  },
+
+  componentDidUpdate() {
+    // FORCE_ROOM_TOAST skips hide timers; clear leftovers once the flag is off.
+    if (this.FORCE_ROOM_TOAST) return;
+    if (this.state.socToast && !this._socToastHide && !this._socToastClear) {
+      this.setState({ socToast: null, socToastVisible: false });
+    }
   },
 
   componentWillUnmount() {
@@ -62,6 +78,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     this.wipeAudio();
     clearTimeout(this._n1); clearTimeout(this._n2);
     clearTimeout(this._msgToastHide); clearTimeout(this._msgToastClear);
+    clearTimeout(this._socToastHide); clearTimeout(this._socToastClear);
     clearTimeout(this._camT); clearTimeout(this._cineT);
     this.stopAmbient();
   },

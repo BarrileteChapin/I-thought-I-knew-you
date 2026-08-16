@@ -191,9 +191,6 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
           : null,
         k.neleJealous && day >= 2 && openedGroup
           ? 'Hanna said Nele was crying at home when the photo went round.'
-          : null,
-        k.neleJealous && (day >= 3 || (day === 3 && s.phase === 'clip'))
-          ? 'A voice note tried to pin jealousy on her and Nele.'
           : null
       ],
       benito: [
