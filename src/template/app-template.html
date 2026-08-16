@@ -56,24 +56,42 @@
     <p class="g-title-lead"><span class="g-title-lead-text"><sc-for list="{{ titleLeadParts }}" as="p" hint-placeholder-count="1"><sc-if value="{{ p.bold }}" hint-placeholder-val="{{ false }}"><strong class="g-title-lead-em">{{ p.text }}</strong></sc-if><sc-if value="{{ p.notBold }}" hint-placeholder-val="{{ true }}"><span>{{ p.text }}</span></sc-if></sc-for></span><sc-if value="{{ titleCaretOn }}" hint-placeholder-val="{{ true }}"><span class="g-title-caret" aria-hidden="true"></span></sc-if></p>
     <div class="g-title-actions">
       <sc-if value="{{ hasSave }}" hint-placeholder-val="{{ false }}">
-        <div class="g-title-save">
-          <img src="{{ savePlayerAvatar }}" alt="" class="g-title-save-av">
-          <div class="g-title-save-name">Hi, {{ savePlayerName }}</div>
-        </div>
-        <div class="g-title-save-progress">{{ saveProgressLabel }}</div>
-        <button sc-camel-on-click="{{ continueGame }}" class="g-btn g-title-start">Continue</button>
-        <div style="margin-top:14px;">
-          <button sc-camel-on-click="{{ startOver }}" class="g-btn g-title-start g-title-start--muted">Start over</button>
+        <div class="g-title-bottom">
+          <div class="g-title-save-row">
+            <div class="g-title-save-meta">
+              <div class="g-title-save">
+                <img src="{{ savePlayerAvatar }}" alt="" class="g-title-save-av">
+                <div class="g-title-save-name">Hi, {{ savePlayerName }}</div>
+              </div>
+              <div class="g-title-save-progress">{{ saveProgressLabel }}</div>
+            </div>
+            <sc-if value="{{ hasUnlockedEnding }}" hint-placeholder-val="{{ false }}">
+              <button sc-camel-on-click="{{ openEndingsGallery }}" class="g-title-album g-title-album--inline" title="Endings album">
+                <img src="assets/album.webp" alt="" class="g-title-album-icon">
+                <span class="g-title-album-label">{{ endingsUnlockedCount }} / {{ endingsTotalCount }}</span>
+              </button>
+            </sc-if>
+          </div>
+          <div class="g-title-cta">
+            <button sc-camel-on-click="{{ continueGame }}" class="g-btn g-title-start">Continue</button>
+            <div class="g-title-cta-secondary">
+              <button sc-camel-on-click="{{ startOver }}" class="g-btn g-title-start g-title-start--muted">Start over</button>
+            </div>
+          </div>
         </div>
       </sc-if>
       <sc-if value="{{ !hasSave }}" hint-placeholder-val="{{ true }}">
-        <button sc-camel-on-click="{{ start }}" class="g-btn g-title-start">Start</button>
-      </sc-if>
-      <sc-if value="{{ hasUnlockedEnding }}" hint-placeholder-val="{{ false }}">
-        <button sc-camel-on-click="{{ openEndingsGallery }}" class="g-title-album" title="Endings album">
-          <img src="assets/album.webp" alt="" class="g-title-album-icon">
-          <span class="g-title-album-label">{{ endingsUnlockedCount }} / {{ endingsTotalCount }}</span>
-        </button>
+        <div class="g-title-bottom">
+          <div class="g-title-cta">
+            <button sc-camel-on-click="{{ start }}" class="g-btn g-title-start">Start</button>
+            <sc-if value="{{ hasUnlockedEnding }}" hint-placeholder-val="{{ false }}">
+              <button sc-camel-on-click="{{ openEndingsGallery }}" class="g-title-album" title="Endings album">
+                <img src="assets/album.webp" alt="" class="g-title-album-icon">
+                <span class="g-title-album-label">{{ endingsUnlockedCount }} / {{ endingsTotalCount }}</span>
+              </button>
+            </sc-if>
+          </div>
+        </div>
       </sc-if>
     </div>
   </div>
