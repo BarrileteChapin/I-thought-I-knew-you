@@ -237,21 +237,27 @@ ul.clean li::before{ content:"·"; position:absolute; left:0; color:var(--violet
 [class*="card-c"] strong{ color:#fff; }
 [class*="card-c"] p,[class*="card-c"] .fs-sm,[class*="card-c"] span,[class*="card-c"] td,[class*="card-c"] th,[class*="card-c"] .chk{ color:rgba(255,255,255,.92); }
 [class*="card-c"] .tag{ background:rgba(255,255,255,.18); color:#fff; }
+
+/* ---------- decorative section art ---------- */
+.art-fill{ display:block; margin:0 auto; margin-top:4mm; }
+.art-corner{ position:absolute; top:16mm; right:16mm; width:30mm; }
+.diagram{ display:block; width:100%; height:auto; align-self:start; }
+table.compact th, table.compact td{ padding:2.5mm 4mm; }
+.contact-link{ color:var(--violet); font-weight:600; text-decoration:none; }
 </style>
 </head>
 <body>
 
 <!-- ============ PAGE 1 · COVER ============ -->
 <section class="page cover">
-  <img class="cover-img" src="{{IMG:school}}" alt="">
+  <img class="cover-img" src="{{IMG:Cover}}" alt="">
   <div class="cover-scrim"></div>
   <div class="cover-content">
     <div class="cover-eyebrow">UNESCO Hackathon Proposal · Critical Thinking &amp; AI Education / Media &amp; Information Literacy</div>
     <h1 class="cover-title">I Thought I<br>Knew You</h1>
     <p class="cover-tag">A critical-thinking and AI-literacy game built as a four-night group-chat mystery. The player checks a video cut to mislead, a misdated photo, a cloned social account, and a cloned voice, and the reason to bother is a friendship they care about.</p>
     <div class="cover-meta">
-      <div><span>Team</span><b>add your names here</b></div>
-      <div><span>Track</span><b>add hackathon track</b></div>
+      <div><span>Track</span><b>MIL</b></div>
       <div><span>Format</span><b>Browser game · client-side AI</b></div>
       <div><span>Audience</span><b>Secondary school, ages 13+</b></div>
     </div>
@@ -281,7 +287,7 @@ ul.clean li::before{ content:"·"; position:absolute; left:0; color:var(--violet
     <div class="toc-row"><span class="toc-num">14</span><span class="toc-title">Team &amp; Contact</span><span class="toc-dots"></span><span class="toc-page">18</span></div>
   </div>
 
-  <div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="02"></span></div>
+  <img class="art-fill" style="height:26.2mm;" src="{{IMG:1_What's in this document}}" alt=""><div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="02"></span></div>
 </section>
 
 <!-- ============ PAGE 3 · PROJECT OVERVIEW ============ -->
@@ -315,7 +321,7 @@ ul.clean li::before{ content:"·"; position:absolute; left:0; color:var(--violet
 
   <div class="pullquote" style="margin-top:9mm;">Success is a student who pauses before forwarding the next thing that lands in their group chat.</div>
 
-  <div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="03"></span></div>
+  <img class="art-corner" src="{{IMG:2-What this project sets out to do}}" alt=""><div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="03"></span></div>
 </section>
 
 <!-- ============ PAGE 4 · THE PROBLEM ============ -->
@@ -329,7 +335,7 @@ ul.clean li::before{ content:"·"; position:absolute; left:0; color:var(--violet
   <div class="two-col two-col-swap" style="margin-top:1.5mm;">
     <div>
       <div class="card-stack">
-        <div class="card h-card card-c5">
+        <div class="card h-card card-c2">
           <span class="tag tag-coral">Stripped context</span>
           <div>
             <h3 style="margin-top:0;">Real media, false frame</h3>
@@ -407,7 +413,7 @@ ul.clean li::before{ content:"·"; position:absolute; left:0; color:var(--violet
   <h3 style="margin-top:7mm; margin-bottom:1mm;">Why This Model</h3>
   <p >The MIL Index fits this project because its five pillars mirror the exact sequence a player lives through when a manipulated video lands in a group chat: they first have to <em>access</em> it before they can react, <em>analyze</em> what looks off, <em>reflect</em> on who sent it and why, <em>create</em> a response, and <em>act</em> on what they decide. A framework built around one skill, spotting the fake, would only cover the second step; this one gives the game a full arc instead of a single detection puzzle. Treating "critical thinking" as five distinct, separately-trainable competencies rather than one vague instinct also keeps the design honest, and it makes the design falsifiable: each pillar below is tied to a specific, checkable mechanic (section 12).</p>
 
-  <div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="05"></span></div>
+  <img class="art-fill" style="height:51.9mm;" src="{{IMG:4-The framework DW Akademie's MIL Index}}" alt=""><div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="05"></span></div>
 </section>
 
 <!-- ============ PAGE 5 · THEORETICAL BACKGROUND II: WHY PEOPLE GET FOOLED ============ -->
@@ -442,7 +448,7 @@ ul.clean li::before{ content:"·"; position:absolute; left:0; color:var(--violet
     <div class="card card-c4"><span class="tag tag-coral">Inoculation</span><h3 style="margin-top:2.5mm;">Five weakened doses, five debriefs</h3><p class="fs-sm">Each night stays safe and low-stakes on purpose, because that's what makes the resistance it builds carry over to real life.</p></div>
   </div>
 
-  <div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="06"></span></div>
+  <img class="art-fill" style="height:22.5mm;" src="{{IMG:5-Why people get fooled, and how practice fixes it}}" alt=""><div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="06"></span></div>
 </section>
 
 <!-- ============ PAGE 6 · THEORETICAL BACKGROUND III: WHY A STORY ============ -->
@@ -484,7 +490,7 @@ ul.clean li::before{ content:"·"; position:absolute; left:0; color:var(--violet
     <div class="ref-item"><b>World Health Organization Regional Office for Europe.</b> (2024). <em>A focus on adolescent peer violence and bullying in Europe, central Asia and Canada</em> (HBSC 2021/2022 survey, Vol. 2). WHO/Europe.</div>
   </div>
 
-  <div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="07"></span></div>
+  <img class="art-corner" src="{{IMG:6-Why it's a story, and why it's a game}}" alt=""><div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="07"></span></div>
 </section>
 
 <!-- ============ PAGE 7 · OUR SOLUTION ============ -->
@@ -538,7 +544,7 @@ ul.clean li::before{ content:"·"; position:absolute; left:0; color:var(--violet
 
   <div class="pullquote" style="margin-top:9mm;">Every one of these five scenarios resolves the same way: the truth was checkable the whole time, and the player either checked or didn't. Nothing in the story is unknowable. That is a design constraint.</div>
 
-  <div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="08"></span></div>
+  <img class="art-fill" style="height:44.7mm;" src="{{IMG:7-Four nights, five reasoning exercises, one friendship}}" alt=""><div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="08"></span></div>
 </section>
 
 <!-- ============ PAGE 8 · HOW IT WORKS ============ -->
@@ -575,7 +581,7 @@ ul.clean li::before{ content:"·"; position:absolute; left:0; color:var(--violet
     <div class="card card-c1" style="padding:4mm;"><span class="tag tag-amber">Create + Act</span><h3 style="margin-top:1.5mm;">Message Nicole</h3><p class="fs-sm" style="margin-bottom:0;">Private and direct, away from pressure.</p></div>
   </div>
 
-  <div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="09"></span></div>
+  <img class="art-corner" src="{{IMG:8-Investigate. React. Or say nothing at all.}}" alt=""><div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="09"></span></div>
 </section>
 
 <!-- ============ PAGE 9 · HOW IT WORKS: DAY BY DAY ============ -->
@@ -652,17 +658,17 @@ ul.clean li::before{ content:"·"; position:absolute; left:0; color:var(--violet
   <p class="lede">Reflection isn't a quiz that appears once, at the end of the week. It's a physical desk the player can open any evening, holding three books that fill in as the investigation actually progresses.</p>
 
   <div class="grid3" style="margin-top:5mm;">
-    <div class="card card-c2">
+    <div class="card">
       <h3 >Diary</h3>
       <img src="{{IMG:notebook-diary}}" style="width:100%; border-radius:2px; border:.5pt solid var(--line); margin:2mm 0; display:block;">
       <p class="fs-sm">One tab per night, each holding the player's own verdict note on what they believed and why, written by the player rather than chosen from options.</p>
     </div>
-    <div class="card card-c3">
+    <div class="card">
       <h3 >Media Literacy Handbook</h3>
       <img src="{{IMG:notebook-handbook}}" style="width:100%; border-radius:2px; border:.5pt solid var(--line); margin:2mm 0; display:block;">
       <p class="fs-sm">The same five MIL pillars from section 2, restated in-fiction as the player's own field notes rather than a framework slide.</p>
     </div>
-    <div class="card card-c4">
+    <div class="card">
       <h3 >Class 10b Album</h3>
       <img src="{{IMG:notebook-map}}" style="width:100%; border-radius:2px; border:.5pt solid var(--line); margin:2mm 0; display:block;">
       <p class="fs-sm">A relationship map of the class that starts mostly blank. Nodes and edges unlock only as the player actually learns who stands where.</p>
@@ -671,7 +677,7 @@ ul.clean li::before{ content:"·"; position:absolute; left:0; color:var(--violet
 
   <p style="margin-top:6mm;">Because the map and handbook only fill in with what's actually been investigated, checking the "Access" and "Analyze" pillars (see section 2) leaves a visible, growing trace the player can revisit. Reflection becomes something they build rather than something the game describes to them.</p>
 
-  <div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="11"></span></div>
+  <img class="art-fill" style="height:73.3mm;" src="{{IMG:10-A desk, not a debrief screen}}" alt=""><div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="11"></span></div>
 </section>
 
 <!-- ============ PAGE 10 · SPOTLIGHT ============ -->
@@ -703,7 +709,7 @@ ul.clean li::before{ content:"·"; position:absolute; left:0; color:var(--violet
 
   <p style="margin-top:7mm;">The two screens are visually similar on purpose. That is the point. Judges and players alike have to compare them side by side, the same way the in-game "compare accounts" action works, rather than intuit which is fake at a glance.</p>
 
-  <div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="12"></span></div>
+  <img class="art-fill" style="height:61.4mm;" src="{{IMG:9-Every night's actual reasoning task}}" alt=""><div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="12"></span></div>
 </section>
 
 <!-- ============ PAGE 13 · PLAYTESTING ============ -->
@@ -731,7 +737,7 @@ ul.clean li::before{ content:"·"; position:absolute; left:0; color:var(--violet
   <h3 style="margin-top:6mm; margin-bottom:1mm;">A limitation we're addressing</h3>
   <p >Our ongoing challenge is keeping players focused on analysing the evidence rather than on <em>who did it</em>. The per-day checklist is a first step we are still sharpening.</p>
 
-  <div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="13"></span></div>
+  <img class="art-fill" style="height:25.4mm;" src="{{IMG:11-What testing changed}}" alt=""><div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="13"></span></div>
 </section>
 
 <!-- ============ PAGE 14 · TECHNOLOGY ============ -->
@@ -741,7 +747,7 @@ ul.clean li::before{ content:"·"; position:absolute; left:0; color:var(--violet
   <p class="lede">The in-character chat is powered by a small, quantised language model (LFM2.5-350M, GGUF Q4_K_M, ~219&nbsp;MB) run entirely client-side in the browser via WebAssembly, with optional WebGPU acceleration. Every reply is grounded against a short, per-day fact sheet the player never sees, so improvised dialogue can never contradict the "true" version of events. This is also AI education in itself: the player is talking to a real, working generative model the whole time, a concrete, hands-on referent for "what an AI actually is" underneath every abstract warning about deepfakes.</p>
 
   <div class="two-col" style="margin-top:4mm; align-items:stretch;">
-    <div class="card card-c5" style="display:flex; flex-direction:column; justify-content:center;">
+    <div class="card" style="display:flex; flex-direction:column; justify-content:center;">
       <h3>Why that matters for schools</h3>
       <ul class="clean" style="margin-top:2mm;">
         <li><strong>No account, no server, no data collection</strong> from minors. Nothing typed by a student leaves their own device.</li>
@@ -750,30 +756,7 @@ ul.clean li::before{ content:"·"; position:absolute; left:0; color:var(--violet
         <li><strong>Content lives in editable JSON</strong>, separate from code, so a teacher, translator, or student team can extend or localise scenarios without touching a line of logic.</li>
       </ul>
     </div>
-    <div class="card card-c1">
-      <h3 style="text-align:center; margin-bottom:4mm;">Typical AI chat vs. this game</h3>
-      <svg viewBox="0 0 300 300" width="100%" height="auto">
-        <text x="150" y="18" text-anchor="middle" font-size="9" font-weight="800" fill="#53555f">A TYPICAL CLOUD CHATBOT</text>
-        <rect x="30" y="30" width="60" height="42" rx="4" fill="#efece5" stroke="#dcd7cc"/>
-        <text x="60" y="55" text-anchor="middle" font-size="8" fill="#15151a">Student</text>
-        <text x="60" y="65" text-anchor="middle" font-size="7" fill="#8a8c96">device</text>
-        <line x1="90" y1="51" x2="200" y2="51" stroke="#dd4f42" stroke-width="1.5" stroke-dasharray="4 3"/>
-        <text x="145" y="45" text-anchor="middle" font-size="7" fill="#dd4f42">every message ↑↓</text>
-        <rect x="200" y="30" width="70" height="42" rx="4" fill="#fbe6e2" stroke="#dd4f42"/>
-        <text x="235" y="52" text-anchor="middle" font-size="8" fill="#dd4f42" font-weight="700">Cloud</text>
-        <text x="235" y="62" text-anchor="middle" font-size="7" fill="#dd4f42">server + data</text>
-
-        <text x="150" y="140" text-anchor="middle" font-size="9" font-weight="800" fill="#53555f">THIS GAME</text>
-        <rect x="60" y="150" width="180" height="60" rx="6" fill="#e3f3ec" stroke="#1f8f76"/>
-        <text x="150" y="175" text-anchor="middle" font-size="9" fill="#1f8f76" font-weight="700">Student's own browser</text>
-        <rect x="90" y="185" width="120" height="18" rx="3" fill="#fff" stroke="#1f8f76"/>
-        <text x="150" y="197" text-anchor="middle" font-size="7.5" fill="#15151a">local model (~219MB)</text>
-        <line x1="270" y1="180" x2="240" y2="180" stroke="#c8871f" stroke-width="1.5"/>
-        <text x="285" y="183" text-anchor="middle" font-size="7" fill="#c8871f">no</text>
-        <text x="285" y="192" text-anchor="middle" font-size="7" fill="#c8871f">server</text>
-        <text x="285" y="201" text-anchor="middle" font-size="7" fill="#c8871f">calls</text>
-      </svg>
-    </div>
+    <div style="display:flex; flex-direction:column; align-items:center; gap:3mm;"><img class="diagram" src="{{IMG:diagram}}" alt="Typical AI chat vs. this game"><img class="art-fill" style="height:38mm;" src="{{IMG:12-An AI that runs on the player's device, not a server}}" alt=""></div>
   </div>
 
   <h3 style="margin-top:5mm; margin-bottom:2mm;">Model card</h3>
@@ -798,7 +781,7 @@ ul.clean li::before{ content:"·"; position:absolute; left:0; color:var(--violet
   <p class="lede">There is no "did you spot the deepfake?" quiz. The game tracks what the player actually did all week, and hands it back to them at the end.</p>
 
   <div class="grid2" style="margin-top:5mm;">
-    <div class="card card-c2">
+    <div class="card">
       <h3>What gets measured</h3>
       <p class="fs-sm" style="margin-bottom:2mm;">A real excerpt from the in-game end-of-week ledger:</p>
       <table>
@@ -811,7 +794,7 @@ ul.clean li::before{ content:"·"; position:absolute; left:0; color:var(--violet
         </tbody>
       </table>
     </div>
-    <div class="card card-c4">
+    <div class="card">
       <h3>What gets said back to you</h3>
       <p class="fs-sm" style="margin-bottom:2mm;">Real debrief lines, selected by what actually happened in the playthrough:</p>
       <div class="pullquote" style="margin:2mm 0;">"You never looked for the original of anything. Originals existed."</div>
@@ -853,14 +836,14 @@ ul.clean li::before{ content:"·"; position:absolute; left:0; color:var(--violet
 
   <div class="grid2" style="margin-top:9mm; row-gap:6mm;">
     <div class="card card-c3"><span class="tag tag-sky">Access + Analyze</span><h3 style="margin-top:3mm;">The critical-thinking core</h3><p class="fs-sm">These two pillars are where the actual reasoning happens, and where the game spends most of its mechanical weight: four nights, twenty real investigation actions (see section 7).</p></div>
-    <div class="card card-c5"><span class="tag tag-violet">Reflect</span><h3 style="margin-top:3mm;">Built-in, not bolted on</h3><p class="fs-sm">Most MIL programmes have to schedule reflection separately. Here it's an unavoidable part of finishing the game: the ending is the reflection.</p></div>
+    <div class="card card-c1"><span class="tag tag-violet">Reflect</span><h3 style="margin-top:3mm;">Built-in, not bolted on</h3><p class="fs-sm">Most MIL programmes have to schedule reflection separately. Here it's an unavoidable part of finishing the game: the ending is the reflection.</p></div>
   </div>
 
   <div class="pullquote" style="margin-top:8mm;">In one sentence: this is a MIL Index exercise built into a story about a friendship, with every pillar exercised in the same order in every playthrough.</div>
 
   <p class="fs-sm" style="margin-top:6mm;color:var(--ink-faint);">Equity note: none of the above requires a server, an account, or reliable connectivity after first load. This matters for Access specifically, since a pillar about "knowing where to find information" is undermined if the tool itself is hard to reach in an under-resourced classroom. This describes thematic alignment with DW Akademie's published MIL Index model; it is not a claim of formal review, partnership, or endorsement.</p>
 
-  <div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="16"></span></div>
+  <img class="art-fill" style="height:83.6mm;" src="{{IMG:14-Who built this}}" alt=""><div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="16"></span></div>
 </section>
 
 <!-- ============ PAGE 14 · ROADMAP ============ -->
@@ -892,7 +875,7 @@ ul.clean li::before{ content:"·"; position:absolute; left:0; color:var(--violet
     <div class="tl-seg"><div class="tl-bar"></div><div class="tl-dot"></div><div class="tl-label">Later</div><div class="tl-sub">Wider rollout, additional scenarios</div></div>
   </div>
 
-  <div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="17"></span></div>
+  <img class="art-fill" style="height:81.0mm;" src="{{IMG:13-From hackathon build to classroom tool}}" alt=""><div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="17"></span></div>
 </section>
 
 <!-- ============ PAGE 15 · TEAM & CONTACT ============ -->
@@ -900,27 +883,27 @@ ul.clean li::before{ content:"·"; position:absolute; left:0; color:var(--violet
   <div class="kicker">14 · Team &amp; Contact</div>
   <h1>Who built this</h1>
 
-  <table style="margin-top:6mm;">
-    <thead><tr><th style="width:30%">Name</th><th style="width:30%">Role</th><th>Contact</th></tr></thead>
+  <table class="compact" style="margin-top:3mm;">
+    <thead><tr><th style="width:30%">Name</th><th style="width:30%">Role</th><th>LinkedIn</th></tr></thead>
     <tbody>
-      <tr><td>Mine</td><td>Design</td><td>add contact</td></tr>
-      <tr><td>Adrian</td><td>Programming</td><td>add contact</td></tr>
-      <tr><td>Carlos</td><td>Programming</td><td>add contact</td></tr>
-      <tr><td>Karin</td><td>Design</td><td>add contact</td></tr>
+      <tr><td>Mine</td><td>Design</td><a class="contact-link" href="https://www.linkedin.com/in/mine-akbaba-ux/">in/mine-akbaba-ux</a></tr>
+      <tr><td>Adrian</td><td>Programming</td><a class="contact-link" href="https://www.linkedin.com/in/adrian-leon-a216a417a/">in/adrian-leon-a216a417a</a></tr>
+      <tr><td>Carlos</td><td>Programming</td><a class="contact-link" href="https://www.linkedin.com/in/leoncarlo/">in/leoncarlo</a></tr>
+      <tr><td>Karin</td><td>Design</td><a class="contact-link" href="https://www.linkedin.com/in/karin-kiho/">in/karin-kiho</a></tr>
     </tbody>
   </table>
 
-  <div style="margin-top:7mm;"><img class="page-photo" src="{{IMG:team-photo}}" alt="The team" style="height:72mm; width:auto; margin:0 auto;"><p class="fs-sm photo-cap" style="text-align:center;">The team</p></div>
+  <div style="margin-top:4mm;"><img class="page-photo" src="{{IMG:team-photo}}" alt="The team" style="width:100%; height:96mm; object-fit:cover; object-position:center;"><p class="fs-sm photo-cap" style="text-align:center;">Left to right: Adrian, Mine, Karin, Carlos at the EmpowerXR hackathon.</p><p class="fs-sm" style="margin-top:3mm;text-align:left;">We met at the EmpowerXR hackathon, where we built an XR application to empower people with disabilities. When we saw this opportunity of UNESCO Hackathon, it aligned with our vision that technology can empower people and create meaningful experiences. Our roots reach across Guatemala, Ecuador, Japan, and Turkey. And today we reside in Portugal, England, and Germany with a diverse background whose expertise we bring together, spanning sustainable and accessible solutions, human behaviour in digital spaces, and user research.</p></div>
 
-  <h3 style="margin-top:11mm;">Try it / find it</h3>
-  <div class="grid2" style="margin-top:4mm;">
+  <h3 style="margin-top:4mm;">Try it / find it</h3>
+  <div class="grid2" style="margin-top:2mm;">
     <div class="card card-c1"><strong >Live game</strong><p style="margin-top:2mm;"><a href="https://barriletechapin.github.io/I-thought-I-knew-you/" style="color:#fff;">barriletechapin.github.io/I-thought-I-knew-you</a></p></div>
     <div class="card card-c2"><strong >Source</strong><p style="margin-top:2mm;"><a href="https://github.com/BarrileteChapin/I-thought-I-knew-you" style="color:#fff;">github.com/BarrileteChapin/I-thought-I-knew-you</a></p></div>
   </div>
 
-  <div class="pullquote" style="margin-top:16mm;">"I thought I knew you."<cite>The line every ending in the game earns differently, depending on what the player actually checked.</cite></div>
+  <div class="pullquote" style="margin-top:4mm;">"I thought I knew you."<cite>The line every ending in the game earns differently, depending on what the player actually checked.</cite></div>
 
-  <p class="fs-sm" style="margin-top:14mm;color:var(--ink-faint);text-align:center;">Thank you for reading. Questions welcome before, during, or after the pitch.</p>
+  <p class="fs-sm" style="margin-top:4mm;color:var(--ink-faint);text-align:center;">Thank you for reading. Questions welcome before, during, or after the pitch.</p>
 
   <div class="pagefoot"><span>I Thought I Knew You · UNESCO Hackathon Proposal</span><span class="pagenum" data-n="18"></span></div>
 </section>
