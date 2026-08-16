@@ -1652,12 +1652,12 @@ video.g-notebook-got-media {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   background: transparent;
 }
 
 .g-title-heading {
-  margin: 0 0 28px;
+  margin: 28px 0 28px;
   font-family: var(--font-heading);
   font-size: var(--fs-hero);
   font-weight: var(--font-heading-weight);
@@ -1701,35 +1701,69 @@ video.g-notebook-got-media {
 
 .g-title-actions {
   width: 100%;
-  max-width: var(--btn-screen-max);
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 6px 0 0;
+  overflow: visible;
+}
+
+.g-title-bottom {
+  width: 100%;
+  margin-top: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 6px 4px;
-  overflow: visible;
+}
+
+.g-title-cta {
+  width: 100%;
+  max-width: var(--btn-screen-max);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 4px 4px;
+}
+
+.g-title-cta-secondary {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.g-title-save-stack {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
 }
 
 .g-title-save {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
   justify-content: center;
+  gap: 12px;
 }
 
 .g-title-save-av {
   display: block;
-  width: 48px;
-  height: 48px;
-  border-radius: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
   object-fit: cover;
   background: var(--c-line-soft);
+  flex: 0 0 auto;
 }
 
 .g-title-save-name {
   font-size: var(--fs-lead);
   font-weight: 700;
   color: var(--c-ink);
+  text-align: center;
 }
 
 .g-title-save-progress {
@@ -1737,7 +1771,7 @@ video.g-notebook-got-media {
   letter-spacing: .1em;
   text-transform: uppercase;
   color: var(--c-accent-bright);
-  margin-bottom: 16px;
+  margin-bottom: 0;
   text-align: center;
 }
 
@@ -1802,6 +1836,10 @@ video.g-notebook-got-media {
   transition: transform .18s ease, opacity .18s ease;
 }
 
+.g-title-album--stack {
+  margin-top: 2px;
+}
+
 .g-title-album:hover {
   transform: translateY(-2px);
   opacity: .9;
@@ -1809,8 +1847,8 @@ video.g-notebook-got-media {
 
 .g-title-album-icon {
   display: block;
-  width: 72px;
-  height: 72px;
+  width: 56px;
+  height: 56px;
   object-fit: contain;
   filter: drop-shadow(0 6px 14px rgba(17, 17, 17, .12));
 }

@@ -461,7 +461,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const playing = s.playingAudioKey === audioKey;
 
     if (key === 1) {
-      return [{
+      const got = [{
         id: 'got-1',
         isVideo: true, isImage: false, isAudio: false,
         label: 'IMG_4471.mp4',
@@ -471,6 +471,19 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         spec: '0:06',
         open: () => {}
       }];
+      if (s.d1VideoSent) {
+        got.push({
+          id: 'got-1-full',
+          isVideo: true, isImage: false, isAudio: false,
+          label: 'IMG_4471_full.mp4',
+          meta: when + ' · sent by Mia',
+          caption: 'Full clip from the party.',
+          bars: [],
+          spec: '0:22',
+          open: () => {}
+        });
+      }
+      return got;
     }
     if (key === 2) {
       return [{

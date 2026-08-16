@@ -299,7 +299,9 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       if (st.dev === 'chats' && st.threadOpen === 'dm') lastRead.dm = dm.length;
       this.setState(Object.assign({}, patch, {
         stats, chat, dm, used, credibility, actedToday: true, ignored: false, lastRead,
-        dmAnsweredToday: pc.thread === 'dm' ? true : st.dmAnsweredToday
+        dmAnsweredToday: pc.thread === 'dm' ? true : st.dmAnsweredToday,
+        d1VideoSent: pc.id === 'd1mia' ? true : st.d1VideoSent,
+        galleryNew: pc.id === 'd1mia' ? true : st.galleryNew
       }, this.chatUnreadPatch(chat, dm, lastRead)));
       return;
     }
