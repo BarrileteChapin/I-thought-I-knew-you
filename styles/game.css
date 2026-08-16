@@ -262,20 +262,52 @@ a:hover {
   margin: 0 0 22px;
 }
 
-.g-end-truth-frame {
+.g-end-truth-clip {
+  position: relative;
+  display: block;
   width: 100%;
-  max-width: 520px;
+  max-width: 260px;
+  margin: 0 auto;
+  aspect-ratio: 9 / 16;
   border: 2px solid var(--c-line);
-  background: var(--c-black);
+  background: #111;
   overflow: hidden;
+  padding: 0;
 }
 
 .g-end-truth-video {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
+  background: #111;
   vertical-align: top;
-  background: var(--c-black);
+}
+
+.g-end-truth-play {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: rgba(0, 0, 0, .28);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.g-end-truth-play-tri {
+  display: block;
+  width: 0;
+  height: 0;
+  margin-left: 6px;
+  border-style: solid;
+  border-width: 18px 0 18px 30px;
+  border-color: transparent transparent transparent #fff;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, .35));
 }
 
 .g-end-sift-grid {

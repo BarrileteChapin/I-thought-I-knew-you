@@ -144,13 +144,14 @@
 <div class="g-screen-flow" style="animation:fadeup var(--dur-fade) var(--ease);">
   <button sc-camel-on-click="{{ skipIntro }}" class="g-skip">Skip intro</button>
   <div class="g-screen-flow-body">
-    <div style="font-size:var(--fs-lead);letter-spacing:.16em;text-transform:uppercase;color:var(--c-accent);margin-bottom:18px;">How to play</div>
-    <div style="font-size:var(--fs-lead);line-height:1.5;color:var(--c-ink);max-width:46ch;margin-bottom:16px;text-wrap:pretty;">The story plays out over four evenings, and you spend every one of them in your room.</div>
-    <div style="font-size:var(--fs-lead);letter-spacing:.16em;text-transform:uppercase;color:var(--c-accent);margin-bottom:18px;">Things you have</div>
-    <div style="font-size:var(--fs-lead);line-height:1.5;color:var(--c-ink);max-width:46ch;margin-bottom:16px;text-wrap:pretty;">You have your phone, which is where the class group chat is, and it's where everything reaches you first.</div>
-    <div style="font-size:var(--fs-lead);line-height:1.5;color:var(--c-ink);max-width:46ch;margin-bottom:16px;text-wrap:pretty;">Your phone also holds everything anyone has sent you, and a couple of apps for looking things up and comparing them, although those are slow and the evening keeps moving while you sit there.</div>
-    <div style="font-size:var(--fs-lead);line-height:1.5;color:var(--c-ink);max-width:46ch;margin-bottom:16px;text-wrap:pretty;">And you have your bed, which ends the day whenever you decide you've done enough.</div>
-    <div style="font-size:17px;line-height:1.5;color:var(--c-muted);max-width:46ch;text-wrap:pretty;">What you do with each evening is up to you.</div>
+    <div style="font-size:var(--fs-lead);letter-spacing:.16em;text-transform:uppercase;color:var(--c-muted);margin-bottom:18px;">How to play</div>
+    <div style="font-size:var(--fs-lead);line-height:1.5;color:var(--c-ink);max-width:46ch;margin-bottom:22px;text-wrap:pretty;">The story runs from Monday to Thursday. Each day, something new about Nicole shows up on your phone.</div>
+    <div style="font-size:var(--fs-lead);letter-spacing:.16em;text-transform:uppercase;color:var(--c-accent);margin-bottom:14px;">What you can do</div>
+    <div style="font-size:var(--fs-lead);line-height:1.55;color:var(--c-ink);max-width:46ch;margin-bottom:12px;text-wrap:pretty;"><strong style="font-weight:700;">Pass it on.</strong> Forwarding or reacting takes one tap.</div>
+    <div style="font-size:var(--fs-lead);line-height:1.55;color:var(--c-ink);max-width:46ch;margin-bottom:12px;text-wrap:pretty;"><strong style="font-weight:700;">Talk to people.</strong> Ask in the group chat, or message Nicole.</div>
+    <div style="font-size:var(--fs-lead);line-height:1.55;color:var(--c-ink);max-width:46ch;margin-bottom:12px;text-wrap:pretty;"><strong style="font-weight:700;">Look around.</strong> Check her social media and everything people sent you.</div>
+    <div style="font-size:var(--fs-lead);line-height:1.55;color:var(--c-ink);max-width:46ch;margin-bottom:18px;text-wrap:pretty;"><strong style="font-weight:700;">Check it.</strong> Look at it closely, or use reverse search or the AI checker.</div>
+    <div style="font-size:17px;line-height:1.5;color:var(--c-muted);max-width:46ch;text-wrap:pretty;">Only the first one is quick. Everything else takes time, and the day keeps going while you do it. Go to bed when you feel you've done enough — your notebook opens after.</div>
   </div>
   <div class="g-screen-flow-footer">
     <button sc-camel-on-click="{{ leaveHowTo }}" class="g-btn g-btn-primary g-btn-screen">Next</button>
@@ -1017,7 +1018,12 @@
                   <div style="font-size:var(--fs-caption);font-weight:700;color:{{ m.lightWho }};margin-bottom:3px;">{{ m.who }}</div>
                 </sc-if>
                 <sc-if value="{{ m.isVideo }}" hint-placeholder-val="{{ false }}">
-                  <video controls="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;min-width:210px;max-width:250px;height:auto;border-radius:10px;background:var(--c-ink);"><source src="{{ m.videoSrcWebm }}" type="video/webm"><source src="{{ m.videoSrcMp4 }}" type="video/mp4"></video>
+                  <sc-if value="{{ m.isFullVideo }}" hint-placeholder-val="{{ false }}">
+                    <video controls="{{ true }}" playsinline="{{ true }}" preload="metadata" src="assets/nicole_day0_full.mp4" style="display:block;width:100%;min-width:210px;max-width:250px;height:auto;border-radius:10px;background:var(--c-ink);"></video>
+                  </sc-if>
+                  <sc-if value="{{ m.isShortVideo }}" hint-placeholder-val="{{ false }}">
+                    <video controls="{{ true }}" playsinline="{{ true }}" preload="metadata" src="assets/nicole_day0.mp4" style="display:block;width:100%;min-width:210px;max-width:250px;height:auto;border-radius:10px;background:var(--c-ink);"></video>
+                  </sc-if>
                   <div style="font-size:var(--fs-caption);color:var(--c-muted);margin-top:5px;">{{ m.videoSpec }}</div>
                   <div style="font-size:var(--fs-md);color:var(--c-ink);margin-top:5px;line-height:1.45;">{{ m.caption }}</div>
                 </sc-if>
@@ -1641,6 +1647,10 @@
 </div>
 </sc-if>
 
+<sc-if value="{{ isEndScreen }}" hint-placeholder-val="{{ false }}">
+  <button sc-camel-on-click="{{ backToTitle }}" title="Save and return to title" style="position:absolute;left:6px;top:6px;z-index:30;background:transparent;border:0;opacity:.45;padding:10px;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;" style-hover="opacity:.75;"><img src="assets/icons/icon-back.svg" alt="" width="18" height="18" style="display:block;"></button>
+</sc-if>
+
 <sc-if value="{{ isStanding }}" hint-placeholder-val="{{ false }}">
 <div style="width:100%;height:100%;display:flex;flex-direction:column;">
   <div class="g-end-fadein" style="flex:1;min-height:0;overflow-y:auto;padding:40px var(--space-screen-x) 20px;">
@@ -1803,17 +1813,11 @@
 </sc-if>
 
 <sc-if value="{{ isTruthVideo }}" hint-placeholder-val="{{ false }}">
-<div style="width:100%;height:100%;display:flex;flex-direction:column;">
-  <div class="g-end-fadein g-end-truth" style="flex:1;min-height:0;overflow-y:auto;padding:40px var(--space-screen-x) 20px;">
-    <div class="g-end-truth-kicker">What actually happened</div>
-    <h2 class="g-end-truth-title">The whole clip</h2>
-    <p class="g-end-truth-lead">Placeholder — swap this file for the truth reveal later.</p>
-    <div class="g-end-truth-frame">
-      <video class="g-end-truth-video" controls="{{ true }}" playsinline="{{ true }}" preload="metadata">
-        <source src="assets/nicole_day0_full.webm" type="video/webm">
-        <source src="assets/nicole_day0_full.mp4" type="video/mp4">
-      </video>
-    </div>
+<div style="width:100%;height:100%;display:flex;flex-direction:column;background:var(--c-frame);">
+  <div style="flex:1;min-height:0;overflow-y:auto;padding:28px var(--space-screen-x) 16px;">
+    <div style="font-size:22px;font-weight:700;line-height:1.25;color:var(--c-ink);margin:0 0 8px;">What actually happened</div>
+    <div style="font-size:15px;line-height:1.45;color:var(--c-muted);margin:0 0 16px;">You did the hard thing. So here is what actually happened — tap the clip to watch.</div>
+    <video controls="{{ true }}" playsinline="{{ true }}" preload="metadata" poster="assets/ending_1_poster.webp" src="assets/ending_1.mp4" style="display:block;width:100%;max-width:280px;min-height:200px;height:auto;margin:0 auto;border-radius:10px;background:var(--c-ink);"></video>
   </div>
   <div style="flex:0 0 auto;padding:14px var(--space-screen-x) 20px;background:var(--c-frame);border-top:1px solid var(--c-ink-hair);">
     <div class="g-btn-footer-row">
@@ -1838,24 +1842,9 @@
     <sc-if value="{{ replayShown }}" hint-placeholder-val="{{ false }}">
       <div class="g-btn-footer-row" style="animation:fadeup .6s ease;">
         <button sc-camel-on-click="{{ prevSection }}" class="g-btn g-btn-footer-back">Go back</button>
-        <button sc-camel-on-click="{{ nextSection }}" class="g-btn g-btn-footer">Continue</button>
+        <button sc-camel-on-click="{{ restart }}" class="g-btn g-btn-footer">Play again</button>
       </div>
     </sc-if>
-  </div>
-</div>
-</sc-if>
-
-<sc-if value="{{ isInvitation }}" hint-placeholder-val="{{ false }}">
-<div style="width:100%;height:100%;display:flex;flex-direction:column;">
-  <div class="g-end-fadein" style="flex:1;min-height:0;overflow-y:auto;padding:80px var(--space-screen-x) 20px;">
-  <div style="font-size:var(--fs-title);line-height:1.6;color:var(--c-ink);max-width:40ch;margin-bottom:22px;text-wrap:pretty;">Some of what you saw this week was true. Some of it wasn't.</div>
-  <div style="font-size:var(--fs-title);line-height:1.6;color:var(--c-muted);max-width:40ch;">The game isn't going to tell you which.</div>
-  </div>
-  <div style="flex:0 0 auto;padding:14px var(--space-screen-x) 20px;background:var(--c-frame);border-top:1px solid var(--c-ink-hair);">
-    <div class="g-btn-footer-row">
-      <button sc-camel-on-click="{{ prevSection }}" class="g-btn g-btn-footer-back">Go back</button>
-      <button sc-camel-on-click="{{ restart }}" class="g-btn g-btn-footer">Play again</button>
-    </div>
   </div>
 </div>
 </sc-if>
