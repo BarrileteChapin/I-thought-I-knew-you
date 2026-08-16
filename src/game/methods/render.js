@@ -684,7 +684,22 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       zoomScale: st.zoom ? 2.1 : 1,
       toggleZoom: () => this.setState(s => ({ zoom: !s.zoom })),
       waveBars: Array.from({ length: 28 }, (_, i) => ({ h: (16 + Math.abs(Math.sin(i * 1.7)) * 66).toFixed(0) + 'px' })),
-      playOpen: () => this.playBuf('real'),
+      playOpen: () => {
+        // Gallery audio for the Day-3 clone should play the clone, not the Sunday original.
+        if (openRow.item === 5) {
+          const key = 'gallery-clip';
+          if (st.cloneAudioSrc) this.playFile(st.cloneAudioSrc, key);
+          else this.playBuf('splice', key);
+          return;
+        }
+        // Day-4 contested voice (same file as the group chat forward).
+        if (openRow.day === 4 && openRow.kind === 'audio'
+            && (openRow.name === 'voice_nicole.m4a' || openRow.name === this.DAYS[4].deskTitle)) {
+          this.playFile(this.DAY4_VOICE_SRC, 'gallery-d4');
+          return;
+        }
+        this.playBuf('real');
+      },
       vTouchStart: (e) => { const t = e.touches && e.touches[0]; if (t) this._vt = { x: t.clientX, y: t.clientY }; },
       vTouchEnd: (e) => {
         const t = e.changedTouches && e.changedTouches[0];
@@ -708,8 +723,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       closeFeedImg: () => this.setState({ feedImg: null }),
       saveFeedImg: () => { if (st.feedImg) this.saveImage(st.feedImg); },
       openIsAudio: viewingMedia && openRow.kind === 'audio', openIsShot: viewingMedia && openRow.kind === 'shot',
-      openChecks: viewingMedia && openRow.day === st.day ? openItemChecks : [],
-      openNoChecks: !(viewingMedia && openRow.day === st.day && openItemChecks.length),
+      openChecks: [],
+      openNoChecks: true,
       closeMedia: () => this.setState({ mediaOpen: null }),
       archive: [
         { day: 1, kind: 'video', note: 'Forwarded by Hanna. 7 seconds.' },

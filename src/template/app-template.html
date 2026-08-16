@@ -677,20 +677,6 @@
       </div>
     </sc-if>
   </div>
-
-  <div style="flex:0 0 auto;padding:12px 14px var(--space-screen-x);display:flex;flex-direction:column;gap:8px;max-height:38%;overflow-y:auto;">
-    <sc-for list="{{ openChecks }}" as="c" hint-placeholder-count="1">
-      <div>
-        <button sc-camel-on-click="{{ c.run }}" disabled="{{ c.done }}" style="width:100%;background:var(--c-white-bare);border:0;border-radius:var(--r-md);color:var(--c-white);padding:13px 15px;display:flex;align-items:baseline;gap:14px;text-align:left;font-size:var(--fs-body);min-height:44px;opacity:{{ c.op }};">
-          <span style="flex:1;line-height:1.35;">{{ c.label }}</span>
-          <span style="font-size:var(--fs-sm);color:var(--c-white-muted);font-variant-numeric:tabular-nums;">{{ c.costLabel }}</span>
-        </button>
-        <sc-if value="{{ c.done }}" hint-placeholder-val="{{ false }}">
-          <div style="border-left:2px solid var(--c-accent);margin-top:8px;padding:4px 0 4px 14px;font-size:var(--fs-md);line-height:1.5;color:var(--c-white-fog);">{{ c.result }}</div>
-        </sc-if>
-      </div>
-    </sc-for>
-  </div>
 </div>
 </sc-if>
 

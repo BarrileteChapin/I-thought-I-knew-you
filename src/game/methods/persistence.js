@@ -157,6 +157,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       dmGhostTyping: false, ghostTypedToday: false, onReadCharged: false,
       shotOpen: null, sawFake: false, sawReal: false, reportOpen: false,
       reportChoice: null, reportedWrong: false, tip: null,
+      heardCloneVoice: false, heardOriginalVoice: false, day4VoicePlays: 0,
       profMenuOpen: false, reportReasonOpen: false, reportToast: false,
       reportedAccounts: {}, reportedFake: false,
       saved: [], toast: false, feedImg: null,

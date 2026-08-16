@@ -67,15 +67,6 @@
   ],
   "checks": [
     {
-      "id": "d3side",
-      "where": "computer",
-      "cost": 5,
-      "label": "Put the two accounts side by side",
-      "effect": "hint",
-      "sift": "coverage",
-      "result": "Nicole Kruger, @nicole_kruger, 52 posts since 2022. Nicole K., @n.kruger, 6 posts since this week. Same face on both."
-    },
-    {
       "id": "d3foll",
       "where": "computer",
       "cost": 4,

@@ -301,6 +301,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       this.setState({ playingAudioKey: key || null });
       const playing = audio.play();
       if (playing && typeof playing.catch === 'function') playing.catch(clear);
+      if (src === this.state.cloneAudioSrc) this.markVoiceHeard('clone');
+      this.markDay4VoicePlay(src);
     } catch (e) {
       if (this._fileAudio === audio) this._fileAudio = null;
       if (this.state.playingAudioKey === key) this.setState({ playingAudioKey: null });
@@ -325,9 +327,50 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       source.onended = clear;
       this.setState({ playingAudioKey: key || null });
       source.start();
+      if (which === 'real') this.markVoiceHeard('original');
+      else if (which === 'splice') this.markVoiceHeard('clone');
     } catch (e) {
       if (this._bufferSource === source) this._bufferSource = null;
       if (this.state.playingAudioKey === key) this.setState({ playingAudioKey: null });
+    }
+  },
+
+  // Clip-night diary: play both the clone and the Sunday original → d4cmp.
+  markVoiceHeard(kind) {
+    const st = this.state;
+    const heardClone = kind === 'clone' || st.heardCloneVoice;
+    const heardOriginal = kind === 'original' || st.heardOriginalVoice;
+    const patch = {};
+    if (kind === 'clone' && !st.heardCloneVoice) patch.heardCloneVoice = true;
+    if (kind === 'original' && !st.heardOriginalVoice) patch.heardOriginalVoice = true;
+    const inClip = st.clipBack || (st.day === 3 && st.phase === 'clip');
+    if (inClip && heardClone && heardOriginal && !st.done.d4cmp) {
+      patch.done = Object.assign({}, st.done, { d4cmp: true });
+    }
+    if (!Object.keys(patch).length) return;
+    this.setState(patch);
+    if (patch.done) {
+      this.bumpHint(5, 'confirm', 'd4cmp');
+      this.log('— you compared the voice to the original');
+    }
+  },
+
+  // Thursday diary: play Hanna's forwarded Nicole voice twice → d5listen.
+  DAY4_VOICE_SRC: 'assets/audios/4-first_audio.wav',
+
+  markDay4VoicePlay(src) {
+    if (src !== this.DAY4_VOICE_SRC) return;
+    const st = this.state;
+    if (st.day !== 4) return;
+    const plays = (st.day4VoicePlays || 0) + 1;
+    const patch = { day4VoicePlays: plays };
+    if (plays >= 2 && !st.done.d5listen) {
+      patch.done = Object.assign({}, st.done, { d5listen: true });
+    }
+    this.setState(patch);
+    if (patch.done) {
+      this.bumpHint(4, 'hint', 'd5listen');
+      this.log('— you listened to the voice twice');
     }
   }
 

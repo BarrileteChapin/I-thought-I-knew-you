@@ -35,15 +35,6 @@
   "dm": [],
   "checks": [
     {
-      "id": "d5listen",
-      "where": "computer",
-      "cost": 5,
-      "label": "Listen closely, twice",
-      "effect": "hint",
-      "sift": "coverage",
-      "result": "No room. No breath between sentences. The pauses are all exactly the same length."
-    },
-    {
       "id": "d5comp",
       "where": "computer",
       "cost": 6,
