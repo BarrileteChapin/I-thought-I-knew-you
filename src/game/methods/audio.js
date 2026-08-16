@@ -829,6 +829,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     if (patch.done) {
       this.bumpHint(4, 'hint', 'd5listen');
       this.log('— you listened to the voice twice');
+      this.injectDay4Apology();
     }
   }
 
