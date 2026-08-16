@@ -32,26 +32,6 @@
   ],
   "checks": [
     {
-      "id": "d4slow",
-      "item": 5,
-      "where": "computer",
-      "cost": 3,
-      "label": "Listen again, slowly",
-      "effect": "hint",
-      "sift": "coverage",
-      "result": "The phrasing is too clean. There are no breaths or hesitations where your real voice note has them."
-    },
-    {
-      "id": "d4cmp",
-      "item": 5,
-      "where": "computer",
-      "cost": 5,
-      "label": "Compare it to the original",
-      "effect": "confirm",
-      "sift": "trace",
-      "result": "Your voice note from Sunday is still in the group. The voice resembles yours, but none of these words are in that recording."
-    },
-    {
       "id": "d4when",
       "item": 5,
       "where": "phone",

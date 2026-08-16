@@ -49,7 +49,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     if (!D.d1mia && !D.d5where) out.push({ text: 'You never asked anyone who was there.' });
     if (!D.d3side) out.push({ text: 'You never compared the account to her real one. It was still up.' });
     if (!st.reportedWrong && !st.reportedFake) out.push({ text: 'You never reported either account. Both were reportable all week.' });
-    if (!D.d5listen && !D.d4slow) out.push({ text: 'You never listened to the voice message twice.' });
+    if (!D.d5listen) out.push({ text: 'You never listened to the voice message twice.' });
     if (!out.length) out.push({ text: 'You checked all five. That' + "'" + 's rarer than it should be.' });
     return out;
   },
@@ -72,10 +72,14 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const st = this.state;
     const sawFake = which === 'fake' || st.sawFake;
     const sawReal = which === 'real' || st.sawReal;
-    if (sawFake && sawReal && st.day === 3 && !st.done.d3compare) {
-      const done = Object.assign({}, st.done); done.d3compare = true;
+    // Both Nicole profiles visited → diary task "Compare the two accounts".
+    if (sawFake && sawReal && st.day === 3 && !st.done.d3side) {
+      const done = Object.assign({}, st.done);
+      done.d3side = true;
+      done.d3compare = true;
       this.setState({ done });
-      this.bumpHint(3, 'hint', 'd3compare');
+      this.bumpHint(3, 'hint', 'd3side');
+      this.log('— you compared the two accounts');
     }
   },
 

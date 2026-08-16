@@ -44,6 +44,7 @@ class Component extends DCLogic {
     dmCloseTyping: false, dmCloseExtra: null, dmCloseReady: false, replayShown: false,
     dmGhostTyping: false, ghostTypedToday: false, onReadCharged: false,
     shotOpen: null, sawFake: false, sawReal: false, reportOpen: false, reportChoice: null, reportedWrong: false,     tip: null,
+    heardCloneVoice: false, heardOriginalVoice: false, day4VoicePlays: 0,
     profMenuOpen: false, reportReasonOpen: false, reportToast: false, reportedAccounts: {}, reportedFake: false,
     saved: [], toast: false, feedImg: null,
     recOpen: false, recPhase: 'intro', recIdx: 0, recBusy: false, recLevel: 0, recTrying: false, recAttempts: 0, recPending: false,
