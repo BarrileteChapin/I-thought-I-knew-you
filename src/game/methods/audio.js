@@ -308,7 +308,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         this._ttsVoice = await this._tts.cloneVoice(this._real.getChannelData(0), this._real.sampleRate);
         if (run !== this._ttsRun) return;
         this.setState({ ttsStatus: 'ready' });
-        if (this.state.day === 3 && this.state.phase === 'clip') this.generateDay3Voice();
+        // Prefetch clip audio as soon as Wednesday has started (morning or night).
+        if (this.state.day === 3) this.generateDay3Voice();
       } catch (e) {
         if (run === this._ttsRun) this.setState({ ttsStatus: 'failed', ttsProgress: 0 });
         console.warn('[tts] voice clone unavailable', e);
@@ -353,6 +354,17 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     return this._ttsGeneratePromise;
   },
 
+  // Kick model download + voice clone (+ clip audio) early on Wednesday morning
+  // so clip night usually has audio ready. Banner stays clip-night only.
+  prefetchDay3Voice() {
+    if (this.state.cloneAudioSrc) return;
+    if (!this.state.voiceSent && !this._real) return;
+    this.ensurePlayerVoice().then(() => {
+      if (this.state.cloneAudioSrc) return;
+      if (this._real) this.prepareVoiceClone();
+    });
+  },
+
   audioDurationLabel(seconds) {
     const total = Math.max(0, Math.round(Number(seconds) || 0));
     return '0:' + String(total).padStart(2, '0');
@@ -369,8 +381,16 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       || src === 'assets/audios/clip_you_fallback_male.mp3';
   },
 
+  isDay3ClonePending() {
+    const s = this.state.ttsStatus;
+    return s === 'loading' || s === 'cloning' || s === 'generating';
+  },
+
+  // Clone → (only after TTS settles) splice → avatar-matched static default.
+  // Never jump to splice/fallback while Pocket TTS is still working.
   resolveDay3ClonePlay() {
     if (this.state.cloneAudioSrc) return { mode: 'file', src: this.state.cloneAudioSrc };
+    if (this.isDay3ClonePending()) return { mode: 'pending' };
     if (this._splice) return { mode: 'buf', which: 'splice' };
     return { mode: 'file', src: this.day3CloneFallbackSrc() };
   },
@@ -378,10 +398,43 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   playDay3Clone(key) {
     const playResolved = () => {
       const resolved = this.resolveDay3ClonePlay();
+      if (!resolved || resolved.mode === 'pending') return false;
       if (resolved.mode === 'file') this.playFile(resolved.src, key);
       else this.playBuf(resolved.which, key);
+      return true;
     };
-    if (this.state.cloneAudioSrc || this._splice) {
+
+    if (this.state.cloneAudioSrc) {
+      playResolved();
+      return;
+    }
+
+    if (this.isDay3ClonePending()) {
+      this._pendingClonePlayKey = key;
+      if (!this._ttsGeneratePromise && this._ttsVoice) this.generateDay3Voice();
+      const wait = Promise.resolve(this._ttsPreparePromise).then(() => {
+        if (this._pendingClonePlayKey !== key) return null;
+        if (!this.state.cloneAudioSrc && this._ttsVoice && !this._ttsGeneratePromise) {
+          this.generateDay3Voice();
+        }
+        return this._ttsGeneratePromise;
+      });
+      wait.finally(() => {
+        if (this._pendingClonePlayKey !== key) return;
+        this._pendingClonePlayKey = null;
+        if (this.state.cloneAudioSrc) {
+          playResolved();
+          return;
+        }
+        this.ensurePlayerVoice().then(() => {
+          if (this.state.playingAudioKey && this.state.playingAudioKey !== key) return;
+          playResolved();
+        });
+      });
+      return;
+    }
+
+    if (this._splice) {
       playResolved();
       return;
     }
@@ -568,6 +621,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   },
 
   stopAudio(updateState) {
+    this._pendingClonePlayKey = null;
     const shouldUpdate = updateState !== false;
     this.clearAudioScrubWatch();
     this._bufferPlayStarted = null;

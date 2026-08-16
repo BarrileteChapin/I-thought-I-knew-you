@@ -232,6 +232,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       return;
     }
     if (st.voiceSent) this.ensurePlayerVoice();
+    // Wednesday morning/clip: rebuild clone audio after reload (blob URLs don't persist).
+    if (st.day === 3 && st.voiceSent && !st.cloneAudioSrc) this.prefetchDay3Voice();
     if (st.screen === 'daycard') {
       this.startDay(st.pendingDay, st.cardPhase);
     } else if (st.screen === 'cinematic') {
