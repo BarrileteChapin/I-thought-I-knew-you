@@ -13,7 +13,7 @@
 
   window.loadGameData = async function () {
     const root = './content/';
-    const [intro, dmOptions, day1, day2, day3, day4, dayYou, pushback, variants, chatContext] = await Promise.all([
+    const [intro, dmOptions, day1, day2, day3, day4, dayYou, pushback, chatContext] = await Promise.all([
       readJson(root + 'conversations/intro.json'),
       readJson(root + 'conversations/dm-options.json'),
       readJson(root + 'conversations/day-1.json'),
@@ -22,7 +22,6 @@
       readJson(root + 'conversations/day-4.json'),
       readJson(root + 'conversations/day-you.json'),
       readJson(root + 'rules/pushback.json'),
-      readJson(root + 'rules/variants.json'),
       readText(root + 'chat_context.md')
     ]);
 
@@ -40,8 +39,7 @@
         CINE_SCENES: intro.cineScenes
       },
       rules: {
-        PUSHBACK: pushback,
-        VARIANTS: variants
+        PUSHBACK: pushback
       },
       chatContext
     };

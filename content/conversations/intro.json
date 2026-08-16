@@ -123,7 +123,7 @@
     {
       "who": "Nicole",
       "kind": "voice",
-      "dur": "0:22",
+      "dur": "0:17",
       "audioSrc": "assets/audios/1-first_audio.wav",
       "caption": "",
       "old": true
@@ -136,7 +136,7 @@
     {
       "who": "You",
       "mine": true,
-      "text": "it was 22 seconds",
+      "text": "it was 17 seconds",
       "old": true
     },
     {
@@ -163,7 +163,7 @@
     {
       "who": "Nicole",
       "kind": "voice",
-      "dur": "0:09",
+      "dur": "0:04",
       "audioSrc": "assets/audios/1-second_audio.wav",
       "caption": "",
       "old": true

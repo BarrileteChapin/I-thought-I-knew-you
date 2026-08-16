@@ -112,7 +112,11 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   sendWrite() {
     const st = this.state;
     const txt = (st.writeText || '').trim();
-    if (!txt) { this.setState({ writeIn: false, writeStatus: 'deleted', screen: 'room', dev: null, threadOpen: null }); return; }
+    if (!txt) {
+      this.setState({ writeIn: false, writeStatus: 'deleted' });
+      this.closePhone();
+      return;
+    }
     const confirmed = [1, 2, 3, 4, 5].filter(n => st.certainty[n] === 'confirmed').length;
     let replies, dGroup;
     if (st.credibilityLost) {
@@ -139,7 +143,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     replies.forEach((r, i) => {
       setTimeout(() => this.setState(s => ({ chat: s.chat.concat([r]) })), 900 + i * 1100);
     });
-    setTimeout(() => this.setState({ screen: 'room', dev: null, threadOpen: null }), 900 + replies.length * 1100 + 900);
+    setTimeout(() => this.closePhone(), 900 + replies.length * 1100 + 900);
   },
 
   moves(s) {
@@ -182,6 +186,9 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   // TEMP debug: always show the truth-video beat (step 7), even if endingId
   // would normally skip it. Flip to false before ship.
   FORCE_ENDING_TRUTH_VIDEO: false,
+  // TEMP debug: always reveal correct diary answers on "What you said".
+  // Flip to false before ship.
+  FORCE_ENDING_VERDICT_ANSWERS: false,
 
   finalCardId(st, s) {
     if (this.FORCE_BEST_ENDING) return 'spoke-aloud';

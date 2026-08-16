@@ -1462,13 +1462,32 @@ video.g-notebook-got-media {
   color: var(--c-ink);
 }
 
+.g-end-verdict-opt.is-wrong {
+  border-color: var(--c-danger);
+  box-shadow: inset 0 0 0 1px var(--c-danger);
+  color: var(--c-ink);
+}
+
+.g-end-verdict-opt.is-answer {
+  border-color: var(--c-accent);
+  color: var(--c-ink);
+  background: var(--c-accent-soft);
+}
+
 .g-end-verdict-choices.is-readonly .g-end-verdict-opt {
   cursor: default;
   pointer-events: none;
 }
 
-.g-end-verdict-choices.is-readonly .g-end-verdict-opt:not(.is-on) {
+.g-end-verdict-choices.is-readonly .g-end-verdict-opt:not(.is-on):not(.is-answer):not(.is-wrong) {
   opacity: 0.4;
+}
+
+.g-end-verdict-answer {
+  margin-top: 10px;
+  font-size: var(--fs-sm);
+  color: var(--c-accent);
+  letter-spacing: 0.01em;
 }
 
 .g-notebook-note-field {

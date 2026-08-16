@@ -468,7 +468,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         meta: when + ' · sent by Hanna',
         caption: 'Nicole, filmed at a party.',
         bars: [],
-        spec: '0:07',
+        spec: '0:06',
         open: () => {}
       }];
     }
@@ -499,27 +499,22 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       }];
     }
     if (key === 'clip') {
-      const src = s.cloneAudioSrc || null;
-      const canPlay = !!src || !!this._splice;
       return [{
         id: 'got-clip',
         isVideo: false, isImage: false, isAudio: true,
-        label: 'clip_you.m4a',
+        label: this.clipFileName(),
         meta: when + ' · sent by Nicole',
         caption: '',
         bars,
-        spec: !canPlay
-          ? (s.ttsStatus === 'failed' ? 'unavailable' : 'preparing')
-          : (playing
-            ? 'playing'
-            : (s.cloneAudioDuration ? this.audioDurationLabel(s.cloneAudioDuration) : '0:09')),
+        spec: playing
+          ? 'playing'
+          : (s.cloneAudioDuration ? this.audioDurationLabel(s.cloneAudioDuration) : '0:04'),
         open: () => {
           if (this.state.playingAudioKey === audioKey) {
             this.stopAudio();
             return;
           }
-          if (src) this.playFile(src, audioKey);
-          else if (this._splice) this.playBuf('splice', audioKey);
+          this.playDay3Clone(audioKey);
         }
       }];
     }
@@ -527,11 +522,11 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       return [{
         id: 'got-4',
         isVideo: false, isImage: false, isAudio: true,
-        label: 'voice_nicole.m4a',
+        label: this.day4VoiceFileName(),
         meta: when + ' · sent by Hanna',
         caption: '',
         bars,
-        spec: playing ? 'playing' : '0:22',
+        spec: playing ? 'playing' : '0:11',
         open: () => {
           if (this.state.playingAudioKey === audioKey) this.stopAudio();
           else this.playFile('assets/audios/4-first_audio.wav', audioKey);
@@ -561,26 +556,53 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     })[id] || '';
   },
 
+  // Canonical diary answers for the ending reveal (best ending only).
+  endingCorrectVerdict(dayKey) {
+    return ({ 1: 'context', 2: 'context', 3: 'fake', 4: 'fake' })[dayKey] || null;
+  },
+
+  showsEndingVerdictAnswers(st) {
+    // TEMP debug: always reveal diary answers on the ending recap.
+    if (this.FORCE_ENDING_VERDICT_ANSWERS) return true;
+    const s = st || this.state;
+    if (this.FORCE_BEST_ENDING) return true;
+    const id = s.endingId || this.finalCardId(s, s.stats || {});
+    return id === 'spoke-aloud';
+  },
+
   // Ending recap rows (Mon–Thu media). Clip night keeps its own diary verdict but is not listed here.
   endingVerdictRows(st) {
     const s = st || this.state;
+    const showAnswers = this.showsEndingVerdictAnswers(s);
     const defs = [
       { key: 1, eyebrow: 'Monday · The video' },
       { key: 2, eyebrow: 'Tuesday · The photo' },
       { key: 3, eyebrow: 'Wednesday · The account' },
       { key: 4, eyebrow: 'Thursday · The voice' }
     ];
-    const cls = (dayKey, id) => {
-      const v = (s.verdict && s.verdict[dayKey]) || null;
-      return 'g-end-verdict-opt' + (v === id ? ' is-on' : '');
-    };
-    return defs.map(d => ({
-      id: 'ev-' + d.key,
-      eyebrow: d.eyebrow,
-      realClass: cls(d.key, 'real'),
-      contextClass: cls(d.key, 'context'),
-      fakeClass: cls(d.key, 'fake')
-    }));
+    return defs.map(d => {
+      const picked = (s.verdict && s.verdict[d.key]) || null;
+      const correct = this.endingCorrectVerdict(d.key);
+      const cls = (id) => {
+        let c = 'g-end-verdict-opt';
+        if (picked === id) {
+          if (showAnswers && correct && picked !== correct) c += ' is-wrong';
+          else c += ' is-on';
+        }
+        if (showAnswers && correct === id) c += ' is-answer';
+        return c;
+      };
+      return {
+        id: 'ev-' + d.key,
+        eyebrow: d.eyebrow,
+        realClass: cls('real'),
+        contextClass: cls('context'),
+        fakeClass: cls('fake'),
+        showAnswer: showAnswers,
+        hideAnswer: !showAnswers,
+        answerText: showAnswers ? ('Answer: ' + this.verdictLabel(correct)) : ''
+      };
+    });
   },
 
   openNotebookManual() {

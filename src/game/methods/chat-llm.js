@@ -8,7 +8,14 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   chatContextSection(publicOnly) {
     const source = String((window.GameData && window.GameData.chatContext) || '');
     let heading = null;
-    if (publicOnly) {
+    const clipNight = this.state.day === 3 && this.state.phase === 'clip';
+    if (clipNight) {
+      if (publicOnly) {
+        heading = /(^|\n)#\s*3\.[^\n]*\(clip\)[^\n]*\(public\)/i.exec(source);
+      }
+      if (!heading) heading = /(^|\n)#\s*3\.[^\n]*\(clip\)/i.exec(source);
+    }
+    if (!heading && publicOnly) {
       heading = new RegExp('(^|\\n)#\\s*' + this.state.day + '\\.[^\\n]*\\(public\\)', 'i').exec(source);
     }
     if (!heading) heading = new RegExp('(^|\\n)#\\s*' + this.state.day + '\\.', 'i').exec(source);
@@ -16,6 +23,12 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const start = heading.index;
     const next = source.indexOf('\n# ', start + heading[0].length);
     return source.slice(start, next < 0 ? source.length : next).replace(/\s+/g, ' ').trim().slice(0, 700);
+  },
+
+  // Day-3 evening after the clone DM is not the fake-account beat.
+  chatTopicKey() {
+    if (this.state.day === 3 && this.state.phase === 'clip') return 'clip';
+    return this.state.day;
   },
 
   chatRecentContext(tab) {
@@ -150,7 +163,12 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
   sendD1Video() {
     this.setState(s => ({ d1VideoSent: true }));
-    setTimeout(() => this.setState(s => ({ chat: s.chat.concat([{ who: 'Mia', kind: 'video', full: true, caption: 'hold on. Here is the full video' }]) })), 900);
+    setTimeout(() => {
+      this.setState(
+        s => ({ chat: s.chat.concat([{ who: 'Mia', kind: 'video', full: true, caption: 'hold on. Here is the full video' }]) }),
+        () => this.applyIncomingReply('group')
+      );
+    }, 900);
   },
 
   chatVoice(who) {
@@ -164,7 +182,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   },
 
   chatPromptMessages(who, playerText, tab, seed) {
-    const day = this.allDays()[this.state.day] || this.day();
+    const day = this.day();
     const context = this.chatContextSection(tab !== 'dm');
     const recent = this.chatRecentContext(tab) || 'No earlier messages in this thread.';
     const line = String(playerText || '').replace(/\s+/g, ' ').trim().slice(0, 160);
@@ -181,10 +199,14 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
           low: 'Nicole is hurt, distant, and curt.'
         })[this.samTier()] || ''
       : '';
+    const clipNight = this.state.day === 3 && this.state.phase === 'clip';
+    const topicLine = clipNight
+      ? 'Topic tonight: Nicole DMed a voice note that sounds like the player. Stay on that voice note — not the fake account from earlier today.'
+      : ('Topic today: ' + (day.name || day.deskTitle) + '. Stay on this topic.');
     const system = [
       'You are ' + who + ' in a realistic teen chat.',
       'Day ' + this.state.day + ': ' + (day.dayName || day.name || day.deskTitle || 'the current rumor') + '.',
-      'Topic today: ' + (day.name || day.deskTitle) + '. Stay on this topic.',
+      topicLine,
       'Voice: ' + this.chatVoice(who) + '.',
       privateRule,
       nicoleState,
@@ -278,8 +300,9 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       1: 'video|clip|cut|whole|party|said|record|check|source',
       2: 'photo|picture|party|summer|posted|date|birthday',
       3: 'account|photo|picture|fake|real|bot|finger|writing',
+      clip: 'voice|audio|record|sunday|said|sound|note|mine|clone|fake|listen',
       4: 'voice|audio|room|breath|clean|record|sound|pause'
-    }[this.state.day] || 'check|proof|source';
+    }[this.chatTopicKey()] || 'check|proof|source';
     if (this.wordCount(value) <= 5 && !new RegExp('\\b(' + dayWords + ')\\b', 'i').test(value) && !/[?]/.test(value)) return 'off-topic';
     return '';
   },
@@ -312,10 +335,10 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const tone = this.chatTone(text);
     const seeds = {
       1: {
-        questioning: ['the clip starts in the middle, please check the whole video', 'that is only half of what i said, the rest changes everything'],
+        questioning: ['that clip is cut at both ends, please check the whole video', 'that is only the middle of what i said, the rest changes everything'],
         pile_on: ['i did not say that like this, ask mia what she remembers', 'mia was right there, ask her what i actually said'],
         supportive: ['thank you, i just need someone to check the full video', 'thank you, you are the first one to question it'],
-        neutral: ['i know the clip looks bad, but it starts halfway through', 'the clip starts mid-sentence, you are missing what i said before']
+        neutral: ['i know the clip looks bad, but both ends are cut', 'you only got the middle, you are missing the rest']
       },
       2: {
         questioning: ['that photo is from last summer, not last night', 'check the date on that photo, it is from lauras birthday'],
@@ -329,6 +352,12 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         supportive: ['thank you, my real account is still there with four years of posts', 'thank you, look at my real account, everything is still there'],
         neutral: ['that is not my account, i deleted nothing', 'i never deleted anything, that account is not mine']
       },
+      clip: {
+        questioning: ['then why does that recording sound exactly like you', 'you sent a note on sunday, this uses the same voice'],
+        pile_on: ['dont lie to me, that is your voice', 'i know how you sound'],
+        supportive: ['if someone faked it then who, because it sounds like you', 'then prove where that voice note came from'],
+        neutral: ['i thought we were friends', 'why would you say that about me']
+      },
       4: {
         questioning: ['my real voice has room noise and breathing, that note does not', 'compare it with my real voice notes, that one is too clean'],
         pile_on: ['that is not how my voice sounds when i record on my phone', 'my voice does not sound like that, the recording is fake'],
@@ -336,7 +365,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         neutral: ['the fake note is too clean, real recordings have room noise', 'that message sounds weird, my phone recordings have noise']
       }
     };
-    return (seeds[this.state.day] || seeds[1])[tone] || seeds[1].neutral;
+    return (seeds[this.chatTopicKey()] || seeds[1])[tone] || seeds[1].neutral;
   },
 
   groupSeedReply(who, text) {
@@ -420,6 +449,32 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
           neutral: 'why would i know'
         }
       },
+      clip: {
+        Mia: {
+          questioning: 'wait is the group even talking about a voice note tonight',
+          pile_on: 'okay but that sounds messy',
+          supportive: 'maybe keep that in dms',
+          neutral: 'i am lost, what happened'
+        },
+        Hanna: {
+          questioning: 'why are you bringing private drama in here',
+          pile_on: 'if someone sent a voice note own it',
+          supportive: 'then sort it with her privately',
+          neutral: 'this chat is quiet for a reason'
+        },
+        Lea: {
+          questioning: 'did something happen in dms',
+          pile_on: 'i dont want to get involved in that',
+          supportive: 'maybe talk to nicole directly',
+          neutral: 'tonight feels off'
+        },
+        Benito: {
+          questioning: 'dont know',
+          pile_on: 'not my business',
+          supportive: 'leave me out',
+          neutral: 'why ask me'
+        }
+      },
       4: {
         Mia: {
           questioning: 'wait, does that voice actually sound like her',
@@ -447,7 +502,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         }
       }
     };
-    const day = seeds[this.state.day] || seeds[1];
+    const day = seeds[this.chatTopicKey()] || seeds[1];
     const char = day[who];
     return (char && char[tone]) || null;
   },
@@ -461,7 +516,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         neutral: ['i dont even know where to start explaining', 'everything looks worse the more people share it', 'please just give me a chance to explain', 'i keep rereading the messages and i feel sick']
       },
       Mia: {
-        questioning: ['wait did anyone actually check that', 'does someone have the full version', 'what happened before this clip', 'can we check where that came from', 'can someone show us the full version', 'what did she actually say before that', 'does anyone have the original clip', 'maybe we should check the source first'],
+        questioning: ['wait did anyone actually check that', 'does someone have the full version', 'what happened before and after this clip', 'can we check where that came from', 'can someone show us the full version', 'what did she actually say before and after that', 'does anyone have the original clip', 'maybe we should check the source first'],
         pile_on: ['okay but that still feels weird', 'can we not decide this in one second', 'that proves less than everyone thinks', 'why are we so certain already', 'okay that does look bad for her', 'but can we be sure that is the whole story', 'that feels too quick to decide', 'i get why everyone is angry though'],
         supportive: ['maybe we should actually ask her', 'this does not prove what everyone thinks', 'i think we should slow down', 'someone needs to check the original', 'we should at least hear her side', 'this does not add up to me', 'can someone check the original first', 'i am not convinced it was her'],
         neutral: ['i dont know, something is off here', 'has anyone checked the original', 'i am not sure what to believe', 'there has to be more context', 'wait, what are we even looking at', 'can we see the full thing first', 'i feel like we are missing something', 'this all happened so fast']
@@ -574,8 +629,9 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
   async sendChatMessage() {
     const st = this.state;
-    const text = String(st.chatDraft || '').replace(/\s+/g, ' ').trim().slice(0, 160);
     const tab = st.tab === 'dm' ? 'dm' : 'group';
+    const draft = tab === 'dm' ? st.chatDmDraft : st.chatGroupDraft;
+    const text = String(draft || '').replace(/\s+/g, ' ').trim().slice(0, 160);
     const left = tab === 'dm' ? st.chatDmLeft : st.chatGroupLeft;
     if (!text || st.chatBusy || left <= 0) return;
     if (tab === 'dm' && this.samTier() === 'gone') return;
@@ -583,9 +639,11 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const generation = (this._chatGeneration || 0) + 1;
     this._chatGeneration = generation;
     const mine = { who: 'You', mine: true, text };
-    const remaining = tab === 'dm' ? { chatDmLeft: left - 1 } : { chatGroupLeft: left - 1 };
+    const remaining = tab === 'dm'
+      ? { chatDmLeft: left - 1, chatDmDraft: '' }
+      : { chatGroupLeft: left - 1, chatGroupDraft: '' };
     this.setState(Object.assign({}, remaining, {
-      chatDraft: '', chatBusy: true, actedToday: true, ignored: false,
+      chatBusy: true, actedToday: true, ignored: false,
       dmAnsweredToday: tab === 'dm' ? true : st.dmAnsweredToday,
       llmStatus: this._llmReady ? 'Replying...' : 'Model loading; using a fallback if needed'
     }));
@@ -617,9 +675,17 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       const samMessage = this.samReply(replyText);
       if (samMessage) samMessage.generated = true;
       const reply = this.pushSamReply(samMessage);
-      if (reply) this.setState(s => ({ dm: s.dm.concat([reply]) }));
+      if (reply) {
+        this.setState(
+          s => ({ dm: s.dm.concat([reply]) }),
+          () => this.applyIncomingReply('dm')
+        );
+      }
     } else {
-      this.setState(s => ({ chat: s.chat.concat([{ who, text: replyText, generated: true }]) }));
+      this.setState(
+        s => ({ chat: s.chat.concat([{ who, text: replyText, generated: true }]) }),
+        () => this.applyIncomingReply('group')
+      );
       if (wantVideo) {
         this.sendD1Video();
       } else if (this.state.day === 1 && !this.state.d1VideoSent && this.d1VideoTopic(text)) {
@@ -656,6 +722,83 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     return new Blob(chunks, { type: 'application/octet-stream' });
   },
 
+  // Persist GGUF in Cache API so reloads skip the ~220MB download.
+  // Survives Start over / Replay (those only clear SAVE_KEY + game state).
+  // Bump the cache name only when the GGUF file itself changes.
+  LLM_MODEL_CACHE: 'ithoughtiknewyou-llm-v1',
+  LLM_MODEL_CACHE_URL: 'https://local.cache/llm/LFM2.5-350M-Q4_K_M.gguf',
+  LLM_MODEL_MIN_BYTES: 1000000,
+
+  async openLlmModelCache() {
+    if (typeof caches === 'undefined' || !caches.open) return null;
+    try {
+      return await caches.open(this.LLM_MODEL_CACHE);
+    } catch (e) {
+      console.warn('[chat-llm] cache open failed', e);
+      return null;
+    }
+  },
+
+  async readCachedModelBlob() {
+    const cache = await this.openLlmModelCache();
+    if (!cache) return null;
+    try {
+      const hit = await cache.match(this.LLM_MODEL_CACHE_URL);
+      if (!hit) return null;
+      const blob = await hit.blob();
+      if (!blob || blob.size < this.LLM_MODEL_MIN_BYTES) return null;
+      return blob;
+    } catch (e) {
+      console.warn('[chat-llm] cache read failed', e);
+      return null;
+    }
+  },
+
+  async writeCachedModelBlob(blob) {
+    if (!blob || blob.size < this.LLM_MODEL_MIN_BYTES) return;
+    const cache = await this.openLlmModelCache();
+    if (!cache) return;
+    try {
+      await cache.put(this.LLM_MODEL_CACHE_URL, new Response(blob, {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/octet-stream',
+          'Content-Length': String(blob.size)
+        }
+      }));
+      console.log('[chat-llm] model cached (' + Math.round(blob.size / 1048576) + ' MB)');
+    } catch (e) {
+      console.warn('[chat-llm] cache write failed', e);
+    }
+  },
+
+  async loadModelBlob(modelUrls) {
+    this.setLlmStatus('Checking cached model...');
+    const cached = await this.readCachedModelBlob();
+    if (cached) {
+      this.setLlmStatus('Loading cached model...');
+      return cached;
+    }
+
+    let blob = null;
+    let lastError = null;
+    for (const url of modelUrls) {
+      try {
+        blob = await this.fetchModelBlob(url, 'model');
+        if (blob && blob.size > this.LLM_MODEL_MIN_BYTES) break;
+        throw new Error('model too small');
+      } catch (error) {
+        lastError = error;
+        console.warn('[chat-llm] model fetch failed', url, error);
+        blob = null;
+      }
+    }
+    if (!blob) throw lastError || new Error('model download failed');
+    this.setLlmStatus('Saving model for next time...');
+    await this.writeCachedModelBlob(blob);
+    return blob;
+  },
+
   async importWllama() {
     const urls = [
       'https://cdn.jsdelivr.net/npm/@wllama/wllama@3.5.1/esm/index.js',
@@ -682,7 +825,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const quietWarn = /multi-thread|single-thread|special_eos|munmap|n_ctx_per_seq|n_ctx_train|prompt_save|update_slots|context checkpoint|lack of cache|SWA|hybrid\/recurrent|speculative/i;
     return new Wllama({ default: wasmUrl }, {
       parallelDownloads: 1,
-      allowOffline: false,
+      // We own the GGUF Cache API; allow Wllama to reuse its wasm/assets offline too.
+      allowOffline: true,
       logger: {
         debug: () => {},
         log: () => {},
@@ -711,20 +855,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
           'https://huggingface.co/LiquidAI/LFM2.5-350M-GGUF/resolve/main/LFM2.5-350M-Q4_K_M.gguf',
           'https://hf-mirror.com/LiquidAI/LFM2.5-350M-GGUF/resolve/main/LFM2.5-350M-Q4_K_M.gguf'
         ];
-        let blob = null;
-        let lastError = null;
-        for (const url of modelUrls) {
-          try {
-            blob = await this.fetchModelBlob(url, 'model');
-            if (blob && blob.size > 1000000) break;
-            throw new Error('model too small');
-          } catch (error) {
-            lastError = error;
-            console.warn('[chat-llm] model fetch failed', url, error);
-            blob = null;
-          }
-        }
-        if (!blob) throw lastError || new Error('model download failed');
+        const blob = await this.loadModelBlob(modelUrls);
 
         this.setLlmStatus(useGpu ? 'Starting model with WebGPU...' : 'Starting model...');
         const isolatedContext = typeof crossOriginIsolated === 'boolean' && crossOriginIsolated;
@@ -790,5 +921,16 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     this._llmReady = false;
     this._wllama = null;
     return this.ensureLlm(true);
+  },
+
+  // Never call from Start over / Replay — only for model upgrades or explicit debug.
+  async clearLlmModelCache() {
+    if (typeof caches === 'undefined' || !caches.delete) return false;
+    try {
+      return await caches.delete(this.LLM_MODEL_CACHE);
+    } catch (e) {
+      console.warn('[chat-llm] cache delete failed', e);
+      return false;
+    }
   }
 });

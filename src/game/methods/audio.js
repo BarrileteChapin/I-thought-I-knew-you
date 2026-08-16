@@ -121,18 +121,27 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     try { if (this._stream) this._stream.getTracks().forEach(t => t.stop()); } catch (e) {}
     this._stream = null;
     const inIntro = this.state.screen === 'introchat';
+    const voiceMsg = {
+      who: 'You', mine: true, kind: 'voice', dur: '0:10', audio: 'real',
+      caption: 'You, reading it out.'
+    };
     this.setState(s => ({
       recOpen: false, recPhase: 'intro', recBusy: false, recPending: false, voiceSent: true,
-      chat: inIntro ? s.chat : s.chat.concat([{ who: 'You', mine: true, kind: 'voice', dur: '0:10', audio: 'real', caption: 'You, reading it out.' }])
+      // Keep the Sunday note in group history (day 1 also reseeds from P_LOG when voiceSent).
+      chat: s.chat.some(m => m.mine && m.audio === 'real')
+        ? s.chat
+        : s.chat.concat([voiceMsg])
     }), () => { if (inIntro) this._it = setTimeout(() => this.introStep(), 800); });
     if (!inIntro) this.advance(1);
     this.log('— you sent your own voice');
+    this.persistPlayerVoice();
     this.prepareVoiceClone();
   },
 
   // Leave the mic sheet without a recording (permission blocked, no mic, or user skip).
   skipRecording() {
     this.wipeAudio();
+    this.clearPersistedPlayerVoice();
     const inIntro = this.state.screen === 'introchat';
     this.setState(s => ({
       recOpen: false,
@@ -146,6 +155,131 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     });
     if (!inIntro) this.advance(1);
     this.log('— you skipped the voice note');
+  },
+
+  // Survive reload: keep the player's Sunday mic buffers in IndexedDB (not localStorage).
+  VOICE_DB_NAME: 'ithoughtiknewyou-voice-v1',
+  VOICE_STORE: 'buffers',
+
+  ensureAudioCtx() {
+    if (!this._ctx) this._ctx = new (window.AudioContext || window.webkitAudioContext)();
+    return this._ctx;
+  },
+
+  audioBufferToWavBlob(buf) {
+    if (!buf || !window.PocketTtsAudio || !window.PocketTtsAudio.chunksToWavBlob) return null;
+    return window.PocketTtsAudio.chunksToWavBlob([buf.getChannelData(0)], buf.sampleRate);
+  },
+
+  openVoiceDb() {
+    return new Promise((resolve, reject) => {
+      if (typeof indexedDB === 'undefined') {
+        reject(new Error('indexedDB unavailable'));
+        return;
+      }
+      const req = indexedDB.open(this.VOICE_DB_NAME, 1);
+      req.onupgradeneeded = () => {
+        const db = req.result;
+        if (!db.objectStoreNames.contains(this.VOICE_STORE)) {
+          db.createObjectStore(this.VOICE_STORE, { keyPath: 'id' });
+        }
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error || new Error('voice db open failed'));
+    });
+  },
+
+  idbReq(req) {
+    return new Promise((resolve, reject) => {
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error || new Error('idb request failed'));
+    });
+  },
+
+  idbTxDone(tx) {
+    return new Promise((resolve, reject) => {
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error || new Error('idb tx failed'));
+      tx.onabort = () => reject(tx.error || new Error('idb tx aborted'));
+    });
+  },
+
+  async persistPlayerVoice() {
+    if (!this._real) return;
+    try {
+      const realBlob = this.audioBufferToWavBlob(this._real);
+      if (!realBlob) return;
+      const spliceBlob = this._splice ? this.audioBufferToWavBlob(this._splice) : null;
+      const db = await this.openVoiceDb();
+      const tx = db.transaction(this.VOICE_STORE, 'readwrite');
+      const store = tx.objectStore(this.VOICE_STORE);
+      store.put({ id: 'real', blob: realBlob });
+      if (spliceBlob) store.put({ id: 'splice', blob: spliceBlob });
+      else store.delete('splice');
+      await this.idbTxDone(tx);
+      try { db.close(); } catch (e) {}
+    } catch (e) {
+      console.warn('[voice] persist failed', e);
+    }
+  },
+
+  async restorePlayerVoice() {
+    if (this._real) return true;
+    if (!this.state.voiceSent) return false;
+    try {
+      const db = await this.openVoiceDb();
+      const tx = db.transaction(this.VOICE_STORE, 'readonly');
+      const store = tx.objectStore(this.VOICE_STORE);
+      const realRec = await this.idbReq(store.get('real'));
+      const spliceRec = await this.idbReq(store.get('splice'));
+      await this.idbTxDone(tx);
+      try { db.close(); } catch (e) {}
+      if (!realRec || !realRec.blob) return false;
+      this.ensureAudioCtx();
+      const realAb = await realRec.blob.arrayBuffer();
+      this._real = await this._ctx.decodeAudioData(realAb.slice(0));
+      if (spliceRec && spliceRec.blob) {
+        const spliceAb = await spliceRec.blob.arrayBuffer();
+        this._splice = await this._ctx.decodeAudioData(spliceAb.slice(0));
+      }
+      if (!this.state.cloneAudioSrc) this.prepareVoiceClone();
+      return !!this._real;
+    } catch (e) {
+      console.warn('[voice] restore failed', e);
+      return false;
+    }
+  },
+
+  ensurePlayerVoice() {
+    if (this._real) return Promise.resolve(true);
+    if (!this.state.voiceSent) return Promise.resolve(false);
+    if (this._voiceRestorePromise) return this._voiceRestorePromise;
+    this._voiceRestorePromise = this.restorePlayerVoice().finally(() => {
+      this._voiceRestorePromise = null;
+    });
+    return this._voiceRestorePromise;
+  },
+
+  async clearPersistedPlayerVoice() {
+    try {
+      const db = await this.openVoiceDb();
+      const tx = db.transaction(this.VOICE_STORE, 'readwrite');
+      tx.objectStore(this.VOICE_STORE).clear();
+      await this.idbTxDone(tx);
+      try { db.close(); } catch (e) {}
+    } catch (e) {
+      console.warn('[voice] clear failed', e);
+    }
+  },
+
+  playRealVoice(key) {
+    if (this._real) {
+      this.playBuf('real', key);
+      return;
+    }
+    this.ensurePlayerVoice().then(ok => {
+      if (ok && this._real) this.playBuf('real', key);
+    });
   },
 
   prepareVoiceClone() {
@@ -224,22 +358,229 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     return '0:' + String(total).padStart(2, '0');
   },
 
+  // Clone → in-memory splice → avatar-matched static default.
+  day3CloneFallbackSrc() {
+    const gender = this.state.playerAvatar === 'male' ? 'male' : 'female';
+    return 'assets/audios/clip_you_fallback_' + gender + '.mp3';
+  },
+
+  isDay3CloneFallbackSrc(src) {
+    return src === 'assets/audios/clip_you_fallback_female.mp3'
+      || src === 'assets/audios/clip_you_fallback_male.mp3';
+  },
+
+  resolveDay3ClonePlay() {
+    if (this.state.cloneAudioSrc) return { mode: 'file', src: this.state.cloneAudioSrc };
+    if (this._splice) return { mode: 'buf', which: 'splice' };
+    return { mode: 'file', src: this.day3CloneFallbackSrc() };
+  },
+
+  playDay3Clone(key) {
+    const playResolved = () => {
+      const resolved = this.resolveDay3ClonePlay();
+      if (resolved.mode === 'file') this.playFile(resolved.src, key);
+      else this.playBuf(resolved.which, key);
+    };
+    if (this.state.cloneAudioSrc || this._splice) {
+      playResolved();
+      return;
+    }
+    // After reload, splice may still be on disk even if TTS clone is not.
+    this.ensurePlayerVoice().then(() => playResolved());
+  },
+
   toggleChatAudio(key, message) {
     if (this.state.playingAudioKey === key) {
       this.stopAudio();
       return;
     }
     if (message.audioSrc) this.playFile(message.audioSrc, key);
-    else if (message.audio && message.audio !== 'clone') this.playBuf(message.audio, key);
+    else if (message.audio === 'real') this.playRealVoice(key);
+    else if (message.audio === 'clone') this.playDay3Clone(key);
+    else if (message.audio) this.playBuf(message.audio, key);
+  },
+
+  formatAudioTime(sec) {
+    if (!isFinite(sec) || sec < 0) return '0:00';
+    const s = Math.floor(sec);
+    const m = Math.floor(s / 60);
+    const r = s % 60;
+    return m + ':' + String(r).padStart(2, '0');
+  },
+
+  clearAudioScrubWatch() {
+    if (this._audioScrubTimer) {
+      clearInterval(this._audioScrubTimer);
+      this._audioScrubTimer = null;
+    }
+  },
+
+  startAudioScrubWatch() {
+    this.clearAudioScrubWatch();
+    this.tickAudioScrub();
+    this._audioScrubTimer = setInterval(() => this.tickAudioScrub(), 100);
+  },
+
+  tickAudioScrub() {
+    const file = this._fileAudio;
+    if (file) {
+      const dur = file.duration;
+      const t = file.currentTime || 0;
+      const pct = (isFinite(dur) && dur > 0) ? Math.min(100, (t / dur) * 100) : 0;
+      const nextPct = pct.toFixed(1) + '%';
+      const nextLabel = this.formatAudioTime(t);
+      if (nextPct !== this.state.audioScrubPct || nextLabel !== this.state.audioScrubLabel) {
+        this.setState({ audioScrubPct: nextPct, audioScrubLabel: nextLabel });
+      }
+      return;
+    }
+    if (this._bufferSource && this._bufferPlayStarted != null) {
+      const dur = this._bufferPlayDuration || 0;
+      const offset = this._bufferOffset || 0;
+      const t = Math.min(dur, offset + (performance.now() - this._bufferPlayStarted) / 1000);
+      const pct = dur > 0 ? Math.min(100, (t / dur) * 100) : 0;
+      const nextPct = pct.toFixed(1) + '%';
+      const nextLabel = this.formatAudioTime(t);
+      if (nextPct !== this.state.audioScrubPct || nextLabel !== this.state.audioScrubLabel) {
+        this.setState({ audioScrubPct: nextPct, audioScrubLabel: nextLabel });
+      }
+    }
+  },
+
+  resetAudioScrub(updateState) {
+    this.clearAudioScrubWatch();
+    this._bufferPlayStarted = null;
+    this._bufferPlayDuration = 0;
+    this._bufferOffset = 0;
+    this._bufferWhich = null;
+    if (updateState === false) return;
+    if (this.state.audioScrubPct !== '0%' || this.state.audioScrubLabel !== '0:00' || this.state.audioPaused) {
+      this.setState({ audioScrubPct: '0%', audioScrubLabel: '0:00', audioPaused: false });
+    }
+  },
+
+  galleryAudioKey(row) {
+    if (!row || row.kind !== 'audio') return null;
+    if (row.playReal) return 'gallery-sunday';
+    if (row.audioSrc) return 'gallery:' + (row.name || 'audio');
+    if (row.item === 5) return 'gallery-clip';
+    return 'gallery:' + (row.name || 'audio');
+  },
+
+  pauseGalleryAudio() {
+    const file = this._fileAudio;
+    if (file && !file.paused) {
+      try { file.pause(); } catch (e) {}
+      this.clearAudioScrubWatch();
+      this.tickAudioScrub();
+      this.setState({ audioPaused: true });
+      return;
+    }
+    if (this._bufferSource) {
+      const elapsed = (performance.now() - this._bufferPlayStarted) / 1000;
+      this._bufferOffset = Math.min(this._bufferPlayDuration || 0, (this._bufferOffset || 0) + elapsed);
+      const source = this._bufferSource;
+      this._bufferSource = null;
+      source.onended = null;
+      try { source.stop(); } catch (e) {}
+      this.clearAudioScrubWatch();
+      const t = this._bufferOffset || 0;
+      const dur = this._bufferPlayDuration || 0;
+      const pct = dur > 0 ? Math.min(100, (t / dur) * 100) : 0;
+      this.setState({
+        audioPaused: true,
+        audioScrubPct: pct.toFixed(1) + '%',
+        audioScrubLabel: this.formatAudioTime(t)
+      });
+    }
+  },
+
+  resumeGalleryAudio() {
+    const file = this._fileAudio;
+    if (file) {
+      const playing = file.play();
+      if (playing && typeof playing.catch === 'function') {
+        playing.catch(() => this.stopAudio());
+      }
+      this.setState({ audioPaused: false });
+      this.startAudioScrubWatch();
+      return;
+    }
+    const which = this._bufferWhich;
+    const b = which === 'splice' ? this._splice : this._real;
+    const key = this.state.playingAudioKey;
+    if (!b || !this._ctx || !key) {
+      this.stopAudio();
+      return;
+    }
+    const offset = this._bufferOffset || 0;
+    if (offset >= b.duration) {
+      this.stopAudio();
+      return;
+    }
+    let source = null;
+    try {
+      source = this._ctx.createBufferSource();
+      source.buffer = b;
+      source.connect(this._ctx.destination);
+      this._bufferSource = source;
+      const clear = () => {
+        if (this._bufferSource !== source) return;
+        this._bufferSource = null;
+        this.resetAudioScrub(false);
+        if (this.state.playingAudioKey === key) {
+          this.setState({ playingAudioKey: null, audioPaused: false, audioScrubPct: '0%', audioScrubLabel: '0:00' });
+        }
+      };
+      source.onended = clear;
+      this._bufferPlayStarted = performance.now();
+      this._bufferPlayDuration = b.duration;
+      source.start(0, offset);
+      this.setState({ audioPaused: false });
+      this.startAudioScrubWatch();
+    } catch (e) {
+      if (this._bufferSource === source) this._bufferSource = null;
+      this.stopAudio();
+    }
+  },
+
+  playGalleryOpen(row) {
+    const key = this.galleryAudioKey(row);
+    if (!key) return;
+    if (this.state.playingAudioKey === key) {
+      if (this.state.audioPaused) this.resumeGalleryAudio();
+      else this.pauseGalleryAudio();
+      return;
+    }
+    if (row.playReal) {
+      this.playRealVoice(key);
+      return;
+    }
+    if (row.audioSrc) {
+      this.playFile(row.audioSrc, key);
+      return;
+    }
+    if (row.item === 5) {
+      this.playDay3Clone(key);
+      return;
+    }
+    this.playBuf('real', key);
   },
 
   stopAudio(updateState) {
     const shouldUpdate = updateState !== false;
+    this.clearAudioScrubWatch();
+    this._bufferPlayStarted = null;
+    this._bufferPlayDuration = 0;
+    this._bufferOffset = 0;
+    this._bufferWhich = null;
+
     const file = this._fileAudio;
     this._fileAudio = null;
     if (file) {
       file.onended = null;
       file.onerror = null;
+      file.ontimeupdate = null;
       try { file.pause(); file.currentTime = 0; } catch (e) {}
       try { file.removeAttribute('src'); file.load(); } catch (e) {}
     }
@@ -251,8 +592,19 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       try { buffer.stop(); } catch (e) {}
     }
 
-    if (shouldUpdate && this.state.playingAudioKey !== null) {
-      this.setState({ playingAudioKey: null });
+    if (shouldUpdate) {
+      const needsClear = this.state.playingAudioKey !== null
+        || this.state.audioPaused
+        || this.state.audioScrubPct !== '0%'
+        || this.state.audioScrubLabel !== '0:00';
+      if (needsClear) {
+        this.setState({
+          playingAudioKey: null,
+          audioPaused: false,
+          audioScrubPct: '0%',
+          audioScrubLabel: '0:00'
+        });
+      }
     }
   },
 
@@ -294,44 +646,96 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       const clear = () => {
         if (this._fileAudio !== audio) return;
         this._fileAudio = null;
-        if (this.state.playingAudioKey === key) this.setState({ playingAudioKey: null });
+        this.resetAudioScrub(false);
+        if (this.state.playingAudioKey === key) {
+          this.setState({
+            playingAudioKey: null,
+            audioPaused: false,
+            audioScrubPct: '0%',
+            audioScrubLabel: '0:00'
+          });
+        }
       };
       audio.onended = clear;
       audio.onerror = clear;
-      this.setState({ playingAudioKey: key || null });
+      audio.ontimeupdate = () => {
+        if (this._fileAudio === audio) this.tickAudioScrub();
+      };
+      this.setState({ playingAudioKey: key || null, audioPaused: false, audioScrubPct: '0%', audioScrubLabel: '0:00' });
+      this.startAudioScrubWatch();
       const playing = audio.play();
       if (playing && typeof playing.catch === 'function') playing.catch(clear);
-      if (src === this.state.cloneAudioSrc) this.markVoiceHeard('clone');
+      if (src === this.state.cloneAudioSrc || this.isDay3CloneFallbackSrc(src)) {
+        this.markVoiceHeard('clone');
+      }
       this.markDay4VoicePlay(src);
     } catch (e) {
       if (this._fileAudio === audio) this._fileAudio = null;
-      if (this.state.playingAudioKey === key) this.setState({ playingAudioKey: null });
+      this.resetAudioScrub(false);
+      if (this.state.playingAudioKey === key) {
+        this.setState({ playingAudioKey: null, audioPaused: false, audioScrubPct: '0%', audioScrubLabel: '0:00' });
+      }
     }
   },
 
   playBuf(which, key) {
-    const b = which === 'splice' ? this._splice : this._real;
-    if (!b || !this._ctx) return;
+    let b = which === 'splice' ? this._splice : this._real;
+    if (!b) {
+      if (which === 'real') {
+        this.ensurePlayerVoice().then(() => {
+          if (this._real) this.playBuf('real', key);
+        });
+        return;
+      }
+      if (which === 'splice') {
+        this.ensurePlayerVoice().then(() => {
+          if (this._splice) this.playBuf('splice', key);
+          else this.playFile(this.day3CloneFallbackSrc(), key);
+        });
+        return;
+      }
+      return;
+    }
+    if (!this._ctx) this.ensureAudioCtx();
+    if (!this._ctx) return;
     this.stopAudio();
+    b = which === 'splice' ? this._splice : this._real;
+    if (!b) return;
     let source = null;
     try {
       source = this._ctx.createBufferSource();
       source.buffer = b;
       source.connect(this._ctx.destination);
       this._bufferSource = source;
+      this._bufferWhich = which;
+      this._bufferOffset = 0;
+      this._bufferPlayDuration = b.duration || 0;
+      this._bufferPlayStarted = performance.now();
       const clear = () => {
         if (this._bufferSource !== source) return;
         this._bufferSource = null;
-        if (this.state.playingAudioKey === key) this.setState({ playingAudioKey: null });
+        this.resetAudioScrub(false);
+        if (this.state.playingAudioKey === key) {
+          this.setState({
+            playingAudioKey: null,
+            audioPaused: false,
+            audioScrubPct: '0%',
+            audioScrubLabel: '0:00'
+          });
+        }
       };
       source.onended = clear;
-      this.setState({ playingAudioKey: key || null });
+      this.setState({ playingAudioKey: key || null, audioPaused: false, audioScrubPct: '0%', audioScrubLabel: '0:00' });
+      this.startAudioScrubWatch();
       source.start();
       if (which === 'real') this.markVoiceHeard('original');
       else if (which === 'splice') this.markVoiceHeard('clone');
     } catch (e) {
       if (this._bufferSource === source) this._bufferSource = null;
-      if (this.state.playingAudioKey === key) this.setState({ playingAudioKey: null });
+      this.resetAudioScrub(false);
+      if (this.state.playingAudioKey === key) {
+        this.setState({ playingAudioKey: null, audioPaused: false, audioScrubPct: '0%', audioScrubLabel: '0:00' });
+      }
     }
   },
 

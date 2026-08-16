@@ -11,23 +11,12 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const m = this.allDays(); return m[this.state.day] || m[1];
   },
 
-  applyVariant(day, key) {
-    const set = this.VARIANTS[key];
-    const v = set && set[this.state.variant];
-    if (!v) return day;
-    return Object.assign({}, day, {
-      fake: v.fake,
-      volunteer: v.volunteer || day.volunteer,
-      checks: day.checks.map(c => v.results[c.id] ? Object.assign({}, c, { result: v.results[c.id] }) : c)
-    });
-  },
-
   allDays() {
     return {
       1: this.DAYS[1],
-      2: this.applyVariant(this.DAYS[2], 2),
-      3: this.applyVariant(this.DAYS[3], 3),
-      4: this.applyVariant(this.DAYS[4], 4)
+      2: this.DAYS[2],
+      3: this.DAYS[3],
+      4: this.DAYS[4]
     };
   },
 
@@ -94,6 +83,35 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
 
   name() { return this.state.playerName || 'Alex'; },
 
+  // Safe token for diegetic download filenames (clip_Alex.m4a, etc.).
+  fileSafeName(raw) {
+    const s = String(raw == null ? this.name() : raw).trim()
+      .replace(/[^a-zA-Z0-9._-]+/g, '_')
+      .replace(/^_+|_+$/g, '');
+    return s || 'Alex';
+  },
+
+  // Sunday mic note the player recorded (before Monday). Mia's party is Fri 14th.
+  recordingFileName() { return 'recording_0709.m4a'; },
+
+  // Wednesday clone Nicole DMs — named after the player.
+  clipFileName() { return 'clip_' + this.fileSafeName() + '.m4a'; },
+
+  // Thursday forwarded “Nicole” voice — same family as her older voice_message_* notes.
+  day4VoiceFileName() { return 'voice_message_0713.m4a'; },
+
+  evidenceDeskTitle(dayObj) {
+    if (dayObj === this.DAY_YOU) return this.clipFileName();
+    if (dayObj === this.DAYS[4]) return this.day4VoiceFileName();
+    return (dayObj && dayObj.deskTitle) || '';
+  },
+
+  evidenceDeskUrl(dayObj) {
+    if (dayObj === this.DAY_YOU) return 'file:///downloads/' + this.clipFileName();
+    if (dayObj === this.DAYS[4]) return 'file:///downloads/' + this.day4VoiceFileName();
+    return (dayObj && dayObj.url) || '';
+  },
+
   faceOf(who) {
     return window.__R({
       Nicole: 'assets/av-nicole.webp', Hanna: 'assets/av-hanna.webp', Lea: 'assets/av-lea.webp',
@@ -123,6 +141,63 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     return '';
   },
 
+  unreadFrom(list, lastReadLen) {
+    const start = Math.max(0, Number(lastReadLen) || 0);
+    return (list || []).slice(start).filter(m => !m.mine && !m.sys).length;
+  },
+
+  // Stable id for gallery "seen" dots (survives day changes and list growth).
+  gallerySeenKey(row) {
+    if (!row) return '';
+    if (row.savedKind) return 'gal:saved:' + (row.name || row.savedKind);
+    if (row.name) return 'gal:' + row.day + ':' + row.name;
+    return 'gal:' + row.day + ':' + (row.kind || 'item') + ':' + (row.item != null ? row.item : '');
+  },
+
+  isViewingChat(tab) {
+    const s = this.state;
+    return s.screen === 'phone' && s.dev === 'chats' && s.threadOpen === tab;
+  },
+
+  // After incoming chat messages land: if that thread is open, mark read;
+  // if closed, sync badge counts to messages past lastRead.
+  applyIncomingReply(tab) {
+    if (this.isViewingChat(tab)) {
+      const list = tab === 'dm' ? this.state.dm : this.state.chat;
+      this.setState(s => {
+        const lastRead = Object.assign({}, s.lastRead, { [tab]: list.length });
+        return Object.assign({ lastRead }, this.chatUnreadPatch(s.chat, s.dm, lastRead));
+      });
+      return;
+    }
+    this.setState(s => Object.assign(
+      { chatFlash: true },
+      this.chatUnreadPatch(s.chat, s.dm, s.lastRead)
+    ));
+    clearTimeout(this._cf);
+    this._cf = setTimeout(() => this.setState({ chatFlash: false }), 900);
+  },
+
+  chatUnreadPatch(chat, dm, lastRead) {
+    const lr = lastRead || {};
+    const groupUnread = this.unreadFrom(chat, lr.group);
+    const dmUnread = this.unreadFrom(dm, lr.dm);
+    return { groupUnread, unread: groupUnread + dmUnread };
+  },
+
+  flushOpenThreadRead(st) {
+    st = st || this.state;
+    const k = st.threadOpen;
+    if (!k || st.dev !== 'chats') return {};
+    const list = k === 'group' ? st.chat : st.dm;
+    const lastRead = Object.assign({}, st.lastRead, { [k]: list.length });
+    return Object.assign({
+      lastRead,
+      newMarkAt: null,
+      showNewPill: false
+    }, this.chatUnreadPatch(st.chat, st.dm, lastRead));
+  },
+
   openPhone(extra) {
     clearTimeout(this._phoneClose);
     this.setState(Object.assign({
@@ -147,14 +222,21 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       this.rel(-10, 0, null);
       this.log('— you left her on read');
     }
-    this.setState(s => ({
-      phoneClosing: true,
-      actionsOpen: false,
-      ignored: s.openedGroup && !s.actedToday
-    }));
+    this.setState(s => {
+      const nextSeen = Object.assign({}, s.seen);
+      if (s.dev === 'social') {
+        (this._socialFeedIds || []).forEach(id => { nextSeen['soc:' + id] = true; });
+      }
+      return Object.assign({
+        phoneClosing: true,
+        actionsOpen: false,
+        ignored: s.openedGroup && !s.actedToday,
+        seen: nextSeen
+      }, this.flushOpenThreadRead(s));
+    });
     clearTimeout(this._phoneClose);
     this._phoneClose = setTimeout(() => {
-      this.setState({ screen: 'room', phoneClosing: false });
+      this.setState({ screen: 'room', phoneClosing: false, threadOpen: null });
     }, 300);
   }
 });

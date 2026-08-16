@@ -14,9 +14,10 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       recOpen: false, recPhase: 'intro', recBusy: false, recLevel: 0, recTrying: false,
       // Keep recPending so a reload mid-mic prompt can reopen the sheet.
       dmGhostTyping: false, introTyping: false, confirmSleep: false, fading: false,
-      msgToast: null, msgToastVisible: false, cameraPush: false, dayEnter: false,
+      msgToast: null, msgToastVisible: false, socToast: null, socToastVisible: false, cameraPush: false, dayEnter: false,
       cinePhase: 'gate', cineIdx: 0, cineActive: false, cineFlash: false,
-      playingAudioKey: null, ttsStatus: 'idle', ttsProgress: 0, cloneAudioSrc: null, cloneAudioDuration: 0,
+      playingAudioKey: null, audioPaused: false, audioScrubPct: '0%', audioScrubLabel: '0:00',
+      ttsStatus: 'idle', ttsProgress: 0, cloneAudioSrc: null, cloneAudioDuration: 0,
       notebookAnim: false,
       endingsGalleryOpen: false,
       endingsGalleryClosing: false,
@@ -118,19 +119,25 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   },
 
   clearSavedGame() {
+    // Only the playthrough save. Do not touch META_KEY (ending unlocks) or
+    // Cache API (chat LLM GGUF — see LLM_MODEL_CACHE).
     try { localStorage.removeItem(this.SAVE_KEY); } catch (e) {}
+    this.clearPersistedPlayerVoice();
   },
 
   // Full wipe used by Start over / Replay. Anything not listed here is left
-  // alone (refs, content tables). Pass `overrides` for screen-specific fields.
+  // alone (refs, content tables, in-memory wllama). Pass `overrides` for
+  // screen-specific fields.
   // Meta ending unlocks live in META_KEY and are intentionally not cleared.
+  // Chat model GGUF lives in Cache API (LLM_MODEL_CACHE) and is not cleared.
   freshGameState(overrides) {
     const meta = this.readMeta();
     return Object.assign({
       screen: 'title', day: 1, min: this.DAYS[1].start, unread: 0, photoUp: true,
       cinePhase: 'gate', cineIdx: 0, cineActive: false, cineMuted: false, cineFlash: false,
-      msgToast: null, msgToastVisible: false, cameraPush: false, dayEnter: false,
+      msgToast: null, msgToastVisible: false, socToast: null, socToastVisible: false, cameraPush: false, dayEnter: false,
       tab: 'group', confirmSleep: false, chat: [], dm: [], sharedCount: 3, playingAudioKey: null,
+      audioPaused: false, audioScrubPct: '0%', audioScrubLabel: '0:00',
       ttsStatus: 'idle', ttsProgress: 0, cloneAudioSrc: null, cloneAudioDuration: 0,
       hints: { 1: [], 2: [], 3: [], 4: [], 5: [] },
       certainty: { 1: 'unchecked', 2: 'unchecked', 3: 'unchecked', 4: 'unchecked', 5: 'unchecked' },
@@ -151,7 +158,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       samDead: false, reason: '',
       voiceSent: false, d1VideoSent: false, pStage: -1, introLine: 0, introMsg: 0, introTyping: false,
       introReady: false,       pendingDay: 1, cardPhase: 'evening', cardDayName: '',
-      cardWhen: '', continueResumeScreen: null, variant: Math.floor(Math.random() * 2),
+      cardWhen: '', continueResumeScreen: null,
       playerName: 'Alex', nameDraft: '', playerAvatar: null,
       dmCloseTyping: false, dmCloseExtra: null, dmCloseReady: false, replayShown: false,
       truthVideoPlaying: false,
@@ -218,6 +225,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       this.openRecorder();
       return;
     }
+    if (st.voiceSent) this.ensurePlayerVoice();
     if (st.screen === 'daycard') {
       this.startDay(st.pendingDay, st.cardPhase);
     } else if (st.screen === 'cinematic') {
@@ -347,9 +355,11 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     clearTimeout(this._dc);
     this.clearSavedGame();
     this.wipeAudio();
+    // Keep chat LLM: Cache API GGUF + in-memory _wllama (do not retryLlm / clearLlmModelCache).
     this.setState(this.freshGameState({ screen: 'name', nameDraft: '', playerAvatar: null }), () => {
       const el = this.nameRef.current;
       if (el) el.focus();
+      if (this.LLM_CHAT_ENABLED) this.ensureLlm(false);
     });
   }
 });

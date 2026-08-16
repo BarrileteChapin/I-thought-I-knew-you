@@ -1,10 +1,28 @@
 window.GameMethods = Object.assign(window.GameMethods || {}, {
+  // TEMP debug: inject the Day-3 “account unavailable” screenshot into group chat.
+  // Flip to false when done looking. Safe to call repeatedly (no duplicate).
+  FORCE_DEBUG_UNAVAILABLE_SHOT: false,
+
+  UNAVAILABLE_SHOT_MSG: {
+    who: 'Hanna', kind: 'shot', shot: 'left', caption: 'Screenshot — account gone.'
+  },
+
+  debugInjectUnavailableShot() {
+    if (!this.FORCE_DEBUG_UNAVAILABLE_SHOT) return;
+    this.setState(s => {
+      if ((s.chat || []).some(m => m.kind === 'shot' && m.shot === 'left')) return {};
+      return {
+        chat: (s.chat || []).concat([Object.assign({}, this.UNAVAILABLE_SHOT_MSG)])
+      };
+    });
+  },
+
   spend(kind, cost) { this.setState(s => ({ minCheck: s.minCheck + (kind === 'check' ? cost : 0), minReact: s.minReact + (kind === 'react' ? cost : 0) })); },
 
   advance(cost) {
+    // Flash while away from chats, but don't invent badge counts — those follow lastRead.
     const away = this.state.screen === 'phone' && this.state.dev !== 'chats';
-    const extra = away ? 1 + Math.floor(Math.random() * 2) : 0;
-    if (extra) {
+    if (away) {
       this.setState({ chatFlash: true });
       clearTimeout(this._cf);
       this._cf = setTimeout(() => this.setState({ chatFlash: false }), 900);
@@ -14,7 +32,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       const per = 10 * (s.shareHalved ? 2 : 1) / (s.group >= 70 ? 1.5 : 1);
       const gained = Math.floor(tick / per);
       return {
-        min: s.min + cost, unread: s.unread + extra, groupUnread: s.groupUnread + extra,
+        min: s.min + cost,
         shareTick: tick - gained * per,
         sharedCount: s.sharedCount + gained
       };
@@ -52,12 +70,13 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
           { who: 'Hanna', text: 'reported. 30 of us. it\'s gone' },
           { who: 'Lea', text: 'she won\'t be able to say anything now' },
           { who: 'Mia', text: 'that was the point wasn\'t it' },
-          { who: 'System', sys: true, text: '@nicole_kruger is no longer available.' }
+          Object.assign({}, this.UNAVAILABLE_SHOT_MSG)
         ] : [
           { who: 'Hanna', text: s.reportedWrong ? 'reported. 30 of us, ' + this.name() + ' too. it\'s gone' : 'reported. 30 of us. it\'s gone' },
           { who: 'Lea', text: 'guys that was her real one' },
           { who: 'Mia', text: 'wait' },
-          { who: 'System', sys: true, text: '@nicole_kruger is no longer available. The other account is still posting.' }
+          Object.assign({}, this.UNAVAILABLE_SHOT_MSG),
+          { who: 'Hanna', text: 'the other account is still posting though' }
         ])
       });
     }
@@ -133,7 +152,12 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     if (!reply) return;
     if (reply.late) {
       this.setState(s => ({ min: s.min + 60 }));
-      setTimeout(() => this.setState(s => ({ dm: s.dm.concat([{ who: 'Nicole', text: reply.text, generated: !!reply.generated }]) })), 900);
+      setTimeout(() => {
+        this.setState(
+          s => ({ dm: s.dm.concat([{ who: 'Nicole', text: reply.text, generated: !!reply.generated }]) }),
+          () => this.applyIncomingReply('dm')
+        );
+      }, 900);
       return null;
     }
     return reply;
@@ -270,10 +294,13 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       }
       this.setState({ done });
       setTimeout(() => { this.bumpHint(pc.item || this.state.day, pc.effect, pc.id); this.advance(pc.cost); this.log('— you asked around'); }, 0);
+      const lastRead = Object.assign({}, st.lastRead);
+      if (st.dev === 'chats' && st.threadOpen === 'group') lastRead.group = chat.length;
+      if (st.dev === 'chats' && st.threadOpen === 'dm') lastRead.dm = dm.length;
       this.setState(Object.assign({}, patch, {
-        stats, chat, dm, used, credibility, actedToday: true, ignored: false, unread: 0,
+        stats, chat, dm, used, credibility, actedToday: true, ignored: false, lastRead,
         dmAnsweredToday: pc.thread === 'dm' ? true : st.dmAnsweredToday
-      }));
+      }, this.chatUnreadPatch(chat, dm, lastRead)));
       return;
     }
 
@@ -283,7 +310,13 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     }
     this.advance(cost);
     this.spend('react', cost);
-    this.setState(Object.assign({}, patch, { stats, chat, dm, used, credibility, credibilityLost: credLost, shareHalved: halve, actedToday: true, ignored: false, unread: 0 }));
+    const lastRead = Object.assign({}, st.lastRead);
+    if (st.dev === 'chats' && st.threadOpen === 'group') lastRead.group = chat.length;
+    if (st.dev === 'chats' && st.threadOpen === 'dm') lastRead.dm = dm.length;
+    this.setState(Object.assign({}, patch, {
+      stats, chat, dm, used, credibility, credibilityLost: credLost, shareHalved: halve,
+      actedToday: true, ignored: false, lastRead
+    }, this.chatUnreadPatch(chat, dm, lastRead)));
     if (st.day === 2 && ['askchecked','callfake','defend','forward','react'].indexOf(a.id) > -1) this.setState({ postedWed: true });
     this.log(reason);
     if (dSam || dGroup) this.rel(dSam, dGroup, reason);
