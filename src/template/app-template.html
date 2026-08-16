@@ -639,7 +639,12 @@
   <div style="flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:auto;">
     <sc-if value="{{ openIsVideo }}" hint-placeholder-val="{{ false }}">
       <div style="width:100%;">
-        <video controls="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;height:auto;background:var(--c-black);"><source src="assets/nicole_day0.webm" type="video/webm"><source src="assets/nicole_day0.mp4" type="video/mp4"></video>
+        <sc-if value="{{ openIsVideoFull }}" hint-placeholder-val="{{ false }}">
+          <video controls="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;height:auto;background:var(--c-black);"><source src="assets/nicole_day0_full.webm" type="video/webm"><source src="assets/nicole_day0_full.mp4" type="video/mp4"></video>
+        </sc-if>
+        <sc-if value="{{ openIsVideoShort }}" hint-placeholder-val="{{ true }}">
+          <video controls="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;height:auto;background:var(--c-black);"><source src="assets/nicole_day0.webm" type="video/webm"><source src="assets/nicole_day0.mp4" type="video/mp4"></video>
+        </sc-if>
         <div style="font-size:var(--fs-md);line-height:1.5;color:var(--c-white-wash);padding:14px 18px 0;">{{ openCaption }}</div>
       </div>
     </sc-if>
@@ -740,6 +745,9 @@
             </sc-if>
             <sc-if value="{{ p.isVideoThumb }}" hint-placeholder-val="{{ false }}">
               <video muted="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;height:100%;object-fit:cover;pointer-events:none;"><source src="assets/nicole_day0.webm" type="video/webm"><source src="assets/nicole_day0.mp4" type="video/mp4"></video>
+            </sc-if>
+            <sc-if value="{{ p.isVideoFullThumb }}" hint-placeholder-val="{{ false }}">
+              <video muted="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;height:100%;object-fit:cover;pointer-events:none;"><source src="assets/nicole_day0_full.webm" type="video/webm"><source src="assets/nicole_day0_full.mp4" type="video/mp4"></video>
             </sc-if>
             <sc-if value="{{ p.isGardenThumb }}" hint-placeholder-val="{{ false }}">
               <img src="assets/nicole-garden.webp" alt="" style="display:block;width:100%;height:100%;object-fit:cover;">
@@ -1211,6 +1219,11 @@
                 <span style="position:absolute;left:7px;bottom:6px;width:0;height:0;border-left:11px solid var(--c-white);border-top:7px solid transparent;border-bottom:7px solid transparent;filter:drop-shadow(0 1px 2px var(--c-black-heavy));"></span>
                 <span style="position:absolute;right:7px;bottom:6px;font-size:10px;font-weight:600;color:var(--c-white);text-shadow:0 1px 2px var(--c-black-strong);font-variant-numeric:tabular-nums;">{{ a.spec }}</span>
               </sc-if>
+              <sc-if value="{{ a.isVideoFullThumb }}" hint-placeholder-val="{{ false }}">
+                <video muted="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;height:100%;object-fit:cover;pointer-events:none;"><source src="assets/nicole_day0_full.webm" type="video/webm"><source src="assets/nicole_day0_full.mp4" type="video/mp4"></video>
+                <span style="position:absolute;left:7px;bottom:6px;width:0;height:0;border-left:11px solid var(--c-white);border-top:7px solid transparent;border-bottom:7px solid transparent;filter:drop-shadow(0 1px 2px var(--c-black-heavy));"></span>
+                <span style="position:absolute;right:7px;bottom:6px;font-size:10px;font-weight:600;color:var(--c-white);text-shadow:0 1px 2px var(--c-black-strong);font-variant-numeric:tabular-nums;">{{ a.spec }}</span>
+              </sc-if>
               <sc-if value="{{ a.isAudio }}" hint-placeholder-val="{{ false }}">
                 <span style="position:absolute;inset:0;background:var(--c-wash-alt);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;">
                   <span style="display:flex;align-items:center;gap:2px;height:26px;">
@@ -1526,6 +1539,9 @@
               <sc-if value="{{ pickIsVideo }}" hint-placeholder-val="{{ false }}">
                 <video muted="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);background:var(--c-wash-alt);pointer-events:none;"><source src="assets/nicole_day0.webm" type="video/webm"><source src="assets/nicole_day0.mp4" type="video/mp4"></video>
               </sc-if>
+              <sc-if value="{{ pickIsVideoFull }}" hint-placeholder-val="{{ false }}">
+                <video muted="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);background:var(--c-wash-alt);pointer-events:none;"><source src="assets/nicole_day0_full.webm" type="video/webm"><source src="assets/nicole_day0_full.mp4" type="video/mp4"></video>
+              </sc-if>
               <div style="font-size:var(--fs-body);color:var(--c-ink);margin-top:12px;overflow-wrap:anywhere;">{{ pickName }}</div>
               <div style="font-size:var(--fs-sm);color:var(--c-ink-heavy);margin-top:4px;">{{ pickMeta }}</div>
               <div style="margin-top:10px;">
@@ -1612,6 +1628,9 @@
               </sc-if>
               <sc-if value="{{ aiPickIsVideo }}" hint-placeholder-val="{{ false }}">
                 <video muted="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);background:var(--c-wash-alt);pointer-events:none;"><source src="assets/nicole_day0.webm" type="video/webm"><source src="assets/nicole_day0.mp4" type="video/mp4"></video>
+              </sc-if>
+              <sc-if value="{{ aiPickIsVideoFull }}" hint-placeholder-val="{{ false }}">
+                <video muted="{{ true }}" playsinline="{{ true }}" preload="metadata" style="display:block;width:100%;max-width:200px;height:auto;border-radius:var(--r-sm);background:var(--c-wash-alt);pointer-events:none;"><source src="assets/nicole_day0_full.webm" type="video/webm"><source src="assets/nicole_day0_full.mp4" type="video/mp4"></video>
               </sc-if>
               <sc-if value="{{ aiPickIsAudio }}" hint-placeholder-val="{{ false }}">
                 <div style="width:100%;max-width:200px;height:110px;border-radius:var(--r-sm);background:var(--c-wash-alt);display:flex;align-items:center;justify-content:center;"><div style="width:70%;height:22px;background:repeating-linear-gradient(90deg,var(--c-ink-dim) 0 2px,transparent 2px 6px);"></div></div>

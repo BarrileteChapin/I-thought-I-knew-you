@@ -18,6 +18,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       cinePhase: 'gate', cineIdx: 0, cineActive: false, cineFlash: false,
       playingAudioKey: null, audioPaused: false, audioScrubPct: '0%', audioScrubLabel: '0:00',
       ttsStatus: 'idle', ttsProgress: 0, cloneAudioSrc: null, cloneAudioDuration: 0,
+      // In-flight chat reply dies with the page; never leave Send locked.
+      chatBusy: false, chatBusyTab: null, llmStatus: '',
       notebookAnim: false,
       endingsGalleryOpen: false,
       endingsGalleryClosing: false,
@@ -149,7 +151,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       galleryNew: false, chatFlash: false,
       lastRead: { group: 0, dm: 0 }, newMarkAt: null, showNewPill: false,
       writeIn: false, writeText: '', writeStatus: null, dragItem: null, pickIdx: null,
-      pickerOpen: false, pickerMode: 'search', searched: {}, aiPickIdx: null,
+      pickerOpen: false, pickerMode: 'search', searched: {}, aiChecked: {}, aiPickIdx: null,
       aiStage: 'idle', aiStep: 0, actionLog: [], reactionTimes: [],
       arrival: 0, reactedToday: false, samSilent: false, apology: false,
       reported: false, clipBack: false, phase: 'evening', groupUnread: 0,
@@ -217,6 +219,10 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     clearTimeout(this._it); clearTimeout(this._dc);
     const meta = this.readMeta();
     if (meta.unlockedEndings) this.setState({ unlockedEndings: meta.unlockedEndings });
+    // Stale saves may still have chatBusy from a mid-reply reload.
+    if (st.chatBusy || st.chatBusyTab || st.llmStatus) {
+      this.setState({ chatBusy: false, chatBusyTab: null, llmStatus: '' });
+    }
     if (st.pendingAfterNotebook) {
       this.setState({ notebookOpen: true, notebookAnim: false });
     }

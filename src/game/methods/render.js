@@ -151,6 +151,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       // Needed for clip-night d4cmp: hear clone + Sunday original side by side.
       { day: 0, item: 0, kind: 'audio', name: recordingName, who: 'You', when: 'Sunday evening', spec: '0:10', gate: !!st.voiceSent, playReal: true },
       { day: 1, item: 1, kind: 'video', who: 'Hanna', spec: '0:06' },
+      { day: 1, item: 1, kind: 'video', name: 'IMG_4471_full.mp4', who: 'Mia', spec: '0:22', gate: !!st.d1VideoSent, videoFull: true },
       // Same Nicole DMs as intro dmHistory (before the Monday banner).
       { day: 1, kind: 'audio', name: 'voice_message_0708.m4a', who: 'Nicole', when: 'Saturday evening', spec: '0:17', audioSrc: 'assets/audios/1-first_audio.wav' },
       { day: 1, kind: 'audio', name: 'voice_message_0709.m4a', who: 'Nicole', when: 'Sunday evening', spec: '0:04', audioSrc: 'assets/audios/1-second_audio.wav' },
@@ -176,11 +177,15 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         spec: r.spec, caption: r.caption || '', savedKind: r.savedKind || '',
         playReal: !!r.playReal,
         audioSrc: r.audioSrc || '',
+        videoFull: !!r.videoFull,
         seenKey,
         isGardenThumb: r.savedKind === 'garden', isCraftThumb: r.savedKind === 'craft',
         isPartyThumb: r.savedKind === 'party',
         kindLabel: r.kind === 'image' ? 'image' : r.kind === 'shot' ? 'image' : r.kind,
-        hasThumb: r.kind === 'image' && !r.savedKind, isVideoThumb: r.kind === 'video', isShotThumb: r.kind === 'shot',
+        hasThumb: r.kind === 'image' && !r.savedKind,
+        isVideoThumb: r.kind === 'video' && !r.videoFull,
+        isVideoFullThumb: r.kind === 'video' && !!r.videoFull,
+        isShotThumb: r.kind === 'shot',
         isAudio: r.kind === 'audio',
         isShotFake: r.kind === 'shot' && (r.name || '').indexOf('real') === -1,
         isShotReal: r.kind === 'shot' && (r.name || '').indexOf('real') > -1,
@@ -199,7 +204,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     const viewingMedia = st.screen === 'phone' && st.dev === 'gallery' && st.mediaOpen !== null && !!rows[st.mediaOpen];
     const openRow = viewingMedia
       ? rows[st.mediaOpen]
-      : { day: -1, item: -1, kind: '', name: '', meta: '', spec: '', caption: '', savedKind: '' };
+      : { day: -1, item: -1, kind: '', name: '', meta: '', spec: '', caption: '', savedKind: '', videoFull: false };
     const openItemChecks = playerChecks.filter(c => c.item === openRow.item);
     const revDone = revCheck ? !!st.done[revCheck.id] : true;
     const HITS = {
@@ -217,6 +222,12 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         { label: 'Frame consistency', value: 'consistent', pct: '96%' },
         { label: 'Compression signature', value: 'consistent', pct: '93%' },
         { label: 'Audio-visual sync', value: 'natural', pct: '95%' }
+      ] },
+      'IMG_4471_full.mp4': { score: 97, len: '0:22 of video', rows: [
+        { label: 'Generation artefacts', value: 'none detected', pct: '3%' },
+        { label: 'Frame consistency', value: 'consistent', pct: '97%' },
+        { label: 'Compression signature', value: 'consistent', pct: '94%' },
+        { label: 'Audio-visual sync', value: 'natural', pct: '96%' }
       ] },
       'nicole_party.jpg': { score: 99, len: '1 image', rows: [
         { label: 'Generation artefacts', value: 'none detected', pct: '1%' },
@@ -663,7 +674,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       reportCancel: () => this.setState({ reportOpen: false }),
       reportNew: () => this.doReport('new'), reportOld: () => this.doReport('old'), reportBoth: () => this.doReport('both'),
        dmGhostTyping: st.tab === 'dm' && st.dmGhostTyping,
-       chatTyping: st.chatBusy || (st.tab === 'dm' && st.dmGhostTyping),
+       chatTyping: (st.chatBusy && st.chatBusyTab === (st.tab === 'dm' ? 'dm' : 'group')) || (st.tab === 'dm' && st.dmGhostTyping),
       dmSilenceLine: st.tab === 'dm' && tier === 'gone'
         ? (st.day <= 4 ? 'She hasn' + "'" + 't opened this since Wednesday.' : 'Still nothing.') : '',
       samColor: st.samDead ? C.inkMuted : this.barStatusColor(st.sam), groupColor: this.barStatusColor(st.group),
@@ -786,6 +797,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         this.setState({ mediaOpen: next, seen, zoom: false });
       },
       openIsVideo: viewingMedia && openRow.kind === 'video',
+      openIsVideoShort: viewingMedia && openRow.kind === 'video' && !openRow.videoFull,
+      openIsVideoFull: viewingMedia && openRow.kind === 'video' && !!openRow.videoFull,
       openIsImage: viewingMedia && openRow.kind === 'image' && !openRow.savedKind,
       openIsGarden: viewingMedia && openRow.savedKind === 'garden',
       openIsCraft: viewingMedia && openRow.savedKind === 'craft',
@@ -802,11 +815,12 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       closeMedia: () => { this.stopAudio(); this.setState({ mediaOpen: null }); },
       archive: [
         { day: 1, kind: 'video', note: 'Forwarded by Hanna. 6 seconds.' },
+        { day: 1, kind: 'video', name: 'IMG_4471_full.mp4', note: 'Sent by Mia. 22 seconds.', gate: !!st.d1VideoSent },
         { day: 2, kind: 'photo', thumb: true, note: 'Posted by Hanna.' },
         { day: 3, kind: 'shot', name: 'screenshot_2847.png', note: 'Sent by Hanna.' },
         { day: 4, kind: 'audio', name: clipName, note: st.voiceSent ? 'Sent to you by Nicole. ' + (st.cloneAudioDuration ? Math.round(st.cloneAudioDuration) : 4) + ' seconds.' : 'Sent to you by Nicole. A screenshot of something you typed.' },
         { day: 4, kind: 'audio', name: day4VoiceName, note: 'Forwarded by Hanna. 11 seconds.' }
-      ].filter(a => a.day <= st.day).map(a => {
+      ].filter(a => a.day <= st.day && a.gate !== false).map(a => {
         const src = this.allDays()[a.day] || {};
         return {
           name: a.name || this.evidenceDeskTitle(src) || '', note: a.note, kind: a.kind,
@@ -929,7 +943,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       pickIsCraft: !!pickRow && pickRow.savedKind === 'craft',
       pickIsParty: !!pickRow && pickRow.savedKind === 'party',
       searchIdle: !!pickRow && !st.searched[pickRow.name],
-      pickIsVideo: !!pickRow && pickRow.kind === 'video',
+      pickIsVideo: !!pickRow && pickRow.kind === 'video' && !pickRow.videoFull,
+      pickIsVideoFull: !!pickRow && pickRow.kind === 'video' && !!pickRow.videoFull,
       searchDone: !!pickRow && !!st.searched[pickRow.name],
       searchOp: pickRow && st.searched[pickRow.name] ? 0.45 : 1,
       searchHits: pickHits.map(h => ({
@@ -956,9 +971,12 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       aiPickIsGarden: !!aiRow && aiRow.savedKind === 'garden',
       aiPickIsCraft: !!aiRow && aiRow.savedKind === 'craft',
       aiPickIsParty: !!aiRow && aiRow.savedKind === 'party',
-      aiPickIsVideo: !!aiRow && aiRow.kind === 'video',
+      aiPickIsVideo: !!aiRow && aiRow.kind === 'video' && !aiRow.videoFull,
+      aiPickIsVideoFull: !!aiRow && aiRow.kind === 'video' && !!aiRow.videoFull,
       aiPickIsAudio: !!aiRow && aiRow.kind === 'audio',
-      aiIdle: st.aiStage === 'idle', aiRunning: st.aiStage === 'running', aiResult: st.aiStage === 'done',
+      aiIdle: st.aiStage === 'idle' && !(aiRow && st.aiChecked[aiRow.name]),
+      aiRunning: st.aiStage === 'running',
+      aiResult: st.aiStage === 'done' || !!(aiRow && st.aiChecked[aiRow.name] && st.aiStage !== 'running'),
       aiPct: Math.round((st.aiStep / 3) * 100) + '%',
       aiSteps: ['Decoding file…', 'Comparing against known generation patterns…', 'Scoring…'].slice(0, st.aiStep).map(l => ({ label: l })),
       aiScore: aiData ? aiData.score + '%' : '',
@@ -971,13 +989,15 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       ],
       aiFooter: aiData ? 'Analysed ' + aiData.len + ' · model v4.2' : '',
       runAnalyse: () => {
-        if (!aiRow || st.aiStage === 'running') return;
+        if (!aiRow || st.aiStage === 'running' || st.aiChecked[aiRow.name]) return;
         this.setState({ aiStage: 'running', aiStep: 1 });
         clearTimeout(this._ai1); clearTimeout(this._ai2); clearTimeout(this._ai3);
         this._ai1 = setTimeout(() => this.setState({ aiStep: 2 }), 1000);
         this._ai2 = setTimeout(() => this.setState({ aiStep: 3 }), 2000);
         this._ai3 = setTimeout(() => {
-          this.setState({ aiStage: 'done' });
+          const aiChecked = Object.assign({}, this.state.aiChecked);
+          aiChecked[aiRow.name] = true;
+          this.setState({ aiStage: 'done', aiChecked });
           if (aiData && aiData.hint) this.bumpHint(3, 'hint', 'ai-' + aiRow.name);
           this.advance(2);
           this.log('— you ran the AI checker');
@@ -993,17 +1013,26 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
           name: r.name, meta: r.meta,
           hasThumb: r.hasThumb, isGardenThumb: r.isGardenThumb, isCraftThumb: r.isCraftThumb,
           isPartyThumb: r.isPartyThumb,
-          isVideoThumb: r.isVideoThumb, isShotFake: r.isShotFake, isShotReal: r.isShotReal,
+          isVideoThumb: r.isVideoThumb, isVideoFullThumb: r.isVideoFullThumb,
+          isShotFake: r.isShotFake, isShotReal: r.isShotReal,
           noThumb: r.noThumb, kindLabel: r.kindLabel,
           disabled: st.pickerMode === 'ai' ? false : !ok,
           op: (st.pickerMode === 'ai' || ok) ? 1 : 0.4,
           cursor: (st.pickerMode === 'ai' || ok) ? 'pointer' : 'default',
           hover: (st.pickerMode === 'ai' || ok) ? ('background:' + C.frame + ';') : '',
-          right: st.pickerMode === 'ai' ? '' : (ok ? (st.searched[r.name] ? 'searched' : '') : 'Images and video only'),
+          right: st.pickerMode === 'ai'
+            ? (st.aiChecked[r.name] ? 'checked' : '')
+            : (ok ? (st.searched[r.name] ? 'searched' : '') : 'Images and video only'),
           disabledForMode: st.pickerMode === 'ai' ? false : !ok,
           choose: () => {
-            if (this.state.pickerMode === 'ai') this.setState({ aiPickIdx: r.idx, pickerOpen: false, aiStage: 'idle', aiStep: 0 });
-            else if (ok) this.setState({ pickIdx: r.idx, pickerOpen: false });
+            if (this.state.pickerMode === 'ai') {
+              const checked = !!this.state.aiChecked[r.name];
+              this.setState({
+                aiPickIdx: r.idx, pickerOpen: false,
+                aiStage: checked ? 'done' : 'idle',
+                aiStep: checked ? 3 : 0
+              });
+            } else if (ok) this.setState({ pickIdx: r.idx, pickerOpen: false });
           }
         };
       }),
@@ -1025,8 +1054,15 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       },
       onDropAi: (e) => {
         if (e && e.preventDefault) e.preventDefault();
-        if (st.dragItem !== null) this.setState({ aiPickIdx: st.dragItem, dragItem: null, aiStage: 'idle', aiStep: 0 });
-        else this.setState({ pickerOpen: true, pickerMode: 'ai' });
+        if (st.dragItem !== null) {
+          const dropped = rows[st.dragItem];
+          const checked = !!(dropped && st.aiChecked[dropped.name]);
+          this.setState({
+            aiPickIdx: st.dragItem, dragItem: null,
+            aiStage: checked ? 'done' : 'idle',
+            aiStep: checked ? 3 : 0
+          });
+        } else this.setState({ pickerOpen: true, pickerMode: 'ai' });
       },
       toolPlayer: () => this.setState({ tool: 'player', mediaOpen: null }),
       toolSearch: () => this.setState({ tool: 'search' }),

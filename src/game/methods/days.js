@@ -77,7 +77,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       newMarkAt: null, showNewPill: false,
       actedToday: false, openedGroup: false, ignored: false, dmAnsweredToday: false, phoneOpenedToday: false, phoneClosing: false, playingAudioKey: null, audioPaused: false, audioScrubPct: '0%', audioScrubLabel: '0:00',
       shareTick: 0, shareHalved: false, tool: 'player', socTab: 'feed', socProfileKey: null, socPostId: null, socInfoOpen: false, mediaOpen: null, zoom: false, dev: null, threadOpen: null, chatFlash: false,
-      writeIn: false, writeText: '', writeStatus: null, chatGroupDraft: '', chatDmDraft: '', chatBusy: false, actionsOpen: false, chatGroupLeft: 5, chatDmLeft: 5,
+      writeIn: false, writeText: '', writeStatus: null, chatGroupDraft: '', chatDmDraft: '', chatBusy: false, chatBusyTab: null, actionsOpen: false, chatGroupLeft: 5, chatDmLeft: 5,
       dragItem: null, pickIdx: null, pickerOpen: false, pickerMode: 'search', aiPickIdx: null, aiStage: 'idle', aiStep: 0,
       dmGhostTyping: false, ghostTypedToday: false, onReadCharged: false,
       shotOpen: null, sawFake: false, sawReal: false, reportOpen: false,

@@ -162,7 +162,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   },
 
   sendD1Video() {
-    this.setState(s => ({ d1VideoSent: true }));
+    this.setState(s => ({ d1VideoSent: true, galleryNew: true }));
     setTimeout(() => {
       this.setState(
         s => ({ chat: s.chat.concat([{ who: 'Mia', kind: 'video', full: true, caption: 'hold on. Here is the full video' }]) }),
@@ -643,9 +643,11 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       ? { chatDmLeft: left - 1, chatDmDraft: '' }
       : { chatGroupLeft: left - 1, chatGroupDraft: '' };
     this.setState(Object.assign({}, remaining, {
-      chatBusy: true, actedToday: true, ignored: false,
+      chatBusy: true, chatBusyTab: tab, actedToday: true, ignored: false,
       dmAnsweredToday: tab === 'dm' ? true : st.dmAnsweredToday,
-      llmStatus: this._llmReady ? 'Replying...' : 'Model loading; using a fallback if needed'
+      llmStatus: this._llmReady
+        ? (tab === 'dm' ? 'Nicole is replying...' : 'The group is replying...')
+        : 'Model loading; using a fallback if needed'
     }));
     this.recordChatBehaviour(tab, text);
     const askMatch = this.maybeCompleteAskTasksFromChat(tab, text);
@@ -695,7 +697,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       }
     }
     const keepError = /offline|failed/i.test(String(this.state.llmStatus || ''));
-    this.setState({ chatBusy: false, llmStatus: keepError ? this.state.llmStatus : '' });
+    this.setState({ chatBusy: false, chatBusyTab: null, llmStatus: keepError ? this.state.llmStatus : '' });
     this.log(tab === 'dm' ? '— you texted Nicole' : '— you texted the group');
   },
 
