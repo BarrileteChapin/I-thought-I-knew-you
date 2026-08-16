@@ -2,18 +2,7 @@
 
 <div class="g-lp {{ titleLpMod }}" style="width:100%;height:100dvh;max-height:100dvh;overflow:hidden;background:var(--c-canvas);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--c-ink);">
 
-<sc-if value="{{ showTitleCast }}" hint-placeholder-val="{{ false }}">
-<div class="g-lp-cast" aria-hidden="true">
-  <img class="g-lp-cast-face g-lp-cast-nicole" src="assets/av-nicole.webp" alt="">
-  <img class="g-lp-cast-face g-lp-cast-hanna" src="assets/av-hanna.webp" alt="">
-  <img class="g-lp-cast-face g-lp-cast-mia" src="assets/av-mia.webp" alt="">
-  <img class="g-lp-cast-face g-lp-cast-lea" src="assets/av-lea.webp" alt="">
-  <img class="g-lp-cast-face g-lp-cast-benito" src="assets/av-benito.webp" alt="">
-  <img class="g-lp-cast-face g-lp-cast-nele" src="assets/av-nele.webp" alt="">
-</div>
-</sc-if>
-
-<div class="g-lp-frame" style="position:relative;z-index:1;flex:0 0 auto;width:var(--frame-w);max-width:100vw;height:var(--frame-h);max-height:100dvh;background:var(--c-frame);border-radius:var(--r-frame);overflow:hidden;display:flex;flex-direction:column;">
+<div class="g-lp-frame" style="position:relative;z-index:1;flex:0 0 auto;width:var(--frame-w);max-width:100vw;height:var(--frame-h);max-height:min(var(--frame-h), 100dvh);background:var(--c-frame);border-radius:var(--r-frame);overflow:hidden;display:flex;flex-direction:column;">
 
 <sc-if value="{{ isCinematic }}" hint-placeholder-val="{{ false }}">
 <div style="width:100%;height:100%;position:relative;overflow:hidden;background:#000000;">
@@ -52,7 +41,9 @@
 <sc-if value="{{ isTitle }}" hint-placeholder-val="{{ true }}">
 <div class="g-title">
   <div class="g-title-body">
-    <h1 class="g-title-heading">I Thought<br>I Knew You</h1>
+    <h1 class="g-title-heading">
+      <img src="assets/logo.svg" alt="I Thought I Knew You" class="g-title-logo" width="272" height="116" decoding="async">
+    </h1>
     <p class="g-title-lead"><span class="g-title-lead-text"><sc-for list="{{ titleLeadParts }}" as="p" hint-placeholder-count="1"><sc-if value="{{ p.bold }}" hint-placeholder-val="{{ false }}"><strong class="g-title-lead-em">{{ p.text }}</strong></sc-if><sc-if value="{{ p.notBold }}" hint-placeholder-val="{{ true }}"><span>{{ p.text }}</span></sc-if></sc-for></span><sc-if value="{{ titleCaretOn }}" hint-placeholder-val="{{ true }}"><span class="g-title-caret" aria-hidden="true"></span></sc-if></p>
     <div class="g-title-actions">
       <sc-if value="{{ hasSave }}" hint-placeholder-val="{{ false }}">
@@ -1941,4 +1932,7 @@
 </sc-if>
 
 </div>
+
+<img class="g-lp-mark" src="assets/logo_oneline.svg" alt="" width="220" height="20" decoding="async" aria-hidden="true">
+
 </div>

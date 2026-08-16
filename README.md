@@ -310,3 +310,12 @@ all referenced IDs still exist. Then manually verify the affected game path:
 
 Check the browser console for failed fetches, missing assets, template errors,
 and runtime errors.
+
+## Third-party
+
+Title-screen glitch effect uses [glitchGL](https://github.com/naughtyduk/glitchGL)
+(with Three.js). Copyright notice:
+
+```text
+Copyright (c) NaughtyDuk. All Rights Reserved.
+```

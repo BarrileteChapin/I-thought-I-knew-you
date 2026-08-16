@@ -1535,11 +1535,194 @@ video.g-notebook-got-media {
   }
 }
 
-/* Title LP — class cast around the phone frame (desktop only) */
-.g-lp {
-  position: relative;
+/* Title home glitch — fixed layer outside React (PC only) */
+.g-home-glitch-layer {
+  display: none;
 }
 
+.g-lp {
+  position: relative;
+  z-index: 1;
+  transition: background-color .75s ease;
+}
+
+.g-lp.has-home-glitch {
+  background: transparent !important;
+}
+
+.g-lp.has-home-glitch.is-leaving {
+  /* Reveal play canvas under the fading glitch so the handoff doesn't pop. */
+  background: var(--c-canvas-play) !important;
+}
+
+.g-lp.is-play {
+  background: var(--c-canvas-play) !important;
+}
+
+.g-lp.is-leaving {
+  pointer-events: none;
+}
+
+.g-lp.is-leaving .g-lp-frame {
+  transition: opacity .55s ease, transform .7s cubic-bezier(.16, .8, .24, 1);
+  opacity: 0;
+  transform: scale(.985);
+}
+
+.g-lp-mark {
+  display: none;
+}
+
+/* Desktop only: room around the phone mockup */
+@media (min-width: 768px) {
+  body:has(.g-lp.is-play) {
+    background: var(--c-canvas-play);
+  }
+
+  /* Viewport chrome — fixed so flex centering / frame z-index can't bury it */
+  .g-lp.is-play .g-lp-mark,
+  .g-lp:not(.is-title) .g-lp-mark {
+    display: block;
+    position: fixed;
+    left: max(20px, env(safe-area-inset-left, 0px));
+    bottom: max(20px, env(safe-area-inset-bottom, 0px));
+    right: auto;
+    top: auto;
+    z-index: 20;
+    width: min(240px, 26vw);
+    height: auto;
+    margin: 0;
+    pointer-events: none;
+    opacity: 1;
+    /* SVG is white-filled; keep readable on mid-grey canvas */
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, .45)) drop-shadow(0 1px 2px rgba(0, 0, 0, .25));
+  }
+}
+
+/* Desktop: fixed phone width; height flexes, but capped on tall screens. */
+@media (min-width: 768px) {
+  .g-lp-frame {
+    --frame-gutter-x: 32px;
+    --frame-gutter-y: 22px;
+    /* ~iPhone-ish shell; stops the mockup from becoming a tower on tall monitors */
+    --frame-max-h: 844px;
+    box-sizing: border-box;
+    flex: 0 0 auto !important;
+    width: 390px !important;
+    max-width: calc(100vw - (var(--frame-gutter-x) * 2)) !important;
+    height: min(
+      calc(100dvh - (var(--frame-gutter-y) * 2)),
+      var(--frame-max-h)
+    ) !important;
+    max-height: min(
+      calc(100dvh - (var(--frame-gutter-y) * 2)),
+      var(--frame-max-h)
+    ) !important;
+  }
+
+  /* Title / top page only — thick black device bezel */
+  .g-lp-frame:has(.g-title) {
+    border: 9px solid #111111;
+    box-shadow: 0 18px 48px rgba(0, 0, 0, .35);
+  }
+}
+
+@media (min-width: 768px) {
+  .g-home-glitch-layer.is-on {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: auto;
+    opacity: 1;
+    transition: opacity .75s ease;
+  }
+
+  /* Darken class-photo chrome so the title shell pops */
+  .g-home-glitch-layer.is-on::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: rgba(8, 8, 10, .48);
+    transition: opacity .75s ease;
+  }
+
+  body:has(.g-lp.is-leaving) .g-home-glitch-layer.is-on {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  body:has(.g-lp.is-leaving) {
+    background: var(--c-canvas-play);
+    transition: background-color .75s ease;
+  }
+
+  .g-home-glitch-pane {
+    position: relative;
+    flex: 0 0 50%;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: auto;
+  }
+
+  .g-home-glitch-pane.is-cutting {
+    animation: g-home-cut .12s ease-out;
+  }
+
+  .g-home-glitch-pane.is-cutting::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    background: rgba(8, 8, 10, .35);
+    opacity: 1;
+  }
+
+  .g-home-glitch-half {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* Different crop before glitch captures the texture */
+  .g-home-glitch-pane.is-left .g-home-glitch-half {
+    object-position: 22% center;
+  }
+
+  .g-home-glitch-pane.is-right .g-home-glitch-half {
+    object-position: 78% center;
+  }
+
+  .g-home-glitch-pane canvas,
+  .g-home-glitch-pane [data-glitch-target] {
+    display: block !important;
+    position: absolute !important;
+    inset: 0 !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    pointer-events: auto;
+  }
+}
+
+@keyframes g-home-cut {
+  0% { filter: brightness(1.05) contrast(1.05); }
+  100% { filter: none; }
+}
+
+/* Title LP — class cast around the phone frame (desktop only) */
 .g-lp-cast {
   display: none;
 }
@@ -1654,30 +1837,38 @@ video.g-notebook-got-media {
   align-items: center;
   justify-content: flex-start;
   background: transparent;
+  overflow: hidden;
 }
 
 .g-title-heading {
+  flex: 0 0 auto;
   margin: 28px 0 28px;
-  font-family: var(--font-heading);
-  font-size: var(--fs-hero);
-  font-weight: var(--font-heading-weight);
-  line-height: 1.02;
-  letter-spacing: -.02em;
   text-align: center;
-  color: var(--c-ink);
+  line-height: 0;
+}
+
+.g-title-logo {
+  display: block;
+  width: min(272px, 72vw);
+  height: auto;
+  margin: 0 auto;
 }
 
 .g-title-lead {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
   font-family: var(--font-ending);
   font-size: 23px;
   line-height: 1.45;
   font-weight: 400;
   color: var(--c-accent-bright);
   max-width: 28ch;
+  width: 100%;
   margin: 0 auto 28px;
   text-align: center;
   text-wrap: pretty;
-  min-height: 7.2em;
 }
 
 .g-title-lead-text {
@@ -1701,7 +1892,7 @@ video.g-notebook-got-media {
 
 .g-title-actions {
   width: 100%;
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
@@ -1712,7 +1903,6 @@ video.g-notebook-got-media {
 
 .g-title-bottom {
   width: 100%;
-  margin-top: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1731,6 +1921,58 @@ video.g-notebook-got-media {
 .g-title-cta-secondary {
   width: 100%;
   margin-top: 8px;
+}
+
+/* Short shell: tighten chrome so Continue / Start over stay on screen */
+@media (max-height: 760px) {
+  .g-title-body {
+    padding: 20px var(--space-screen-x) 16px;
+  }
+
+  .g-title-heading {
+    margin: 10px 0 12px;
+  }
+
+  .g-title-logo {
+    width: min(200px, 58vw);
+  }
+
+  .g-title-lead {
+    font-size: 17px;
+    line-height: 1.35;
+    margin-bottom: 12px;
+  }
+
+  .g-title-save-stack {
+    margin-bottom: 10px;
+  }
+
+  .g-title-start {
+    min-height: 44px;
+  }
+}
+
+@media (max-height: 620px) {
+  .g-title-body {
+    padding: 12px var(--space-screen-x) 10px;
+  }
+
+  .g-title-heading {
+    margin: 4px 0 8px;
+  }
+
+  .g-title-logo {
+    width: min(160px, 48vw);
+  }
+
+  .g-title-lead {
+    font-size: 15px;
+    margin-bottom: 8px;
+  }
+
+  .g-title-cta-secondary {
+    margin-top: 4px;
+  }
 }
 
 .g-title-save-stack {

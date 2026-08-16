@@ -120,7 +120,7 @@
 
   /* Phone shell size */
   --frame-w: 100%;
-  --frame-h: 100dvh; /* mobile: fill viewport (falls back via max-height) */
+  --frame-h: 100dvh;
   --btn-screen-max: 280px;
 
   /* Radius */
@@ -257,6 +257,8 @@
   --c-black-heavy: rgba(0, 0, 0, .5);
   --c-black-strong: rgba(0, 0, 0, .6);
   --c-canvas: #D8D8D8;
+  /* Desktop chrome around the phone (non-title screens) — dark enough for white mark */
+  --c-canvas-play: #969798;
   --c-frame: #E8E8E8;
   --c-panel: #E4E4E4;
   --c-line: #D4D4D4;
@@ -280,11 +282,11 @@
   --c-warm-soft: rgba(242, 177, 92, .10);
 }
 
-/* Desktop: phone mockup size + rounded shell (keep min-width in sync with --bp-desktop) */
+/* Desktop: phone mockup width + rounded shell (height is flexible in game.css) */
 @media (min-width: 768px) {
   :root {
     --frame-w: 390px;
-    --frame-h: 844px;
+    --frame-h: auto;
     --r-frame: 32px;
   }
 }
