@@ -1207,7 +1207,10 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
       continueGame: () => this.beginExperience('continue'),
       startOver: () => this.beginExperience('startOver'),
       showTitleCast: st.screen === 'title',
-      titleLpMod: st.titleLeaving ? 'is-leaving' : '',
+      titleLpMod: [
+        st.screen === 'title' ? 'is-title' : 'is-play',
+        st.titleLeaving ? 'is-leaving' : ''
+      ].filter(Boolean).join(' '),
       titleLeadParts: this.titleLeadParts(st.titleLeadShown),
       titleCaretOn: st.screen === 'title' && !st.titleLeaving,
       openEndingsGallery: () => this.openEndingsGallery(),

@@ -10,6 +10,9 @@
   <style>x-dc{display:none!important}</style>
   <script src="./assets/vendor/react.production.min.js"></script>
   <script src="./assets/vendor/react-dom.production.min.js"></script>
+  <!-- Title home glitch (PC): Three.js + glitchGL. Personal/academic licence. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/naughtyduk/glitchGL@main/scripts/glitchGL.min.js"></script>
   <script>
     // Public, pinned quantized bundle derived from Kyutai's Pocket TTS model.
     // Replace this with a self-hosted mirror if the deployment needs one.
@@ -40,6 +43,7 @@
   <script src="./src/game/methods/relation-map.js"></script>
   <script src="./src/game/methods/ending.js"></script>
   <script src="./src/game/methods/render.js"></script>
+  <script src="./src/game/methods/home-glitch.js"></script>
   <script src="./src/data/load-game-data.js"></script>
   <script>
     // The original bundle resolves these paths through its asset manifest.
@@ -62,6 +66,15 @@
   </svg>
   <div id="app-loading" role="status" aria-label="Loading">
     <span class="g-app-loading-spinner" aria-hidden="true"></span>
+  </div>
+  <!-- Outside React so glitchGL's canvas survives title re-renders. PC title only. -->
+  <div id="g-home-glitch-layer" class="g-home-glitch-layer" hidden aria-hidden="true">
+    <div class="g-home-glitch-pane is-left">
+      <img id="g-home-glitch-l" class="g-home-glitch-half" src="assets/class_10b.webp" alt="" decoding="async">
+    </div>
+    <div class="g-home-glitch-pane is-right">
+      <img id="g-home-glitch-r" class="g-home-glitch-half" src="assets/nicole-garden.webp" alt="" decoding="async">
+    </div>
   </div>
   <script>
     (async function bootOrganizedGame() {

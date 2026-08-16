@@ -70,11 +70,10 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
   beginExperience(mode) {
     if (this.state.titleLeaving) return;
     this.stopTitleLead();
-    const desktop = typeof window !== 'undefined'
-      && window.matchMedia
-      && window.matchMedia('(min-width: 768px)').matches;
-    const delay = desktop ? 560 : 0;
+    // Let the title chrome / glitch bg fade before swapping screens.
+    const leaveMs = 820;
     this.setState({ titleLeaving: true, endingsGalleryOpen: false, endingsGalleryClosing: false });
+    if (typeof this.stopHomeGlitchCycle === 'function') this.stopHomeGlitchCycle();
     clearTimeout(this._titleLeave);
     this._titleLeave = setTimeout(() => {
       if (mode === 'continue') {
@@ -103,7 +102,7 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
         const el = this.nameRef.current;
         if (el) el.focus();
       });
-    }, delay);
+    }, leaveMs);
   },
 
   confirmName() {

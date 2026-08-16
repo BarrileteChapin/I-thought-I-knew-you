@@ -16,6 +16,13 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     if (this.state.screen === 'room' || this.state.screen === 'phone') {
       this.preloadRoomBg(this.roomBgFor(this.state.day, this.state.phase, !!this.state.phoneOpenedToday));
     }
+    this.syncHomeGlitch();
+    this._homeGlitchMq = window.matchMedia ? window.matchMedia(this.HOME_GLITCH_MQ) : null;
+    this._onHomeGlitchMq = () => this.syncHomeGlitch();
+    if (this._homeGlitchMq) {
+      if (this._homeGlitchMq.addEventListener) this._homeGlitchMq.addEventListener('change', this._onHomeGlitchMq);
+      else if (this._homeGlitchMq.addListener) this._homeGlitchMq.addListener(this._onHomeGlitchMq);
+    }
     if (this.LLM_CHAT_ENABLED) {
       console.log('[chat-llm] preloading chat model');
       this.ensureLlm(false);
@@ -81,6 +88,11 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     clearTimeout(this._socToastHide); clearTimeout(this._socToastClear);
     clearTimeout(this._camT); clearTimeout(this._cineT);
     this.stopAmbient();
+    if (this._homeGlitchMq) {
+      if (this._homeGlitchMq.removeEventListener) this._homeGlitchMq.removeEventListener('change', this._onHomeGlitchMq);
+      else if (this._homeGlitchMq.removeListener) this._homeGlitchMq.removeListener(this._onHomeGlitchMq);
+    }
+    this.teardownHomeGlitch();
   },
 
   wipeAudio() {
@@ -107,6 +119,8 @@ window.GameMethods = Object.assign(window.GameMethods || {}, {
     if (this.state.screen === 'title' && prevScreen !== 'title' && !this.state.titleLeaving) {
       this.beginTitleLead();
     }
+    if (prevScreen === 'title' && this.state.screen !== 'title') this.teardownHomeGlitch();
+    else if (this.state.screen === 'title') this.syncHomeGlitch();
     if (this.state.screen === 'room' || this.state.screen === 'phone') {
       this.preloadRoomBg(this.roomBgFor(this.state.day, this.state.phase, !!this.state.phoneOpenedToday));
     }
