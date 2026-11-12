@@ -1,4 +1,43 @@
 (function () {
+  // Lite: phones / reduced-motion / very weak devices — skip canvas, WebGL, smooth scroll.
+  var isLite =
+    typeof window.__lLite === 'boolean'
+      ? window.__lLite
+      : (function () {
+          try {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return true;
+            return window.matchMedia('(max-width: 900px)').matches;
+          } catch (e) {
+            return true;
+          }
+        })();
+
+  function loadScriptOnce(src) {
+    return new Promise(function (resolve, reject) {
+      var existing = document.querySelector('script[data-l-src="' + src + '"]');
+      if (existing) {
+        if (existing.getAttribute('data-l-ready') === '1') resolve();
+        else {
+          existing.addEventListener('load', function () {
+            resolve();
+          }, { once: true });
+          existing.addEventListener('error', reject, { once: true });
+        }
+        return;
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      s.async = true;
+      s.setAttribute('data-l-src', src);
+      s.addEventListener('load', function () {
+        s.setAttribute('data-l-ready', '1');
+        resolve();
+      }, { once: true });
+      s.addEventListener('error', reject, { once: true });
+      document.head.appendChild(s);
+    });
+  }
+
   var video = document.getElementById('l-intro-video');
   var btn = document.getElementById('l-intro-mute');
   if (video && btn) {
@@ -14,6 +53,74 @@
       }
     });
   }
+
+  // Pause hero video when off-screen (decode cost on phones)
+  if (video && 'IntersectionObserver' in window) {
+    var videoIo = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            var playPromise = video.play();
+            if (playPromise && typeof playPromise.catch === 'function') {
+              playPromise.catch(function () {});
+            }
+          } else {
+            video.pause();
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+    videoIo.observe(video);
+  }
+
+  // Mobile mute: fixed bottom-left, fade out with scroll
+  (function initMuteScrollFade() {
+    if (!btn) return;
+    var heroEl = document.getElementById('top');
+    var mobileMq = window.matchMedia('(max-width: 899px)');
+
+    function syncMuteFade() {
+      if (!mobileMq.matches) {
+        btn.style.opacity = '';
+        btn.classList.remove('is-faded');
+        btn.removeAttribute('aria-hidden');
+        return;
+      }
+      var scrolled = window.scrollY || document.documentElement.scrollTop || 0;
+      var fadeStart = 48;
+      var fadeEnd = heroEl
+        ? Math.min(260, Math.max(140, heroEl.offsetHeight * 0.28))
+        : 200;
+      var t = (scrolled - fadeStart) / Math.max(1, fadeEnd - fadeStart);
+      if (t < 0) t = 0;
+      if (t > 1) t = 1;
+      var opacity = 1 - t;
+      btn.style.opacity = String(opacity);
+      var faded = opacity < 0.12;
+      btn.classList.toggle('is-faded', faded);
+      if (faded) btn.setAttribute('aria-hidden', 'true');
+      else btn.removeAttribute('aria-hidden');
+    }
+
+    syncMuteFade();
+    window.addEventListener('scroll', syncMuteFade, { passive: true });
+    window.addEventListener('resize', syncMuteFade);
+    if (mobileMq.addEventListener) {
+      mobileMq.addEventListener('change', syncMuteFade);
+    }
+
+    var muteLenisTries = 0;
+    var muteLenisHook = window.setInterval(function () {
+      muteLenisTries += 1;
+      if (window.__lLenis && typeof window.__lLenis.on === 'function') {
+        window.__lLenis.on('scroll', syncMuteFade);
+        window.clearInterval(muteLenisHook);
+      } else if (muteLenisTries > 40) {
+        window.clearInterval(muteLenisHook);
+      }
+    }, 100);
+  })();
 
   var personPath =
     'M8 2a2.5 2.5 0 1 0 0 5a2.5 2.5 0 0 0 0-5M4 8.5A1.5 1.5 0 0 1 5.5 7h5A1.5 1.5 0 0 1 12 8.5c0 1.33-.472 2.436-1.266 3.195C9.949 12.447 9.023 12.87 8 12.87s-1.949-.424-2.734-1.175C4.472 10.936 4 9.831 4 8.5';
@@ -198,7 +305,9 @@
   })();
 
   // Hero logo: slit-scan displacement (same idea as karinkiho.com/en/experiment/slit)
+  // Skipped on lite — per-pixel canvas every frame is too heavy for phones.
   (function initHeroLogoSlit() {
+    if (isLite) return;
     var wrap = document.querySelector('.l-hero-logo-glitch');
     var img = wrap && wrap.querySelector('.l-hero-logo');
     var canvas = wrap && wrap.querySelector('.l-hero-logo-canvas');
@@ -368,73 +477,6 @@
     }
   })();
 
-  // Mobile literacy carousel: 1) copy+lead, then each compact stat
-  Array.prototype.forEach.call(document.querySelectorAll('.l-literacy-layout'), function (wrap) {
-    var track = wrap.querySelector('.l-literacy-track');
-    var dotsHost = wrap.querySelector('.l-facts-dots');
-    if (!track || !dotsHost) return;
-
-    var slides = Array.prototype.slice.call(track.querySelectorAll('.l-literacy-slide'));
-    if (!slides.length) return;
-
-    dotsHost.innerHTML = slides
-      .map(function (_, i) {
-        return (
-          '<button type="button" aria-label="Slide ' +
-          (i + 1) +
-          '"' +
-          (i === 0 ? ' class="is-active"' : '') +
-          '></button>'
-        );
-      })
-      .join('');
-
-    var dots = Array.prototype.slice.call(dotsHost.querySelectorAll('button'));
-    var desktopMq = window.matchMedia('(min-width: 960px)');
-
-    function setActive(index) {
-      dots.forEach(function (dot, i) {
-        dot.classList.toggle('is-active', i === index);
-      });
-    }
-
-    function nearestIndex() {
-      var left = track.scrollLeft;
-      var best = 0;
-      var bestDist = Infinity;
-      slides.forEach(function (slide, i) {
-        var dist = Math.abs(slide.offsetLeft - left);
-        if (dist < bestDist) {
-          bestDist = dist;
-          best = i;
-        }
-      });
-      return best;
-    }
-
-    var scrollTick = null;
-    track.addEventListener(
-      'scroll',
-      function () {
-        if (desktopMq.matches) return;
-        if (scrollTick) return;
-        scrollTick = window.requestAnimationFrame(function () {
-          scrollTick = null;
-          setActive(nearestIndex());
-        });
-      },
-      { passive: true }
-    );
-
-    dots.forEach(function (dot, i) {
-      dot.addEventListener('click', function () {
-        if (desktopMq.matches) return;
-        track.scrollTo({ left: slides[i].offsetLeft, behavior: 'smooth' });
-        setActive(i);
-      });
-    });
-  });
-
   var contactForm = document.getElementById('l-contact-form');
   var contactHeld = document.getElementById('l-contact-held');
   if (contactForm && contactHeld) {
@@ -467,14 +509,15 @@
   if (typeof ScrollTrigger !== 'undefined') gsap.registerPlugin(ScrollTrigger);
   if (hasSplitText) gsap.registerPlugin(SplitText);
 
-  // —— Lenis ——
+  // —— Lenis (desktop only; native scroll on lite) ——
   var lenis = null;
-  if (typeof Lenis === 'function') {
+  if (!isLite && typeof Lenis === 'function') {
     lenis = new Lenis({
       duration: 1.1,
       smoothWheel: true,
       touchMultiplier: 1.1,
     });
+    window.__lLenis = lenis;
     lenis.on('scroll', updateHeaderLogo);
     if (typeof ScrollTrigger !== 'undefined') {
       lenis.on('scroll', ScrollTrigger.update);
@@ -499,7 +542,8 @@
 
   // —— Section headings (.l-h2 / .l-h3): keep entrance motion ——
   // Story heading is excluded — stays quiet inside the nights scrub.
-  if (hasSplitText && typeof ScrollTrigger !== 'undefined') {
+  // SplitText DOM explosion skipped on lite.
+  if (!isLite && hasSplitText && typeof ScrollTrigger !== 'undefined') {
     Array.prototype.forEach.call(document.querySelectorAll('.l-h2, .l-h3'), function (el) {
       if (el.classList.contains('l-night-story-heading')) return;
 
@@ -703,11 +747,13 @@
     }
   })();
 
-  // —— Nights: sequential slide-in from the right (no scrub) ——
-  (function initNightsSlideIn() {
+  // —— Nights: vertical scroll drives horizontal rail until Thursday ——
+  (function initNightsScrub() {
     var nightsSection = document.getElementById('project');
+    var nightsPin = nightsSection && nightsSection.querySelector('.l-nights-pin');
+    var nightsRail = nightsSection && nightsSection.querySelector('.l-nights-rail');
     var nightsTrack = document.getElementById('l-nights-track');
-    if (!nightsSection || !nightsTrack) return;
+    if (!nightsSection || !nightsPin || !nightsRail || !nightsTrack) return;
     if (typeof ScrollTrigger === 'undefined' || typeof gsap === 'undefined') return;
 
     var nightCards = Array.prototype.slice.call(
@@ -716,42 +762,91 @@
     if (!nightCards.length) return;
 
     var reduceMq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    var desktopMq = window.matchMedia('(min-width: 960px)');
-    var played = false;
+    var scrubTween = null;
 
-    function play() {
-      if (played) return;
-      played = true;
+    function scrollDist() {
+      var last = nightCards[nightCards.length - 1];
+      if (!last) return 0;
+      var railStyle = window.getComputedStyle(nightsRail);
+      var padL = parseFloat(railStyle.paddingLeft) || 0;
+      var padR = parseFloat(railStyle.paddingRight) || 0;
+      var visible = Math.max(0, nightsRail.clientWidth - padL - padR);
+      // Stop when Thursday's right edge meets the rail's content right — no dead margin after
+      var endX = last.offsetLeft + last.offsetWidth;
+      return Math.max(0, endX - visible);
+    }
+
+    function killScrub() {
+      if (scrubTween) {
+        if (scrubTween.scrollTrigger) scrubTween.scrollTrigger.kill();
+        scrubTween.kill();
+        scrubTween = null;
+      }
+      gsap.set(nightsTrack, { x: 0, clearProps: 'transform' });
+      nightsPin.style.height = '';
+      nightsSection.classList.remove('is-nights-scrub');
+      nightsSection.classList.remove('is-nights-native');
+    }
+
+    function setupScrub() {
+      killScrub();
 
       if (reduceMq.matches) {
-        gsap.set(nightCards, { clearProps: 'transform,opacity' });
+        nightsSection.classList.add('is-nights-native');
         return;
       }
 
-      // PC: stronger right-origin entrance; mobile: lighter nudge
-      var fromX = desktopMq.matches ? Math.min(140, window.innerWidth * 0.18) : 72;
+      var dist = scrollDist();
+      // Desktop with all four cards visible: no horizontal travel
+      if (dist < 12) {
+        nightsSection.classList.remove('is-nights-scrub');
+        return;
+      }
 
-      gsap.fromTo(
-        nightCards,
-        { x: fromX, opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
-          duration: desktopMq.matches ? 0.85 : 0.65,
-          stagger: desktopMq.matches ? 0.16 : 0.1,
-          ease: 'power3.out',
-        }
-      );
+      // Sticky rail + tall pin spacer (not full-viewport pin — less empty top/bottom)
+      nightsSection.classList.add('is-nights-scrub');
+      gsap.set(nightsTrack, { x: 0 });
+
+      var stickyH = nightsRail.offsetHeight;
+      nightsPin.style.height = stickyH + dist + 'px';
+
+      scrubTween = gsap.to(nightsTrack, {
+        x: function () {
+          return -scrollDist();
+        },
+        ease: 'none',
+        scrollTrigger: {
+          trigger: nightsPin,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0.4,
+          invalidateOnRefresh: true,
+          onRefresh: function () {
+            var d = scrollDist();
+            var h = nightsRail.offsetHeight;
+            nightsPin.style.height = h + d + 'px';
+          },
+        },
+      });
     }
 
-    gsap.set(nightCards, { x: desktopMq.matches ? 140 : 72, opacity: 0 });
+    setupScrub();
 
-    ScrollTrigger.create({
-      trigger: nightsSection,
-      start: 'top 70%',
-      once: true,
-      onEnter: play,
+    var resizeTimer = null;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        setupScrub();
+        ScrollTrigger.refresh();
+      }, 180);
     });
+
+    if (reduceMq.addEventListener) {
+      reduceMq.addEventListener('change', function () {
+        setupScrub();
+        ScrollTrigger.refresh();
+      });
+    }
   })();
 
   // —— Story section (after film): line reveal + Nicole glitch ——
@@ -766,7 +861,7 @@
     var storyGlitchPane = document.getElementById('l-night-story-glitch');
     var storyGlitchImg = document.getElementById('l-night-story-glitch-img');
     var storyGlitchMq = window.matchMedia
-      ? window.matchMedia('(min-width: 768px)')
+      ? window.matchMedia('(min-width: 1024px)')
       : null;
     var STORY_GLITCH_POOL = [
       '/assets/landing/story/nicole-garden.webp',
@@ -782,11 +877,25 @@
     var storyBodyPlayed = false;
 
     function isStoryGlitchDesktop() {
+      if (isLite) return false;
       try {
         return !!(storyGlitchMq && storyGlitchMq.matches);
       } catch (e) {
         return false;
       }
+    }
+
+    function ensureStoryGlitchLibs() {
+      if (typeof window.glitchGL === 'function' && typeof window.THREE !== 'undefined') {
+        return Promise.resolve();
+      }
+      return loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js').then(
+        function () {
+          return loadScriptOnce(
+            'https://cdn.jsdelivr.net/gh/naughtyduk/glitchGL@main/scripts/glitchGL.min.js'
+          );
+        }
+      );
     }
 
     function waitImgReady(img) {
@@ -979,15 +1088,15 @@
     function mountStoryGlitch() {
       if (storyGlitchInst || !storyGlitchWanted || !isStoryGlitchDesktop()) return;
       if (!storyGlitchPane || !storyGlitchImg) return;
-      if (typeof window.glitchGL !== 'function' || typeof window.THREE === 'undefined') {
-        return;
-      }
 
       storyGlitchMountRun += 1;
       var run = storyGlitchMountRun;
       storySection.classList.add('is-glitch-on');
 
-      waitImgReady(storyGlitchImg)
+      ensureStoryGlitchLibs()
+        .then(function () {
+          return waitImgReady(storyGlitchImg);
+        })
         .then(function () {
           if (run !== storyGlitchMountRun || storyGlitchInst) return;
           if (!storyGlitchWanted || !isStoryGlitchDesktop()) return;

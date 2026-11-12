@@ -8,6 +8,27 @@
   <link rel="stylesheet" href="/styles/landing.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/bold/style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css">
+  <script>
+    /* Lite mode: skip canvas/WebGL/smooth-scroll on phones & weak devices */
+    window.__lLite = (function () {
+      try {
+        var mq = window.matchMedia;
+        if (mq && mq('(prefers-reduced-motion: reduce)').matches) return true;
+        var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        if (conn && (conn.saveData || /2g/.test(conn.effectiveType || ''))) return true;
+        var narrow = mq && mq('(max-width: 900px)').matches;
+        var coarse = mq && mq('(pointer: coarse)').matches;
+        if (narrow) return true;
+        if (coarse && mq('(max-width: 1100px)').matches) return true;
+        if (typeof navigator.deviceMemory === 'number' && navigator.deviceMemory <= 2) return true;
+        if (typeof navigator.hardwareConcurrency === 'number' && navigator.hardwareConcurrency <= 2) return true;
+        return false;
+      } catch (e) {
+        return true;
+      }
+    })();
+    document.documentElement.classList.toggle('l-lite', !!window.__lLite);
+  </script>
 </head>
 <body>
   <a class="l-play-fixed" href="/play/">Play</a>
@@ -30,8 +51,8 @@
             <canvas class="l-hero-logo-canvas" aria-hidden="true"></canvas>
           </h1>
           <p class="l-hero-lead">
-            A class-chat game about deepfakes, rumours,<br>
-            and the friend you’d rather believe.<br>
+            A class-chat game about deepfakes, rumours,
+            and the friend you’d rather believe.
             Can you help her before the chat decides for you?
           </p>
         </div>
@@ -50,11 +71,6 @@
                 </video>
               </div>
             </div>
-            <button type="button" class="l-film-mute" id="l-intro-mute" data-unmuted="false" aria-label="Unmute">
-              <i class="ph-bold ph-speaker-high l-icon-unmuted" aria-hidden="true"></i>
-              <i class="ph-bold ph-speaker-slash l-icon-muted" aria-hidden="true"></i>
-            </button>
-
             <!-- Live-ish group chat feed, anchored to the phone -->
             <div class="l-hero-chat" id="l-hero-chat" aria-hidden="true"></div>
           </div>
@@ -79,6 +95,11 @@
         </div>
 
       </div>
+
+      <button type="button" class="l-film-mute" id="l-intro-mute" data-unmuted="false" aria-label="Unmute">
+        <i class="ph-bold ph-speaker-high l-icon-unmuted" aria-hidden="true"></i>
+        <i class="ph-bold ph-speaker-slash l-icon-muted" aria-hidden="true"></i>
+      </button>
     </section>
 
     <!-- Media literacy -->
@@ -137,7 +158,6 @@
             <a class="l-fact-source" href="https://www.commonsensemedia.org/research/teens-trust-and-technology-in-the-age-of-ai" target="_blank" rel="noopener noreferrer">Common Sense Media, 2024</a>
           </article>
         </div>
-        <div class="l-facts-dots" role="tablist" aria-label="Media literacy slides"></div>
       </div>
     </section>
 
@@ -430,10 +450,7 @@
     </div>
   </footer>
 
-  <!-- Story Nicole glitch (PC): Three.js + glitchGL. Personal/academic licence. -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/gh/naughtyduk/glitchGL@main/scripts/glitchGL.min.js" defer></script>
-  <!-- Landing-only motion stack (not loaded on /play/) -->
+  <!-- Three/glitchGL: loaded on demand for desktop story only. Lenis skipped in lite mode. -->
   <script src="/assets/landing/vendor/gsap.min.js" defer></script>
   <script src="/assets/landing/vendor/ScrollTrigger.min.js" defer></script>
   <script src="/assets/landing/vendor/SplitText.min.js" defer></script>
