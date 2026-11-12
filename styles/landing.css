@@ -310,10 +310,11 @@ body:not(:has(#top.l-hero)) .l-header-logo {
   display: flex;
   align-items: center;
   min-height: 100dvh;
-  overflow: hidden;
+  overflow-x: clip;
+  overflow-y: visible;
   background: #f4f6f9;
   color: var(--ink);
-  padding: 2.5rem 0;
+  padding: 4.5rem 0 3rem;
 }
 
 .l-hero-grid {
@@ -500,8 +501,14 @@ body:not(:has(#top.l-hero)) .l-header-logo {
   display: flex;
   justify-content: center;
   overflow: visible;
-  padding-inline: 3rem;
+  padding-inline: 2.75rem;
   box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+  .l-hero-stage {
+    padding-inline: 3.5rem;
+  }
 }
 
 .l-bubble {
@@ -892,8 +899,8 @@ body:not(:has(#top.l-hero)) .l-header-logo {
 /* —— UNESCO badge (first view) —— */
 .l-award--hero {
   position: absolute;
-  right: -0.5rem;
-  top: -0.75rem;
+  right: -0.25rem;
+  top: -0.35rem;
   z-index: 12;
   pointer-events: none;
 }
@@ -917,8 +924,8 @@ body:not(:has(#top.l-hero)) .l-header-logo {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 9.5rem;
-  height: 9.5rem;
+  width: 6.75rem;
+  height: 6.75rem;
 }
 
 @media (min-width: 640px) {
@@ -957,9 +964,9 @@ body:not(:has(#top.l-hero)) .l-header-logo {
 
 .l-award-kicker {
   margin: 0;
-  font-size: 0.65rem;
+  font-size: 0.5rem;
   font-weight: 800;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: #0d1020;
 }
@@ -971,8 +978,8 @@ body:not(:has(#top.l-hero)) .l-header-logo {
 }
 
 .l-award-unesco {
-  margin: 0.2rem 0 0;
-  font-size: 1.25rem;
+  margin: 0.15rem 0 0;
+  font-size: 0.95rem;
   font-weight: 800;
   color: #0d1020;
 }
@@ -991,7 +998,7 @@ body:not(:has(#top.l-hero)) .l-header-logo {
 
 .l-award-event {
   margin: 0;
-  font-size: 0.75rem;
+  font-size: 0.58rem;
   font-weight: 700;
   color: #0d1020;
 }
@@ -1004,7 +1011,7 @@ body:not(:has(#top.l-hero)) .l-header-logo {
 
 .l-award-year {
   margin: 0;
-  font-size: 0.75rem;
+  font-size: 0.58rem;
   font-weight: 800;
   letter-spacing: 0.04em;
   color: rgba(13, 16, 32, 0.72);
@@ -1060,16 +1067,40 @@ body:not(:has(#top.l-hero)) .l-header-logo {
 .l-literacy-layout {
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: 0.9rem;
+  min-width: 0;
 }
 
-@media (min-width: 960px) {
-  .l-literacy-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-    gap: 3rem 3.5rem;
-    align-items: start;
-  }
+.l-literacy-track {
+  display: flex;
+  gap: 0.85rem;
+  min-width: 0;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.l-literacy-track::-webkit-scrollbar {
+  display: none;
+}
+
+.l-literacy-slide {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.l-literacy-slide--main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.25rem 1.15rem 1.35rem;
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.55);
+  border: 2px solid rgba(13, 16, 32, 0.12);
 }
 
 .l-literacy-copy .l-h2 {
@@ -1105,13 +1136,25 @@ body:not(:has(#top.l-hero)) .l-header-logo {
   color: var(--ink);
 }
 
-/* —— Media literacy facts: 1 lead + 4 compact —— */
-.l-facts {
-  margin: 0;
+.l-facts-dots {
   display: flex;
-  flex-direction: column;
-  gap: 1.75rem;
-  min-width: 0;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.l-facts-dots button {
+  width: 0.45rem;
+  height: 0.45rem;
+  padding: 0;
+  border: 0;
+  border-radius: 9999px;
+  background: rgba(13, 16, 32, 0.22);
+  cursor: pointer;
+}
+
+.l-facts-dots button.is-active {
+  background: var(--ink);
+  transform: scale(1.15);
 }
 
 .l-fact {
@@ -1126,38 +1169,23 @@ body:not(:has(#top.l-hero)) .l-header-logo {
 }
 
 .l-fact--lead .l-fact-frac {
-  font-size: clamp(3.25rem, 7vw, 4.75rem);
+  font-size: clamp(3rem, 10vw, 4.75rem);
 }
 
 .l-fact--lead .l-fact-in {
-  font-size: clamp(1.85rem, 3.5vw, 2.6rem);
+  font-size: clamp(1.7rem, 5vw, 2.6rem);
 }
 
 .l-fact--lead .l-fact-body {
   margin-top: 1.1rem;
-  font-size: clamp(1.15rem, 1.8vw, 1.4rem);
+  font-size: clamp(1.1rem, 3.6vw, 1.4rem);
 }
 
-.l-facts-grid {
-  margin: 0;
-  padding: 1.5rem 0 0;
-  list-style: none;
-  display: grid;
-  gap: 1.35rem 1.5rem;
-  border-top: 2px solid rgba(13, 16, 32, 0.18);
-}
-
-@media (min-width: 640px) {
-  .l-facts-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.5rem 1.75rem;
-  }
-}
-
-@media (min-width: 960px) {
-  .l-facts-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.l-fact--compact {
+  padding: 1.15rem 1.1rem 1.25rem;
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.55);
+  border: 2px solid rgba(13, 16, 32, 0.12);
 }
 
 .l-fact--compact .l-fact-frac {
@@ -1173,14 +1201,77 @@ body:not(:has(#top.l-hero)) .l-header-logo {
   font-size: 1rem;
 }
 
-@media (min-width: 640px) {
+.l-fact--compact .l-fact-source {
+  padding-top: 0.75rem;
+}
+
+/* Desktop: left copy / right stats (no carousel) */
+@media (min-width: 960px) {
+  .l-literacy-layout {
+    display: block;
+  }
+
+  .l-literacy-track {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.525fr) minmax(0, 0.525fr);
+    grid-template-areas:
+      "copy lead lead"
+      "copy c1 c2"
+      "copy c3 c4";
+    gap: 1.75rem 1.75rem;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+
+  .l-literacy-slide--main {
+    display: contents;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .l-literacy-copy {
+    grid-area: copy;
+    padding-right: 1rem;
+  }
+
+  .l-fact--lead {
+    grid-area: lead;
+  }
+
+  .l-fact--compact {
+    flex: none;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  /* track children: div.main, then 4 compact articles → article:nth-of-type(1…4) */
+  .l-literacy-track > .l-fact--compact:nth-of-type(1) {
+    grid-area: c1;
+  }
+
+  .l-literacy-track > .l-fact--compact:nth-of-type(2) {
+    grid-area: c2;
+  }
+
+  .l-literacy-track > .l-fact--compact:nth-of-type(3) {
+    grid-area: c3;
+  }
+
+  .l-literacy-track > .l-fact--compact:nth-of-type(4) {
+    grid-area: c4;
+  }
+
   .l-fact--compact .l-fact-body {
     font-size: 1.05rem;
   }
-}
 
-.l-fact--compact .l-fact-source {
-  padding-top: 0.75rem;
+  .l-facts-dots {
+    display: none;
+  }
 }
 
 .l-fact-frac {
@@ -1298,14 +1389,20 @@ body:not(:has(#top.l-hero)) .l-header-logo {
   align-items: center;
   text-align: center;
   min-width: 0;
-  padding: 0 0.35rem;
+  padding: 0 0.2rem;
+}
+
+@media (min-width: 640px) {
+  .l-sift-step {
+    padding: 0 0.35rem;
+  }
 }
 
 .l-sift-letter {
-  margin: 0 0 0.75rem;
-  height: clamp(2.75rem, 8vw, 4.5rem);
+  margin: 0 0 0.55rem;
+  height: clamp(1.85rem, 7vw, 4.5rem);
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(2.75rem, 8vw, 4.5rem);
+  font-size: clamp(1.85rem, 7vw, 4.5rem);
   font-weight: 700;
   line-height: 1;
   color: var(--ink);
@@ -1345,24 +1442,26 @@ body:not(:has(#top.l-hero)) .l-header-logo {
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  width: 5.25rem;
-  height: 5.25rem;
+  width: clamp(3.35rem, 18vw, 5.25rem);
+  height: clamp(3.35rem, 18vw, 5.25rem);
   border-radius: 9999px;
-  border: 3px solid var(--ink);
+  border: 2.5px solid var(--ink);
   background: var(--card);
-  box-shadow: 3px 3px 0 var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
 }
 
 @media (min-width: 640px) {
   .l-sift-circle {
     width: 6.25rem;
     height: 6.25rem;
+    border-width: 3px;
+    box-shadow: 3px 3px 0 var(--ink);
   }
 }
 
 .l-sift-circle img {
-  width: 2rem;
-  height: 2rem;
+  width: clamp(1.25rem, 6vw, 2rem);
+  height: clamp(1.25rem, 6vw, 2rem);
   object-fit: contain;
 }
 
@@ -1374,16 +1473,17 @@ body:not(:has(#top.l-hero)) .l-header-logo {
 }
 
 .l-sift-label {
-  margin: 0.7rem 0 0;
-  max-width: 9.5rem;
-  font-size: 0.7rem;
+  margin: 0.55rem 0 0;
+  max-width: 7.5rem;
+  font-size: 0.62rem;
   font-weight: 700;
-  line-height: 1.35;
+  line-height: 1.3;
   color: var(--muted);
 }
 
 @media (min-width: 640px) {
   .l-sift-label {
+    max-width: 9.5rem;
     font-size: 0.8rem;
   }
 }
@@ -1761,11 +1861,11 @@ body:not(:has(#top.l-hero)) .l-header-logo {
   max-width: 28rem;
 }
 
-/* Form card pokes above the black band — room above comes from #reactions */
+/* Form card: on mobile stack normally; from tablet up, poke above black band */
 .l-contact-form {
   position: relative;
   z-index: 2;
-  margin-top: -3.25rem;
+  margin-top: 0;
   border-radius: 1.6rem;
   border: 3px solid var(--ink);
   background: var(--card);
@@ -1788,7 +1888,7 @@ body:not(:has(#top.l-hero)) .l-header-logo {
 
 /* Keep clear space under “Play the prototype” despite the overlap */
 #reactions.l-section {
-  padding-bottom: 8.5rem;
+  padding-bottom: 4rem;
 }
 
 @media (min-width: 640px) {

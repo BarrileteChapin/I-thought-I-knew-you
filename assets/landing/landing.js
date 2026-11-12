@@ -34,6 +34,73 @@
     el.innerHTML = html;
   });
 
+  // Mobile literacy carousel: 1) copy+lead, then each compact stat
+  Array.prototype.forEach.call(document.querySelectorAll('.l-literacy-layout'), function (wrap) {
+    var track = wrap.querySelector('.l-literacy-track');
+    var dotsHost = wrap.querySelector('.l-facts-dots');
+    if (!track || !dotsHost) return;
+
+    var slides = Array.prototype.slice.call(track.querySelectorAll('.l-literacy-slide'));
+    if (!slides.length) return;
+
+    dotsHost.innerHTML = slides
+      .map(function (_, i) {
+        return (
+          '<button type="button" aria-label="Slide ' +
+          (i + 1) +
+          '"' +
+          (i === 0 ? ' class="is-active"' : '') +
+          '></button>'
+        );
+      })
+      .join('');
+
+    var dots = Array.prototype.slice.call(dotsHost.querySelectorAll('button'));
+    var desktopMq = window.matchMedia('(min-width: 960px)');
+
+    function setActive(index) {
+      dots.forEach(function (dot, i) {
+        dot.classList.toggle('is-active', i === index);
+      });
+    }
+
+    function nearestIndex() {
+      var left = track.scrollLeft;
+      var best = 0;
+      var bestDist = Infinity;
+      slides.forEach(function (slide, i) {
+        var dist = Math.abs(slide.offsetLeft - left);
+        if (dist < bestDist) {
+          bestDist = dist;
+          best = i;
+        }
+      });
+      return best;
+    }
+
+    var scrollTick = null;
+    track.addEventListener(
+      'scroll',
+      function () {
+        if (desktopMq.matches) return;
+        if (scrollTick) return;
+        scrollTick = window.requestAnimationFrame(function () {
+          scrollTick = null;
+          setActive(nearestIndex());
+        });
+      },
+      { passive: true }
+    );
+
+    dots.forEach(function (dot, i) {
+      dot.addEventListener('click', function () {
+        if (desktopMq.matches) return;
+        track.scrollTo({ left: slides[i].offsetLeft, behavior: 'smooth' });
+        setActive(i);
+      });
+    });
+  });
+
   var contactForm = document.getElementById('l-contact-form');
   var contactHeld = document.getElementById('l-contact-held');
   if (contactForm && contactHeld) {
