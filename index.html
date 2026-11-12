@@ -23,8 +23,9 @@
     <section id="top" class="l-hero">
       <div class="l-hero-inner">
         <div>
-          <h1>
-            <img class="l-hero-logo" src="/assets/landing/brand/logo.svg" alt="I Thought I Knew You">
+          <h1 class="l-hero-logo-glitch" aria-label="I Thought I Knew You">
+            <img class="l-hero-logo" src="/assets/landing/brand/logo.svg" alt="" decoding="async">
+            <canvas class="l-hero-logo-canvas" aria-hidden="true"></canvas>
           </h1>
           <p class="l-hero-lead">
             A media-literacy game. Four nights in a group chat, and a
@@ -218,6 +219,15 @@
               <p class="l-night-body">A clone. The “97% authentic” badge is wrong.</p>
             </article>
             <article class="l-night-card l-night-card--story" id="l-night-story">
+              <div class="l-night-story-glitch" id="l-night-story-glitch" aria-hidden="true">
+                <img
+                  id="l-night-story-glitch-img"
+                  class="l-night-story-glitch-img"
+                  src="/assets/landing/story/nicole-garden.webp"
+                  alt=""
+                  decoding="async"
+                >
+              </div>
               <h3 class="l-night-story-heading">
                 Four nights. The truth is there if you look.
               </h3>
@@ -329,6 +339,9 @@
     </div>
   </footer>
 
+  <!-- Story Nicole glitch (PC): Three.js + glitchGL. Personal/academic licence. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/gh/naughtyduk/glitchGL@main/scripts/glitchGL.min.js" defer></script>
   <!-- Landing-only motion stack (not loaded on /play/) -->
   <script src="/assets/landing/vendor/gsap.min.js" defer></script>
   <script src="/assets/landing/vendor/ScrollTrigger.min.js" defer></script>
