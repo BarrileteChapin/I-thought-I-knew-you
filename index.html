@@ -4,8 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>I Thought I Knew You</title>
-  <meta name="description" content="A media-literacy game. Four nights in a group chat, and a friendship as the reason to check before you react.">
+  <meta name="description" content="A class-chat game about deepfakes, rumours, and the friend you’d rather believe. Can you help her before the chat decides for you?">
   <link rel="stylesheet" href="/styles/landing.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/bold/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css">
 </head>
 <body>
   <a class="l-play-fixed" href="/play/">Play</a>
@@ -28,34 +30,42 @@
             <canvas class="l-hero-logo-canvas" aria-hidden="true"></canvas>
           </h1>
           <p class="l-hero-lead">
-            A media-literacy game. Four nights in a group chat, and a
-            friendship as the reason to check before you react.
+            A class-chat game about deepfakes, rumours,<br>
+            and the friend you’d rather believe.<br>
+            Can you help her before the chat decides for you?
           </p>
         </div>
 
         <div class="l-hero-stage">
           <div class="l-film">
             <div class="l-film-frame">
+              <span class="l-film-btn l-film-btn--silent" aria-hidden="true"></span>
+              <span class="l-film-btn l-film-btn--vol-up" aria-hidden="true"></span>
+              <span class="l-film-btn l-film-btn--vol-down" aria-hidden="true"></span>
+              <span class="l-film-btn l-film-btn--power" aria-hidden="true"></span>
               <div class="l-film-screen">
+                <span class="l-film-island" aria-hidden="true"></span>
                 <video id="l-intro-video" poster="/assets/landing/poster.jpg" playsinline preload="metadata" autoplay muted loop>
                   <source src="/assets/landing/intro.mp4" type="video/mp4">
                 </video>
               </div>
             </div>
             <button type="button" class="l-film-mute" id="l-intro-mute" data-unmuted="false" aria-label="Unmute">
-              <svg class="l-icon-unmuted" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M11 5L6 9H2v6h4l5 4V5z" fill="currentColor"></path>
-                <path d="M15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-              </svg>
-              <svg class="l-icon-muted" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M11 5L6 9H2v6h4l5 4V5z" fill="currentColor"></path>
-                <line x1="23" y1="9" x2="17" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
-                <line x1="17" y1="9" x2="23" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
-              </svg>
+              <i class="ph-bold ph-speaker-high l-icon-unmuted" aria-hidden="true"></i>
+              <i class="ph-bold ph-speaker-slash l-icon-muted" aria-hidden="true"></i>
             </button>
+
+            <!-- Live-ish group chat feed, anchored to the phone -->
+            <div class="l-hero-chat" id="l-hero-chat" aria-hidden="true"></div>
           </div>
 
-          <div class="l-award l-award--hero" aria-label="Awarded UNESCO Youth Hackathon 2026">
+          <a
+            class="l-award l-award--hero"
+            href="https://www.unesco.org/en/articles/meet-winners-unescos-2026-youth-hackathon-media-and-information-literacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Awarded UNESCO Youth Hackathon 2026 — read the UNESCO article"
+          >
             <div class="l-award-mark">
               <img src="/assets/landing/brand/laurel.svg" alt="" aria-hidden="true">
               <div class="l-award-copy">
@@ -65,8 +75,9 @@
                 <p class="l-award-year">2026</p>
               </div>
             </div>
-          </div>
+          </a>
         </div>
+
       </div>
     </section>
 
@@ -76,7 +87,6 @@
         <div class="l-literacy-track" id="l-literacy-track">
           <div class="l-literacy-slide l-literacy-slide--main">
             <div class="l-literacy-copy">
-              <p class="l-literacy-kicker">Media literacy</p>
               <h2 class="l-h2">Media literacy matters where the rumour actually lands.</h2>
               <p class="l-lead">
                 For a teenager it isn't a news story to fact-check later. It's a
@@ -133,123 +143,167 @@
 
     <!-- SIFT -->
     <section id="method" class="l-section l-section--panel l-section--ghost l-section--grow" data-grow="0.97">
-      <div class="l-wrap">
-        <h2 class="l-h2">SIFT. Four moves before you react.</h2>
-        <p class="l-lead">
-          Based on
-          <a class="l-inline-link" href="https://hapgood.us/2019/06/19/sift-the-four-moves/" target="_blank" rel="noopener noreferrer">Mike Caulfield's SIFT method</a>
-          (2019). Not everything is fake — Monday's video is real. The skill
-          is tracing context, not spotting AI.
-        </p>
-        <ol class="l-sift" aria-label="SIFT — four moves before you react">
-          <li class="l-sift-step">
-            <p class="l-sift-letter">S</p>
-            <div class="l-sift-node">
-              <span class="l-sift-link" aria-hidden="true"></span>
+      <div class="l-wrap l-sift-layout">
+        <div class="l-sift-copy">
+          <h2 class="l-h2">SIFT. Four moves before you react.</h2>
+          <p class="l-lead">
+            When a rumour hits the chat, these four habits buy you time to
+            check it — based on
+            <a class="l-inline-link" href="https://hapgood.us/2019/06/19/sift-the-four-moves/" target="_blank" rel="noopener noreferrer">Mike Caulfield's SIFT method</a>
+            (2019). The game is practice: pause, look closer, then decide.
+          </p>
+        </div>
+        <div class="l-sift-board">
+          <div class="l-sift-rail" aria-hidden="true">
+            <span class="l-sift-rail-draw" id="l-sift-rail-draw"></span>
+          </div>
+          <ol class="l-sift" aria-label="SIFT — four moves before you react">
+            <li class="l-sift-step">
+              <p class="l-sift-letter">S</p>
               <div class="l-sift-circle" aria-hidden="true">
                 <img src="/assets/landing/icons/stop.svg" alt="">
               </div>
-            </div>
-            <p class="l-sift-label">Stop</p>
-          </li>
-          <li class="l-sift-step">
-            <p class="l-sift-letter">I</p>
-            <div class="l-sift-node">
-              <span class="l-sift-link" aria-hidden="true"></span>
+              <p class="l-sift-title">Stop</p>
+              <p class="l-sift-body">Don’t react or forward yet. Take a breath.</p>
+            </li>
+            <li class="l-sift-step">
+              <p class="l-sift-letter">I</p>
               <div class="l-sift-circle" aria-hidden="true">
                 <img src="/assets/landing/icons/source.svg" alt="">
               </div>
-            </div>
-            <p class="l-sift-label">Investigate the source</p>
-          </li>
-          <li class="l-sift-step">
-            <p class="l-sift-letter">F</p>
-            <div class="l-sift-node">
-              <span class="l-sift-link" aria-hidden="true"></span>
+              <p class="l-sift-title">Investigate the source</p>
+              <p class="l-sift-body">Who posted this, and what do you know about them?</p>
+            </li>
+            <li class="l-sift-step">
+              <p class="l-sift-letter">F</p>
               <div class="l-sift-circle" aria-hidden="true">
                 <img src="/assets/landing/icons/coverage.svg" alt="">
               </div>
-            </div>
-            <p class="l-sift-label">Find better coverage</p>
-          </li>
-          <li class="l-sift-step">
-            <p class="l-sift-letter">T</p>
-            <div class="l-sift-node">
+              <p class="l-sift-title">Find better coverage</p>
+              <p class="l-sift-body">Has anyone else reported the same claim?</p>
+            </li>
+            <li class="l-sift-step">
+              <p class="l-sift-letter">T</p>
               <div class="l-sift-circle" aria-hidden="true">
                 <img src="/assets/landing/icons/trace.svg" alt="">
               </div>
-            </div>
-            <p class="l-sift-label">Trace the original</p>
-          </li>
-        </ol>
+              <p class="l-sift-title">Trace the original</p>
+              <p class="l-sift-body">Find the first version — where and when it appeared.</p>
+            </li>
+          </ol>
+        </div>
       </div>
     </section>
 
-    <!-- 4 nights + storytelling (horizontal sticky scrub) -->
-    <section id="project" class="l-nights" aria-label="Four nights and the story">
+    <!-- Four nights (horizontal sticky scrub) -->
+    <section id="project" class="l-nights" aria-label="Four nights">
       <div class="l-nights-pin">
         <div class="l-nights-rail">
           <div class="l-nights-track" id="l-nights-track">
-            <article class="l-night-card l-night-card--coral">
-              <div class="l-night-pips" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-              <h3 class="l-night-day">Monday</h3>
-              <p class="l-night-feeling">Disgust</p>
-              <p class="l-night-evidence">A party video</p>
-              <p class="l-night-body">Real footage, cut before the sentence that explains it.</p>
-            </article>
-            <article class="l-night-card l-night-card--amber">
-              <div class="l-night-pips" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-              <h3 class="l-night-day">Tuesday</h3>
-              <p class="l-night-feeling">Anger</p>
-              <p class="l-night-evidence">A party photo</p>
-              <p class="l-night-body">Real, unedited, and from a party a year ago.</p>
-            </article>
-            <article class="l-night-card l-night-card--violet">
-              <div class="l-night-pips" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-              <h3 class="l-night-day">Wednesday</h3>
-              <p class="l-night-feeling">Violation</p>
-              <p class="l-night-evidence">A second account</p>
-              <p class="l-night-body">An AI copy. Her real account is still there, and quiet.</p>
-            </article>
-            <article class="l-night-card l-night-card--sky">
-              <div class="l-night-pips" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-              <h3 class="l-night-day">Thursday</h3>
-              <p class="l-night-feeling">Certainty</p>
-              <p class="l-night-evidence">A voice message</p>
-              <p class="l-night-body">A clone. The “97% authentic” badge is wrong.</p>
-            </article>
-            <article class="l-night-card l-night-card--story" id="l-night-story">
-              <div class="l-night-story-glitch" id="l-night-story-glitch" aria-hidden="true">
-                <img
-                  id="l-night-story-glitch-img"
-                  class="l-night-story-glitch-img"
-                  src="/assets/landing/story/nicole-garden.webp"
-                  alt=""
-                  decoding="async"
-                >
+            <article class="l-night-card l-night-card--coral" data-night-index="0">
+              <header class="l-night-head">
+                <p class="l-night-kicker">Day 1</p>
+                <h3 class="l-night-day">Monday</h3>
+              </header>
+              <div class="l-night-stage">
+                <div class="l-night-viz" aria-hidden="true">
+                  <div class="l-night-post">
+                    <div class="l-night-post-head">
+                      <span class="l-night-post-av l-night-post-av--blank"></span>
+                      <span class="l-night-post-name">••••••</span>
+                    </div>
+                    <div class="l-night-post-media l-night-post-media--video">
+                      <span class="l-night-post-play"></span>
+                    </div>
+                    <div class="l-night-post-actions">
+                      <i class="ph-fill ph-heart l-night-post-ico" aria-hidden="true"></i>
+                      <i class="ph-bold ph-arrows-clockwise l-night-post-ico" aria-hidden="true"></i>
+                      <i class="ph-bold ph-export l-night-post-ico" aria-hidden="true"></i>
+                    </div>
+                  </div>
+                </div>
+                <p class="l-night-evidence">A party video</p>
               </div>
-              <h3 class="l-night-story-heading">
-                Four nights. The truth is there if you look.
-              </h3>
-              <div class="l-night-story-panel">
-                <p data-story-line>
-                  You are one of 28 classmates, ages 13 and up.
-                </p>
-                <p data-story-line>
-                  The evidence arrives from someone you trust, about someone
-                  you trust, while the room is already reacting.
-                </p>
-                <p data-story-line>
-                  Looking costs the evening’s time. Reacting does not.
-                </p>
-                <p data-story-line>
-                  Some checks are dead ends, because knowing when a search
-                  isn’t helping is part of the skill.
-                </p>
-                <p data-story-line>
-                  The ending is a record of what you did — forwarded, checked,
-                  reported — not a quiz.
-                </p>
+            </article>
+            <article class="l-night-card l-night-card--amber" data-night-index="1">
+              <header class="l-night-head">
+                <p class="l-night-kicker">Day 2</p>
+                <h3 class="l-night-day">Tuesday</h3>
+              </header>
+              <div class="l-night-stage">
+                <div class="l-night-viz" aria-hidden="true">
+                  <div class="l-night-post">
+                    <div class="l-night-post-head">
+                      <span class="l-night-post-av l-night-post-av--blank"></span>
+                      <span class="l-night-post-name">••••••</span>
+                    </div>
+                    <div class="l-night-post-media l-night-post-media--photo"></div>
+                    <div class="l-night-post-actions">
+                      <i class="ph-fill ph-heart l-night-post-ico" aria-hidden="true"></i>
+                      <i class="ph-bold ph-arrows-clockwise l-night-post-ico" aria-hidden="true"></i>
+                      <i class="ph-bold ph-export l-night-post-ico" aria-hidden="true"></i>
+                    </div>
+                  </div>
+                </div>
+                <p class="l-night-evidence">A party photo</p>
+              </div>
+            </article>
+            <article class="l-night-card l-night-card--wed l-night-card--mint" data-night-index="2">
+              <header class="l-night-head">
+                <p class="l-night-kicker">Day 3</p>
+                <h3 class="l-night-day">Wednesday</h3>
+              </header>
+              <div class="l-night-wed-stack">
+                <div class="l-night-wed-row">
+                  <div class="l-night-stage l-night-stage--wed">
+                    <div class="l-night-viz l-night-viz--tight" aria-hidden="true">
+                      <div class="l-night-accounts">
+                        <div class="l-night-account">
+                          <span class="l-night-post-av l-night-post-av--blank"></span>
+                          <span>account</span>
+                        </div>
+                        <span class="l-night-accounts-vs">→</span>
+                        <div class="l-night-account l-night-account--fake">
+                          <span class="l-night-post-av l-night-post-av--blank"></span>
+                          <span>account_2</span>
+                        </div>
+                      </div>
+                    </div>
+                    <p class="l-night-evidence">A second account</p>
+                  </div>
+                </div>
+                <div class="l-night-wed-row l-night-wed-row--eve">
+                  <div class="l-night-stage l-night-stage--wed">
+                    <div class="l-night-viz l-night-viz--tight" aria-hidden="true">
+                      <div class="l-night-bubble l-night-bubble--note">
+                        <span class="l-night-post-av l-night-post-av--blank"></span>
+                        <p>did you see this?</p>
+                      </div>
+                    </div>
+                    <p class="l-night-evidence">A note about you</p>
+                  </div>
+                </div>
+              </div>
+            </article>
+            <article class="l-night-card l-night-card--violet" data-night-index="3">
+              <header class="l-night-head">
+                <p class="l-night-kicker">Day 4</p>
+                <h3 class="l-night-day">Thursday</h3>
+              </header>
+              <div class="l-night-stage">
+                <div class="l-night-viz" aria-hidden="true">
+                  <div class="l-night-bubble l-night-bubble--voice">
+                    <span class="l-night-post-av l-night-post-av--blank"></span>
+                    <div class="l-night-voice">
+                      <span class="l-night-voice-play"></span>
+                      <span class="l-night-voice-wave" aria-hidden="true">
+                        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                      </span>
+                      <span class="l-night-voice-time">0:12</span>
+                    </div>
+                  </div>
+                </div>
+                <p class="l-night-evidence">A voice message</p>
               </div>
             </article>
           </div>
@@ -257,35 +311,72 @@
       </div>
     </section>
 
-    <!-- Video placeholder -->
+    <!-- How it plays (with the nights) -->
+    <section id="story" class="l-story" aria-label="How the game plays">
+      <div class="l-story-glitch" id="l-night-story-glitch" aria-hidden="true">
+        <img
+          id="l-night-story-glitch-img"
+          class="l-story-glitch-img"
+          src="/assets/landing/story/nicole-garden.webp"
+          alt=""
+          decoding="async"
+        >
+      </div>
+      <div class="l-story-inner">
+        <h2 class="l-night-story-heading">
+          Four nights. The truth is there if you look.
+        </h2>
+        <div class="l-night-story-panel">
+          <p data-story-line>
+            You are one of 28 classmates, ages 13 and up.
+          </p>
+          <p data-story-line>
+            The evidence arrives from someone you trust, about someone
+            you trust, while the room is already reacting.
+          </p>
+          <p data-story-line>
+            Looking costs the evening’s time. Reacting does not.
+          </p>
+          <p data-story-line>
+            Some checks are dead ends, because knowing when a search
+            isn’t helping is part of the skill.
+          </p>
+          <p data-story-line>
+            The ending is a record of what you did — forwarded, checked,
+            reported — not a quiz.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Watch the trailer -->
     <section id="film" class="l-section l-section--center">
       <div class="l-wrap">
-        <h2 class="l-h3 l-h3--oneline">Introduction about the game.</h2>
-        <div class="l-film-slot">
-          <div class="l-film-slot-inner">
-            <p class="l-film-slot-label">Coming soon</p>
+        <h2 class="l-h3 l-h3--oneline">Watch how it plays.</h2>
+        <div class="l-film-slot" data-yt-id="0_W7XPrYRe0">
+          <div class="l-film-slot-inner l-film-slot-inner--embed" id="l-film-player">
+            <button type="button" class="l-film-poster" id="l-film-poster" aria-label="Play introduction video">
+              <picture class="l-film-poster-img">
+                <source srcset="/assets/landing/film/poster.webp" type="image/webp">
+                <img
+                  src="/assets/landing/film/poster.jpg"
+                  alt=""
+                  width="1280"
+                  height="720"
+                  decoding="async"
+                >
+              </picture>
+              <span class="l-film-poster-play" aria-hidden="true">
+                <i class="ph-fill ph-play" aria-hidden="true"></i>
+              </span>
+            </button>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- Playtest reactions placeholder -->
-    <section id="reactions" class="l-section l-section--center">
-      <div class="l-wrap">
-        <h2 class="l-h3">People who played it.</h2>
-        <ul class="l-reactions">
-          <li class="l-reaction-slot" aria-label="Photo 1"></li>
-          <li class="l-reaction-slot" aria-label="Photo 2"></li>
-          <li class="l-reaction-slot" aria-label="Photo 3"></li>
-        </ul>
-        <div class="l-section-cta">
+        <div class="l-section-cta l-film-cta">
           <a class="l-play l-play--md" href="/play/">
-            <span class="l-play-slab" aria-hidden="true"></span>
             <span class="l-play-face">
-              Play the prototype
-              <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-                <path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
-              </svg>
+              Play the game
+              <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
             </span>
           </a>
         </div>
@@ -297,10 +388,10 @@
       <div class="l-section--panel l-section--ghost l-contact-shell">
         <div class="l-wrap l-contact">
           <div class="l-contact-copy">
-            <h2 class="l-h2">A classroom pilot, or a conversation about support.</h2>
+            <h2 class="l-h2">Questions, pilots, partnerships — write to us.</h2>
             <p class="l-lead">
-              The public address isn't listed yet. A message typed here stays on
-              this page.
+              Teachers, schools, and collaborators welcome. Tell us what you’re
+              after and how to reach you.
             </p>
           </div>
           <form class="l-contact-form" id="l-contact-form" novalidate>
@@ -320,10 +411,10 @@
             </div>
             <button type="submit" class="l-contact-submit">Send</button>
             <p class="l-contact-held" id="l-contact-held" hidden role="status">
-              Held on this page. There's no inbox connected yet.
+              Thanks — saved on this page for now. Inbox isn’t connected yet.
             </p>
             <p class="l-contact-note">
-              This form is not connected. Nothing you type is sent or stored.
+              Form isn’t wired to email yet; nothing is sent or stored server-side.
               <a href="/privacy/">Privacy policy</a>
             </p>
           </form>

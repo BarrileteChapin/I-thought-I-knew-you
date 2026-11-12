@@ -34,6 +34,169 @@
     el.innerHTML = html;
   });
 
+  // Hero: continuous incoming classmate messages (game chat row look)
+  (function initHeroChatFeed() {
+    var host = document.getElementById('l-hero-chat');
+    if (!host) return;
+
+    var AV = '/assets/landing/cast/';
+    var FEED = [
+      { who: 'Hanna', text: 'yo WHAT' },
+      { who: 'Mia', text: '💀💀' },
+      { who: 'Lea', text: 'wow. I thought I knew her' },
+      { who: 'Hanna', text: 'sending this to the other groups' },
+      { who: 'Mia', text: 'bowling or billiards' },
+      { who: 'Benito', text: '👍' },
+      { who: 'Hanna', text: 'ok so next week' },
+      { who: 'Mia', text: 'has anyone actually done the chem thing' },
+      { who: 'Lea', text: 'wait is this real' },
+      { who: 'Hanna', text: 'no lol' },
+      { who: 'Nicole', text: 'please tell me you don\u2019t believe this' },
+      { who: 'Mia', text: 'free food' },
+      { who: 'Hanna', text: 'checked WHAT it\u2019s right there' },
+      { who: 'Lea', text: 'I thought I knew you' },
+      { who: 'Benito', text: 'this is messy' },
+      { who: 'Mia', text: 'everyone\u2019s invited' },
+    ];
+
+    var MAX_VISIBLE = 2;
+    var index = 0;
+    var timer = null;
+    var feedActive = true;
+    var hero = document.getElementById('top');
+    var reduceMotion =
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function slug(who) {
+      return String(who || 'mia').toLowerCase();
+    }
+
+    function avatarSrc(who) {
+      var s = slug(who);
+      if (s === 'hanna') return AV + 'av-hanna.webp';
+      if (s === 'lea') return AV + 'av-lea.webp';
+      if (s === 'benito') return AV + 'av-benito.webp';
+      if (s === 'nicole') return AV + 'av-nicole.webp';
+      return AV + 'av-mia.webp';
+    }
+
+    function makeRow(msg) {
+      var row = document.createElement('div');
+      row.className = 'l-chat-row';
+      row.innerHTML =
+        '<img class="l-chat-av" src="' +
+        avatarSrc(msg.who) +
+        '" alt="" width="48" height="48" decoding="async">' +
+        '<div class="l-chat-bubble">' +
+        '<div class="l-chat-who l-chat-who--' +
+        slug(msg.who) +
+        '">' +
+        msg.who +
+        '</div>' +
+        '<div class="l-chat-text"></div>' +
+        '</div>';
+      row.querySelector('.l-chat-text').textContent = msg.text;
+      return row;
+    }
+
+    function pushNext() {
+      if (!feedActive || host.classList.contains('is-away')) return;
+      var msg = FEED[index % FEED.length];
+      index += 1;
+
+      var row = makeRow(msg);
+      host.appendChild(row);
+      void row.offsetWidth;
+      row.classList.add('is-in');
+
+      while (host.children.length > MAX_VISIBLE) {
+        var oldest = host.children[0];
+        if (oldest.classList.contains('is-out')) {
+          if (oldest.parentNode) oldest.parentNode.removeChild(oldest);
+          continue;
+        }
+        oldest.classList.remove('is-in');
+        oldest.classList.add('is-out');
+        (function (node) {
+          window.setTimeout(function () {
+            if (node.parentNode) node.parentNode.removeChild(node);
+          }, reduceMotion ? 0 : 400);
+        })(oldest);
+        break;
+      }
+    }
+
+    function schedule() {
+      stop();
+      if (!feedActive || host.classList.contains('is-away')) return;
+      var delay = reduceMotion ? 10000 : 2200 + Math.floor(Math.random() * 1600);
+      timer = window.setTimeout(function () {
+        pushNext();
+        schedule();
+      }, delay);
+    }
+
+    function stop() {
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+    }
+
+    function startFeed() {
+      feedActive = true;
+      if (!host.children.length) {
+        pushNext();
+        if (!reduceMotion) {
+          window.setTimeout(function () {
+            if (feedActive && !host.classList.contains('is-away')) pushNext();
+          }, 700);
+        } else {
+          pushNext();
+        }
+      }
+      schedule();
+    }
+
+    function syncChatAway() {
+      if (!hero) return;
+      var rect = hero.getBoundingClientRect();
+      var fadeRange = Math.min(window.innerHeight * 0.28, Math.max(120, hero.offsetHeight * 0.22));
+      var scrolled = Math.max(0, -rect.top);
+      var away = scrolled > fadeRange * 0.35;
+      var wasAway = host.classList.contains('is-away');
+      host.classList.toggle('is-away', away);
+      if (away) {
+        feedActive = false;
+        stop();
+      } else if (wasAway || !timer) {
+        startFeed();
+      }
+    }
+
+    startFeed();
+    syncChatAway();
+
+    window.addEventListener('scroll', syncChatAway, { passive: true });
+    window.addEventListener('resize', syncChatAway);
+    // Lenis may exist later; hook when available
+    var lenisHookTries = 0;
+    var lenisHook = window.setInterval(function () {
+      lenisHookTries += 1;
+      if (window.__lLenis && typeof window.__lLenis.on === 'function') {
+        window.__lLenis.on('scroll', syncChatAway);
+        window.clearInterval(lenisHook);
+      } else if (lenisHookTries > 40) {
+        window.clearInterval(lenisHook);
+      }
+    }, 100);
+
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) stop();
+      else if (feedActive && !host.classList.contains('is-away')) schedule();
+    });
+  })();
+
   // Hero logo: slit-scan displacement (same idea as karinkiho.com/en/experiment/slit)
   (function initHeroLogoSlit() {
     var wrap = document.querySelector('.l-hero-logo-glitch');
@@ -442,499 +605,499 @@
     });
   }
 
-  // —— SIFT connectors: faint → solid, drawn left → right when panel settles ——
-  function playSiftDraw(root) {
-    var sift = root && root.querySelector ? root.querySelector('.l-sift') || root : null;
-    if (!sift || !sift.classList || !sift.classList.contains('l-sift')) return;
-    if (sift.classList.contains('is-drawn')) return;
-    sift.classList.add('is-drawn');
-    var links = sift.querySelectorAll('.l-sift-link');
-    if (!links.length) return;
-
-    gsap.fromTo(
-      links,
-      { scaleX: 0, opacity: 0.12 },
-      {
-        scaleX: 1,
-        opacity: 1,
-        duration: 0.55,
-        stagger: 0.18,
-        ease: 'power2.inOut',
-        transformOrigin: 'left center',
-      }
-    );
-  }
-
   function playPanelSettle(el) {
     playFactReveal(el);
-    playSiftDraw(el);
   }
 
-  // —— Nights scrub + quiet body reveal (story heading: no anim) ——
-  var nightsSection = document.getElementById('project');
-  var nightsTrack = document.getElementById('l-nights-track');
-  var storyCard = document.getElementById('l-night-story');
-  if (!nightsSection || !nightsTrack || !storyCard) return;
-  if (typeof ScrollTrigger === 'undefined') return;
+  // —— Film: custom poster until play ——
+  (function initFilmPosterPlay() {
+    var slot = document.querySelector('.l-film-slot[data-yt-id]');
+    var player = document.getElementById('l-film-player');
+    var poster = document.getElementById('l-film-poster');
+    if (!slot || !player || !poster) return;
 
-  var nightsPin = nightsSection.querySelector('.l-nights-pin');
-  var nightCards = nightsTrack.querySelectorAll('.l-night-card:not(.l-night-card--story)');
-  var storyHeading = storyCard.querySelector('.l-night-story-heading');
-  var storyLineEls = Array.prototype.slice.call(
-    storyCard.querySelectorAll('[data-story-line]')
-  );
-  var storyGlitchPane = document.getElementById('l-night-story-glitch');
-  var storyGlitchImg = document.getElementById('l-night-story-glitch-img');
-  var storyGlitchMq = window.matchMedia
-    ? window.matchMedia('(min-width: 768px)')
-    : null;
-  var STORY_GLITCH_POOL = [
-    '/assets/landing/story/nicole-garden.webp',
-    '/assets/landing/story/nicole_sad_bg.webp',
-    '/assets/landing/story/nicole_party.webp',
-  ];
-  var storyGlitchInst = null;
-  var storyGlitchMountRun = 0;
-  var storyGlitchTimer = null;
-  var storyGlitchBusy = false;
-  var storyGlitchPoolIndex = 0;
-  var storyGlitchWanted = false;
+    var ytId = slot.getAttribute('data-yt-id');
+    if (!ytId) return;
+    var started = false;
 
-  function isStoryGlitchDesktop() {
-    try {
-      return !!(storyGlitchMq && storyGlitchMq.matches);
-    } catch (e) {
-      return false;
+    function startFilm() {
+      if (started) return;
+      started = true;
+      var iframe = document.createElement('iframe');
+      iframe.className = 'l-film-embed';
+      iframe.title = 'Introduction about the game';
+      iframe.allow =
+        'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.setAttribute('allowfullscreen', '');
+      iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+      iframe.src =
+        'https://www.youtube-nocookie.com/embed/' +
+        encodeURIComponent(ytId) +
+        '?autoplay=1&rel=0';
+      player.innerHTML = '';
+      player.appendChild(iframe);
     }
-  }
 
-  function waitImgReady(img) {
-    if (!img) return Promise.reject(new Error('missing img'));
-    if (img.complete && img.naturalWidth > 0) return Promise.resolve(img);
-    return new Promise(function (resolve, reject) {
-      img.addEventListener('load', function () {
-        resolve(img);
-      }, { once: true });
-      img.addEventListener('error', function () {
-        reject(new Error('img load failed'));
-      }, { once: true });
-    });
-  }
+    poster.addEventListener('click', startFilm);
+  })();
 
-  function storyGlitchOptions(target) {
-    return {
-      target: target,
-      intensity: 3.0,
-      aspectCorrection: true,
-      interaction: {
-        enabled: true,
-        shape: 'square',
-        customSize: '40vw',
-        customUrl: '/assets/landing/brand/logo.svg',
-        velocity: false,
-        effects: {
-          pixelation: ['pixelSize'],
-          crt: [
-            'chromaticAberration',
-            'phosphorGlow',
-            'curvature',
-            'scanlines',
-          ],
-          glitch: [
-            'rgbShift',
-            'lineDisplacement',
-            'bitCrushing',
-            'signalDropout',
-            'syncErrors',
-            'interferenceLines',
-            'frameGhosting',
-            'stutterFreeze',
-            'datamoshing',
-          ],
-        },
-      },
-      effects: {
-        pixelation: {
-          enabled: true,
-          pixelSize: 7,
-          pixelShape: 'square',
-          bitDepth: 'none',
-          dithering: 'none',
-          pixelDirection: 'square',
-        },
-        crt: {
-          enabled: true,
-          preset: 'computer-monitor',
-          curvature: 6,
-          lineDirection: 'right',
-          lineMovement: true,
-          lineSpeed: 0.38,
-        },
-        glitch: {
-          enabled: true,
-          rgbShift: 0,
-          digitalNoise: 0.18,
-          lineDisplacement: 0,
-          bitCrushDepth: 0,
-          signalDropoutFreq: 0.03,
-          signalDropoutSize: 0.4,
-          syncErrorFreq: 0.1,
-          syncErrorAmount: 0.141,
-          interferenceSpeed: 5.2,
-          interferenceIntensity: 1,
-          frameGhostAmount: 0.68,
-          stutterFreq: 0.4,
-          datamoshStrength: 2,
-        },
-      },
-    };
-  }
+  // —— SIFT: draw horizontal rail on scroll + slow circle reveal ——
+  (function initSiftReveal() {
+    var section = document.getElementById('method');
+    var steps = section
+      ? Array.prototype.slice.call(section.querySelectorAll('.l-sift-step'))
+      : [];
+    var railDraw = document.getElementById('l-sift-rail-draw');
+    if (!section || !steps.length) return;
+    if (typeof ScrollTrigger === 'undefined' || typeof gsap === 'undefined') return;
 
-  function cleanupStoryGlitchCanvas() {
-    if (!storyGlitchPane) return;
-    Array.prototype.slice
-      .call(storyGlitchPane.querySelectorAll('canvas, [data-glitch-target]'))
-      .forEach(function (node) {
-        if (node === storyGlitchImg) return;
-        if (node.parentNode) node.parentNode.removeChild(node);
+    var reduceMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var rowMq = window.matchMedia('(min-width: 720px)');
+    var played = false;
+
+    function playSteps() {
+      if (played) return;
+      played = true;
+      if (reduceMq.matches) {
+        gsap.set(steps, { clearProps: 'transform,opacity' });
+        return;
+      }
+      gsap.to(steps, {
+        opacity: 1,
+        y: 0,
+        duration: 0.85,
+        stagger: 0.22,
+        ease: 'power3.out',
       });
-  }
-
-  function stopStoryGlitchCycle() {
-    if (storyGlitchTimer) {
-      clearTimeout(storyGlitchTimer);
-      storyGlitchTimer = null;
     }
-  }
 
-  function teardownStoryGlitch() {
-    storyGlitchMountRun += 1;
-    stopStoryGlitchCycle();
-    storyGlitchBusy = false;
-    var inst = storyGlitchInst;
-    storyGlitchInst = null;
-    storyCard.classList.remove('is-glitch-on');
-    if (inst && typeof inst.cleanup === 'function') {
-      try {
-        inst.cleanup();
-      } catch (e) {
-        /* ignore */
+    gsap.set(steps, { opacity: 0, y: 28 });
+
+    ScrollTrigger.create({
+      trigger: section,
+      start: 'top 68%',
+      once: true,
+      onEnter: playSteps,
+    });
+
+    if (railDraw) {
+      if (reduceMq.matches) {
+        gsap.set(railDraw, { scaleX: 1 });
+      } else {
+        gsap.set(railDraw, { scaleX: 0, transformOrigin: 'left center' });
+        gsap.to(railDraw, {
+          scaleX: 1,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 72%',
+            end: 'top 28%',
+            scrub: 0.45,
+            invalidateOnRefresh: true,
+            onUpdate: function () {
+              if (!rowMq.matches) gsap.set(railDraw, { scaleX: 0 });
+            },
+          },
+        });
       }
     }
-    cleanupStoryGlitchCanvas();
-  }
+  })();
 
-  function mountStoryGlitchInstance() {
-    if (typeof window.glitchGL !== 'function' || typeof window.THREE === 'undefined') {
-      return null;
-    }
-    cleanupStoryGlitchCanvas();
-    return window.glitchGL(storyGlitchOptions('#l-night-story-glitch-img'));
-  }
+  // —— Nights: sequential slide-in from the right (no scrub) ——
+  (function initNightsSlideIn() {
+    var nightsSection = document.getElementById('project');
+    var nightsTrack = document.getElementById('l-nights-track');
+    if (!nightsSection || !nightsTrack) return;
+    if (typeof ScrollTrigger === 'undefined' || typeof gsap === 'undefined') return;
 
-  function nextStoryGlitchSrc() {
-    storyGlitchPoolIndex = (storyGlitchPoolIndex + 1) % STORY_GLITCH_POOL.length;
-    return STORY_GLITCH_POOL[storyGlitchPoolIndex];
-  }
+    var nightCards = Array.prototype.slice.call(
+      nightsTrack.querySelectorAll('.l-night-card')
+    );
+    if (!nightCards.length) return;
 
-  function advanceStoryGlitch() {
-    if (!storyGlitchInst || !storyGlitchImg || storyGlitchBusy) {
-      return Promise.resolve();
+    var reduceMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var desktopMq = window.matchMedia('(min-width: 960px)');
+    var played = false;
+
+    function play() {
+      if (played) return;
+      played = true;
+
+      if (reduceMq.matches) {
+        gsap.set(nightCards, { clearProps: 'transform,opacity' });
+        return;
+      }
+
+      // PC: stronger right-origin entrance; mobile: lighter nudge
+      var fromX = desktopMq.matches ? Math.min(140, window.innerWidth * 0.18) : 72;
+
+      gsap.fromTo(
+        nightCards,
+        { x: fromX, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: desktopMq.matches ? 0.85 : 0.65,
+          stagger: desktopMq.matches ? 0.16 : 0.1,
+          ease: 'power3.out',
+        }
+      );
     }
-    if (!storyGlitchWanted || !isStoryGlitchDesktop()) {
-      return Promise.resolve();
+
+    gsap.set(nightCards, { x: desktopMq.matches ? 140 : 72, opacity: 0 });
+
+    ScrollTrigger.create({
+      trigger: nightsSection,
+      start: 'top 70%',
+      once: true,
+      onEnter: play,
+    });
+  })();
+
+  // —— Story section (after film): line reveal + Nicole glitch ——
+  (function initStorySection() {
+    var storySection = document.getElementById('story');
+    if (!storySection) return;
+    if (typeof ScrollTrigger === 'undefined' || typeof gsap === 'undefined') return;
+
+    var storyLineEls = Array.prototype.slice.call(
+      storySection.querySelectorAll('[data-story-line]')
+    );
+    var storyGlitchPane = document.getElementById('l-night-story-glitch');
+    var storyGlitchImg = document.getElementById('l-night-story-glitch-img');
+    var storyGlitchMq = window.matchMedia
+      ? window.matchMedia('(min-width: 768px)')
+      : null;
+    var STORY_GLITCH_POOL = [
+      '/assets/landing/story/nicole-garden.webp',
+      '/assets/landing/story/nicole_sad_bg.webp',
+      '/assets/landing/story/nicole_party.webp',
+    ];
+    var storyGlitchInst = null;
+    var storyGlitchMountRun = 0;
+    var storyGlitchTimer = null;
+    var storyGlitchBusy = false;
+    var storyGlitchPoolIndex = 0;
+    var storyGlitchWanted = false;
+    var storyBodyPlayed = false;
+
+    function isStoryGlitchDesktop() {
+      try {
+        return !!(storyGlitchMq && storyGlitchMq.matches);
+      } catch (e) {
+        return false;
+      }
     }
-    storyGlitchBusy = true;
-    var run = storyGlitchMountRun;
-    var src = nextStoryGlitchSrc();
-    var probe = new Image();
-    probe.src = src;
-    return waitImgReady(probe)
-      .then(function () {
-        if (run !== storyGlitchMountRun || !storyGlitchInst) return;
-        if (storyGlitchInst && typeof storyGlitchInst.cleanup === 'function') {
-          try {
-            storyGlitchInst.cleanup();
-          } catch (e) {
-            /* ignore */
+
+    function waitImgReady(img) {
+      if (!img) return Promise.reject(new Error('missing img'));
+      if (img.complete && img.naturalWidth > 0) return Promise.resolve(img);
+      return new Promise(function (resolve, reject) {
+        img.addEventListener('load', function () {
+          resolve(img);
+        }, { once: true });
+        img.addEventListener('error', function () {
+          reject(new Error('img load failed'));
+        }, { once: true });
+      });
+    }
+
+    function storyGlitchOptions(target) {
+      return {
+        target: target,
+        intensity: 3.0,
+        aspectCorrection: true,
+        interaction: {
+          enabled: true,
+          shape: 'square',
+          customSize: '40vw',
+          customUrl: '/assets/landing/brand/logo.svg',
+          velocity: false,
+          effects: {
+            pixelation: ['pixelSize'],
+            crt: [
+              'chromaticAberration',
+              'phosphorGlow',
+              'curvature',
+              'scanlines',
+            ],
+            glitch: [
+              'rgbShift',
+              'lineDisplacement',
+              'bitCrushing',
+              'signalDropout',
+              'syncErrors',
+              'interferenceLines',
+              'frameGhosting',
+              'stutterFreeze',
+              'datamoshing',
+            ],
+          },
+        },
+        effects: {
+          pixelation: {
+            enabled: true,
+            pixelSize: 7,
+            pixelShape: 'square',
+            bitDepth: 'none',
+            dithering: 'none',
+            pixelDirection: 'square',
+          },
+          crt: {
+            enabled: true,
+            preset: 'computer-monitor',
+            curvature: 6,
+            lineDirection: 'right',
+            lineMovement: true,
+            lineSpeed: 0.38,
+          },
+          glitch: {
+            enabled: true,
+            rgbShift: 0,
+            digitalNoise: 0.18,
+            lineDisplacement: 0,
+            bitCrushDepth: 0,
+            signalDropoutFreq: 0.03,
+            signalDropoutSize: 0.4,
+            syncErrorFreq: 0.1,
+            syncErrorAmount: 0.141,
+            interferenceSpeed: 5.2,
+            interferenceIntensity: 1,
+            frameGhostAmount: 0.68,
+            stutterFreq: 0.4,
+            datamoshStrength: 2,
+          },
+        },
+      };
+    }
+
+    function cleanupStoryGlitchCanvas() {
+      if (!storyGlitchPane) return;
+      Array.prototype.slice
+        .call(storyGlitchPane.querySelectorAll('canvas, [data-glitch-target]'))
+        .forEach(function (node) {
+          if (node === storyGlitchImg) return;
+          if (node.parentNode) node.parentNode.removeChild(node);
+        });
+    }
+
+    function stopStoryGlitchCycle() {
+      if (storyGlitchTimer) {
+        clearTimeout(storyGlitchTimer);
+        storyGlitchTimer = null;
+      }
+    }
+
+    function teardownStoryGlitch() {
+      storyGlitchMountRun += 1;
+      stopStoryGlitchCycle();
+      storyGlitchBusy = false;
+      var inst = storyGlitchInst;
+      storyGlitchInst = null;
+      storySection.classList.remove('is-glitch-on');
+      if (inst && typeof inst.cleanup === 'function') {
+        try {
+          inst.cleanup();
+        } catch (e) {
+          /* ignore */
+        }
+      }
+      cleanupStoryGlitchCanvas();
+    }
+
+    function mountStoryGlitchInstance() {
+      if (typeof window.glitchGL !== 'function' || typeof window.THREE === 'undefined') {
+        return null;
+      }
+      cleanupStoryGlitchCanvas();
+      return window.glitchGL(storyGlitchOptions('#l-night-story-glitch-img'));
+    }
+
+    function nextStoryGlitchSrc() {
+      storyGlitchPoolIndex = (storyGlitchPoolIndex + 1) % STORY_GLITCH_POOL.length;
+      return STORY_GLITCH_POOL[storyGlitchPoolIndex];
+    }
+
+    function advanceStoryGlitch() {
+      if (!storyGlitchInst || !storyGlitchImg || storyGlitchBusy) {
+        return Promise.resolve();
+      }
+      if (!storyGlitchWanted || !isStoryGlitchDesktop()) {
+        return Promise.resolve();
+      }
+      storyGlitchBusy = true;
+      var run = storyGlitchMountRun;
+      var src = nextStoryGlitchSrc();
+      var probe = new Image();
+      probe.src = src;
+      return waitImgReady(probe)
+        .then(function () {
+          if (run !== storyGlitchMountRun || !storyGlitchInst) return;
+          if (storyGlitchInst && typeof storyGlitchInst.cleanup === 'function') {
+            try {
+              storyGlitchInst.cleanup();
+            } catch (e) {
+              /* ignore */
+            }
           }
-        }
-        storyGlitchInst = null;
-        cleanupStoryGlitchCanvas();
-        storyGlitchImg.src = src;
-        return waitImgReady(storyGlitchImg);
-      })
-      .then(function () {
-        if (run !== storyGlitchMountRun || !storyGlitchWanted) return;
-        try {
-          storyGlitchInst = mountStoryGlitchInstance();
-        } catch (e) {
           storyGlitchInst = null;
-        }
-      })
-      .catch(function () {
-        /* ignore swap errors */
-      })
-      .finally(function () {
-        storyGlitchBusy = false;
-      });
-  }
+          cleanupStoryGlitchCanvas();
+          storyGlitchImg.src = src;
+          return waitImgReady(storyGlitchImg);
+        })
+        .then(function () {
+          if (run !== storyGlitchMountRun || !storyGlitchWanted) return;
+          try {
+            storyGlitchInst = mountStoryGlitchInstance();
+          } catch (e) {
+            storyGlitchInst = null;
+          }
+        })
+        .catch(function () {
+          /* ignore swap errors */
+        })
+        .finally(function () {
+          storyGlitchBusy = false;
+        });
+    }
 
-  function scheduleStoryGlitchCycle() {
-    stopStoryGlitchCycle();
-    if (!storyGlitchInst || !storyGlitchWanted) return;
-    var run = storyGlitchMountRun;
-    var delay = 5200 + Math.floor(Math.random() * 2800);
-    storyGlitchTimer = setTimeout(function () {
-      if (run !== storyGlitchMountRun) return;
-      advanceStoryGlitch().finally(function () {
+    function scheduleStoryGlitchCycle() {
+      stopStoryGlitchCycle();
+      if (!storyGlitchInst || !storyGlitchWanted) return;
+      var run = storyGlitchMountRun;
+      var delay = 5200 + Math.floor(Math.random() * 2800);
+      storyGlitchTimer = setTimeout(function () {
         if (run !== storyGlitchMountRun) return;
-        if (!storyGlitchInst || !storyGlitchWanted) return;
-        scheduleStoryGlitchCycle();
-      });
-    }, delay);
-  }
-
-  function mountStoryGlitch() {
-    if (storyGlitchInst || !storyGlitchWanted || !isStoryGlitchDesktop()) return;
-    if (!storyGlitchPane || !storyGlitchImg) return;
-    if (typeof window.glitchGL !== 'function' || typeof window.THREE === 'undefined') {
-      return;
-    }
-
-    storyGlitchMountRun += 1;
-    var run = storyGlitchMountRun;
-    storyCard.classList.add('is-glitch-on');
-
-    waitImgReady(storyGlitchImg)
-      .then(function () {
-        if (run !== storyGlitchMountRun || storyGlitchInst) return;
-        if (!storyGlitchWanted || !isStoryGlitchDesktop()) return;
-        try {
-          storyGlitchInst = mountStoryGlitchInstance();
+        advanceStoryGlitch().finally(function () {
+          if (run !== storyGlitchMountRun) return;
+          if (!storyGlitchInst || !storyGlitchWanted) return;
           scheduleStoryGlitchCycle();
-        } catch (e) {
-          storyGlitchInst = null;
-        }
-      })
-      .catch(function () {
-        /* ignore */
+        });
+      }, delay);
+    }
+
+    function mountStoryGlitch() {
+      if (storyGlitchInst || !storyGlitchWanted || !isStoryGlitchDesktop()) return;
+      if (!storyGlitchPane || !storyGlitchImg) return;
+      if (typeof window.glitchGL !== 'function' || typeof window.THREE === 'undefined') {
+        return;
+      }
+
+      storyGlitchMountRun += 1;
+      var run = storyGlitchMountRun;
+      storySection.classList.add('is-glitch-on');
+
+      waitImgReady(storyGlitchImg)
+        .then(function () {
+          if (run !== storyGlitchMountRun || storyGlitchInst) return;
+          if (!storyGlitchWanted || !isStoryGlitchDesktop()) return;
+          try {
+            storyGlitchInst = mountStoryGlitchInstance();
+            scheduleStoryGlitchCycle();
+          } catch (e) {
+            storyGlitchInst = null;
+          }
+        })
+        .catch(function () {
+          /* ignore */
+        });
+    }
+
+    function syncStoryGlitch(on) {
+      storyGlitchWanted = !!on;
+      if (!on || !isStoryGlitchDesktop()) {
+        teardownStoryGlitch();
+        return;
+      }
+      if (storyGlitchInst) {
+        storySection.classList.add('is-glitch-on');
+        return;
+      }
+      requestAnimationFrame(function () {
+        mountStoryGlitch();
       });
-  }
-
-  function syncStoryGlitch(on) {
-    storyGlitchWanted = !!on;
-    if (!on || !isStoryGlitchDesktop()) {
-      teardownStoryGlitch();
-      return;
     }
-    if (storyGlitchInst) {
-      storyCard.classList.add('is-glitch-on');
-      return;
+
+    var storyHeading = storySection.querySelector('.l-night-story-heading');
+    var reduceMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var HEADING_REST = 0.55;
+    var storyPlayed = false;
+
+    function playStoryBody() {
+      if (!storyLineEls.length || storyBodyPlayed) return;
+      storyBodyPlayed = true;
+      gsap.to(storyLineEls, {
+        opacity: 1,
+        y: 0,
+        duration: 0.55,
+        stagger: 0.12,
+        ease: 'power3.out',
+      });
     }
-    requestAnimationFrame(function () {
-      mountStoryGlitch();
-    });
-  }
 
-  // Body: timed reveal after expand settles (not scrub-linked)
-  gsap.set(storyLineEls, { opacity: 0, y: 16 });
-  var storyBodyPlayed = false;
+    function playStoryMotion() {
+      if (storyPlayed) return;
+      storyPlayed = true;
 
-  function playStoryBody() {
-    if (!storyLineEls.length || storyBodyPlayed) return;
-    storyBodyPlayed = true;
-    gsap.to(storyLineEls, {
-      opacity: 1,
-      y: 0,
-      duration: 0.55,
-      stagger: 0.12,
-      ease: 'power3.out',
-    });
-  }
+      if (reduceMq.matches) {
+        if (storyHeading) gsap.set(storyHeading, { scale: 1, opacity: 1 });
+        if (storyLineEls.length) gsap.set(storyLineEls, { opacity: 1, y: 0 });
+        storyBodyPlayed = true;
+        syncStoryGlitch(true);
+        return;
+      }
 
-  function resetStoryBody() {
-    storyBodyPlayed = false;
-    gsap.killTweensOf(storyLineEls);
-    gsap.set(storyLineEls, { opacity: 0, y: 16 });
-  }
+      var tl = gsap.timeline({
+        defaults: { ease: 'power3.out' },
+        onStart: function () {
+          syncStoryGlitch(true);
+        },
+      });
 
-  var storyBaseW = 0;
-  var storyBaseH = 0;
+      if (storyHeading) {
+        tl.to(storyHeading, {
+          scale: 1,
+          duration: 0.95,
+          ease: 'power2.out',
+        }, 0);
+      }
 
-  function headingRestScale() {
-    if (!storyHeading) return 1;
-    var large = parseFloat(window.getComputedStyle(storyHeading).fontSize) || 44;
-    // Visual size on the compact card ≈ 26px
-    return Math.min(0.62, 26 / large);
-  }
+      tl.add(function () {
+        playStoryBody();
+      }, storyHeading ? 0.55 : 0);
+    }
 
-  function measureBase() {
-    gsap.set(storyCard, { clearProps: 'width,flexBasis,minHeight,borderRadius,height' });
-    gsap.set(nightsTrack, { clearProps: 'x' });
-    if (storyHeading) gsap.set(storyHeading, { clearProps: 'scale' });
-    storyCard.classList.remove('is-wide', 'is-fullbleed');
-    nightsSection.classList.remove('is-story-full');
-    void storyCard.offsetWidth;
-    storyBaseW = storyCard.getBoundingClientRect().width;
-    storyBaseH = storyCard.getBoundingClientRect().height;
     if (storyHeading) {
       gsap.set(storyHeading, {
-        scale: headingRestScale(),
+        scale: HEADING_REST,
         transformOrigin: '50% 50%',
       });
     }
-  }
-
-  function storyCenterX(width) {
-    var w = width == null ? storyCard.offsetWidth : width;
-    return -(storyCard.offsetLeft + w / 2 - window.innerWidth / 2);
-  }
-
-  measureBase();
-
-  var tl = gsap.timeline({
-    defaults: { ease: 'none' },
-    scrollTrigger: {
-      trigger: nightsSection,
-      start: 'top top',
-      end: '+=380%',
-      pin: nightsPin || true,
-      scrub: 0.55,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
-    },
-  });
-
-  // 1) Horizontal scrub to center story
-  tl.to(
-    nightsTrack,
-    {
-      duration: 1,
-      x: function () {
-        return storyCenterX(storyBaseW);
-      },
-    },
-    0
-  );
-
-  // 2) Heading grows first and settles; background expand finishes after
-  if (storyHeading) {
-    tl.fromTo(
-      storyHeading,
-      {
-        scale: function () {
-          return headingRestScale();
-        },
-        transformOrigin: '50% 50%',
-      },
-      {
-        duration: 0.36,
-        scale: 1,
-        transformOrigin: '50% 50%',
-        ease: 'power2.out',
-      },
-      0.96
-    );
-  }
-
-  tl.to(
-    storyCard,
-    {
-      duration: 0.48,
-      width: function () {
-        return window.innerWidth;
-      },
-      flexBasis: function () {
-        return window.innerWidth;
-      },
-      minHeight: function () {
-        return window.innerHeight;
-      },
-      borderRadius: 0,
-      onUpdate: function () {
-        var p = this.progress();
-        storyCard.classList.toggle('is-wide', p > 0.2);
-        storyCard.classList.toggle('is-fullbleed', p > 0.85);
-        nightsSection.classList.toggle('is-story-full', p > 0.92);
-        syncStoryGlitch(p > 0.85);
-        if (p >= 0.92) playStoryBody();
-        else if (p < 0.5 && storyBodyPlayed) resetStoryBody();
-      },
-      onComplete: function () {
-        storyCard.classList.add('is-wide', 'is-fullbleed');
-        nightsSection.classList.add('is-story-full');
-        syncStoryGlitch(true);
-        playStoryBody();
-      },
-      onReverseComplete: function () {
-        storyCard.classList.remove('is-wide', 'is-fullbleed');
-        nightsSection.classList.remove('is-story-full');
-        syncStoryGlitch(false);
-        resetStoryBody();
-        if (storyHeading) {
-          gsap.set(storyHeading, {
-            scale: headingRestScale(),
-            transformOrigin: '50% 50%',
-          });
-        }
-      },
-    },
-    1
-  );
-
-  tl.to(
-    nightsTrack,
-    {
-      duration: 0.48,
-      x: function () {
-        return storyCenterX(window.innerWidth);
-      },
-    },
-    1
-  );
-
-  tl.to(nightCards, { duration: 0.3, opacity: 0 }, 1);
-
-  if (nightsPin) {
-    tl.to(nightsPin, { duration: 0.3, backgroundColor: '#0d1020' }, 1);
-  }
-
-  // Hold after settle so timed body anim can play while still pinned
-  tl.to({}, { duration: 0.55 });
-
-  function refreshMotion() {
-    measureBase();
-    ScrollTrigger.refresh();
-    if (!isStoryGlitchDesktop()) syncStoryGlitch(false);
-    else if (storyGlitchWanted) syncStoryGlitch(true);
-  }
-
-  var resizeTimer = null;
-  window.addEventListener('resize', function () {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(refreshMotion, 180);
-  });
-
-  if (storyGlitchMq) {
-    var onStoryGlitchMq = function () {
-      if (!isStoryGlitchDesktop()) syncStoryGlitch(false);
-      else if (storyCard.classList.contains('is-fullbleed')) syncStoryGlitch(true);
-    };
-    if (storyGlitchMq.addEventListener) {
-      storyGlitchMq.addEventListener('change', onStoryGlitchMq);
-    } else if (storyGlitchMq.addListener) {
-      storyGlitchMq.addListener(onStoryGlitchMq);
+    if (storyLineEls.length) {
+      gsap.set(storyLineEls, { opacity: 0, y: 16 });
     }
-  }
 
-  window.addEventListener('pagehide', function () {
-    syncStoryGlitch(false);
-  });
-
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(function () {
-      refreshMotion();
+    ScrollTrigger.create({
+      trigger: storySection,
+      start: 'top 72%',
+      once: true,
+      onEnter: playStoryMotion,
     });
-  }
+
+    if (storyGlitchMq) {
+      var onStoryGlitchMq = function () {
+        if (!isStoryGlitchDesktop()) syncStoryGlitch(false);
+        else if (storyGlitchWanted) syncStoryGlitch(true);
+      };
+      if (storyGlitchMq.addEventListener) {
+        storyGlitchMq.addEventListener('change', onStoryGlitchMq);
+      } else if (storyGlitchMq.addListener) {
+        storyGlitchMq.addListener(onStoryGlitchMq);
+      }
+    }
+
+    window.addEventListener('pagehide', function () {
+      syncStoryGlitch(false);
+    });
+  })();
 })();
