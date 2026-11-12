@@ -1,8 +1,13 @@
 # I Thought I Knew You
 
-This is a static React game for GitHub Pages. The game follows four evenings in
-which the player investigates videos, photos, social accounts, voice messages,
-and conversations involving Nicole.
+This is a static site for GitHub Pages (`www.itiky.eu`):
+
+- `/` — promotional landing page (phase 1: header + hero)
+- `/play/` — the media-literacy game
+- `/privacy/` — privacy & imprint
+
+The game follows four evenings in which the player investigates videos, photos,
+social accounts, voice messages, and conversations involving Nicole.
 
 The project was extracted from `V8.html` and intentionally keeps the original
 game behavior. `V8.html` is the reference/export file and must not be edited as
@@ -26,35 +31,36 @@ When modifying this project:
 
 Use these organized files as the editable source:
 
-- `content/`: story, dialogue, choices, and game content
-- `src/game/methods/`: game behavior grouped by responsibility
-- `src/game/game-logic.js`: state fields and the runtime adapter
-- `src/template/app-template.html`: screen markup and template bindings
-- `styles/`: `design-system.css` (tokens + `g-btn-*`) and `game.css` (page reset + motion)
-- `assets/`: media, fonts, and local React vendor files
+- `play/content/`: story, dialogue, choices, and game content
+- `play/src/game/methods/`: game behavior grouped by responsibility
+- `play/src/game/game-logic.js`: state fields and the runtime adapter
+- `play/src/template/app-template.html`: screen markup and template bindings
+- `play/styles/`: `design-system.css` (tokens + `g-btn-*`) and `game.css` (page reset + motion)
+- `play/assets/`: media, fonts, and local React vendor files
+- `index.html`, `styles/landing.css`, `assets/landing/`: root landing shell
 
 Treat these as infrastructure or reference files:
 
 - `V8.html`: unchanged reference/export artifact
-- `src/runtime/dc-runtime.js`: generated template runtime
-- `assets/vendor/`: bundled React and ReactDOM files
+- `play/src/runtime/dc-runtime.js`: generated template runtime
+- `play/assets/vendor/`: bundled React and ReactDOM files
 
 ## Runtime Flow
 
 The app does not use Vite or a package build step.
 
-1. `index.html` loads local React and ReactDOM.
+1. `play/index.html` loads local React and ReactDOM.
 2. The game method files populate `window.GameMethods`.
-3. `src/data/load-game-data.js` fetches the JSON files and creates
+3. `play/src/data/load-game-data.js` fetches the JSON files and creates
    `window.GameData`.
-4. `index.html` fetches `src/template/app-template.html` and
-   `src/game/game-logic.js`.
-5. `src/runtime/dc-runtime.js` parses the custom template and connects it to
+4. `play/index.html` fetches `src/template/app-template.html` and
+   `src/game/game-logic.js` (paths relative to `/play/`).
+5. `play/src/runtime/dc-runtime.js` parses the custom template and connects it to
    React.
 6. `game-logic.js` creates `Component` and merges `window.GameMethods` onto its
    prototype.
 
-All method files must be loaded by `index.html` before the runtime is loaded.
+All method files must be loaded by `play/index.html` before the runtime is loaded.
 
 ### Local Pocket TTS Adapter
 
@@ -63,7 +69,7 @@ The Day 3 cloned-voice path uses the project-owned browser adapter under
 ONNX inference in a Web Worker and loads only the ONNX Runtime Web module plus
 the configured model bundle.
 
-`index.html` points to a pinned public quantized bundle derived from Kyutai's
+`play/index.html` points to a pinned public quantized bundle derived from Kyutai's
 official model in `KevinAHM/pocket-tts-onnx`. The bundle contains the exported
 `english_2026-04` files, including `bundle.json`, `tokenizer.model`, the four
 quantized inference graphs, and `mimi_encoder_int8.onnx`. Do not commit the
@@ -261,7 +267,7 @@ When adding an asset:
 
 ## Local Preview
 
-The app fetches template, logic, and JSON files. Do not open `index.html`
+The app fetches template, logic, and JSON files. Do not open HTML files
 directly with `file://`.
 
 From the workspace root, run:
@@ -273,7 +279,9 @@ python -m http.server 8000
 Open:
 
 ```text
-http://localhost:8000/I-thought-I-knew-you/
+http://localhost:8000/          # landing
+http://localhost:8000/play/     # game
+http://localhost:8000/privacy/  # privacy & imprint
 ```
 
 ## Verification

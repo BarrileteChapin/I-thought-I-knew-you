@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" id="theme-color" content="#1B4FE0">
+  <title>I Thought I Knew You</title>
+  <link rel="stylesheet" href="./styles/design-system.css">
+  <link rel="stylesheet" href="./styles/game.css">
+  <style>x-dc{display:none!important}</style>
+  <script src="./assets/vendor/react.production.min.js"></script>
+  <script src="./assets/vendor/react-dom.production.min.js"></script>
+  <!-- Title home glitch (PC): Three.js + glitchGL. Personal/academic licence. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/naughtyduk/glitchGL@main/scripts/glitchGL.min.js"></script>
+  <script>
+    // Public, pinned quantized bundle derived from Kyutai's Pocket TTS model.
+    // Replace this with a self-hosted mirror if the deployment needs one.
+    window.POCKET_TTS_MODEL_BASE_URL = window.POCKET_TTS_MODEL_BASE_URL
+      || 'https://huggingface.co/KevinAHM/pocket-tts-onnx/resolve/58a6d00cf13d239b6748cb0769f35c580a8f606c/onnx';
+  </script>
+  <script type="module" src="./src/tts/adapter.js"></script>
+  <script>
+    (function syncThemeColor() {
+      var meta = document.getElementById('theme-color');
+      if (!meta) return;
+      var accent = getComputedStyle(document.documentElement).getPropertyValue('--c-accent').trim();
+      if (accent) meta.setAttribute('content', accent);
+    }());
+  </script>
+  <script src="./src/game/methods/core.js"></script>
+  <script src="./src/game/methods/persistence.js"></script>
+  <script src="./src/game/methods/chat-llm.js"></script>
+  <script src="./src/game/methods/lifecycle.js"></script>
+  <script src="./src/game/methods/audio.js"></script>
+  <script src="./src/game/methods/cinematic.js"></script>
+  <script src="./src/game/methods/notifications.js"></script>
+  <script src="./src/game/methods/intro.js"></script>
+  <script src="./src/game/methods/relationships.js"></script>
+  <script src="./src/game/methods/actions.js"></script>
+  <script src="./src/game/methods/days.js"></script>
+  <script src="./src/game/methods/notebook.js"></script>
+  <script src="./src/game/methods/relation-map.js"></script>
+  <script src="./src/game/methods/ending.js"></script>
+  <script src="./src/game/methods/render.js"></script>
+  <script src="./src/game/methods/home-glitch.js"></script>
+  <script src="./src/data/load-game-data.js"></script>
+  <script>
+    // The original bundle resolves these paths through its asset manifest.
+    // The organized version serves the same assets directly from GitHub Pages.
+    window.__R = function (assetPath) { return assetPath; };
+  </script>
+</head>
+<body>
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute;overflow:hidden">
+    <defs>
+      <filter id="g-ink-displace" x="-12%" y="-12%" width="124%" height="124%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" seed="4" result="noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="16" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="g-ink-displace-soft" x="-12%" y="-12%" width="124%" height="124%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.055" numOctaves="2" seed="9" result="noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="9" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>
+  </svg>
+  <div id="app-loading" role="status" aria-label="Loading">
+    <span class="g-app-loading-spinner" aria-hidden="true"></span>
+  </div>
+  <!-- Outside React so glitchGL's canvas survives title re-renders. PC title only. -->
+  <div id="g-home-glitch-layer" class="g-home-glitch-layer" hidden aria-hidden="true">
+    <div class="g-home-glitch-pane is-left">
+      <img id="g-home-glitch-l" class="g-home-glitch-half" src="assets/class_10b.webp" alt="" decoding="async">
+    </div>
+    <div class="g-home-glitch-pane is-right">
+      <img id="g-home-glitch-r" class="g-home-glitch-half" src="assets/nicole-garden.webp" alt="" decoding="async">
+    </div>
+  </div>
+  <script>
+    (async function bootOrganizedGame() {
+      const loading = document.getElementById('app-loading');
+
+      function setError(message) {
+        if (loading) {
+          loading.textContent = message;
+          loading.style.color = getComputedStyle(document.documentElement).getPropertyValue('--c-danger-dark').trim() || '#8A1C1C';
+          loading.style.fontFamily = getComputedStyle(document.documentElement).getPropertyValue('--font-body').trim() || 'system-ui, sans-serif';
+          loading.style.fontSize = '16px';
+          loading.style.fontWeight = '600';
+          loading.style.textAlign = 'center';
+          loading.style.padding = '24px';
+        }
+        console.error('[game] ' + message);
+      }
+
+      function dismissLoading() {
+        if (loading && loading.parentNode) loading.remove();
+      }
+
+      async function readSource(path) {
+        const response = await fetch(path);
+        if (!response.ok) throw new Error(path + ' returned HTTP ' + response.status);
+        return response.text();
+      }
+
+      try {
+        await window.loadGameData();
+
+        const [template, logic] = await Promise.all([
+          readSource('./src/template/app-template.html'),
+          readSource('./src/game/game-logic.js')
+        ]);
+
+        const root = document.createElement('x-dc');
+        root.setAttribute('aria-hidden', 'true');
+        root.innerHTML = template;
+
+        const logicScript = document.createElement('script');
+        logicScript.type = 'text/x-dc';
+        logicScript.dataset.dcScript = '';
+        const accent = getComputedStyle(document.documentElement).getPropertyValue('--c-accent').trim() || '#1B4FE0';
+        const ink = getComputedStyle(document.documentElement).getPropertyValue('--c-ink').trim() || '#111111';
+        logicScript.dataset.props = JSON.stringify({
+          accent: {
+            editor: 'color',
+            default: accent,
+            tsType: 'string',
+            options: [accent, ink]
+          },
+          nightIntensity: {
+            editor: 'range',
+            default: 1,
+            min: 0.4,
+            max: 1.6,
+            step: 0.1,
+            tsType: 'number'
+          },
+          showClock: { editor: 'boolean', default: true, tsType: 'boolean' }
+        });
+        logicScript.textContent = logic;
+        root.appendChild(logicScript);
+
+        // Keep #app-loading on top until React has painted a real screen.
+        // Replacing the body early lets the raw template (videos included) flash.
+        document.body.appendChild(root);
+
+        const runtime = document.createElement('script');
+        runtime.src = './src/runtime/dc-runtime.js';
+        runtime.onerror = () => setError('Could not load the React component runtime.');
+        runtime.onload = () => {
+          let settled = false;
+          const finish = () => {
+            if (settled) return;
+            settled = true;
+            obs.disconnect();
+            requestAnimationFrame(dismissLoading);
+          };
+          const obs = new MutationObserver(() => {
+            if (document.querySelector('.g-title, .g-name-entry, .g-daycard, .g-lp-frame .g-btn')) finish();
+          });
+          obs.observe(document.body, { childList: true, subtree: true });
+          if (document.querySelector('.g-title, .g-name-entry, .g-daycard, .g-lp-frame .g-btn')) finish();
+          setTimeout(finish, 8000);
+        };
+        document.head.appendChild(runtime);
+      } catch (error) {
+        setError('Could not load the game source: ' + error.message);
+      }
+    }());
+  </script>
+</body>
+</html>

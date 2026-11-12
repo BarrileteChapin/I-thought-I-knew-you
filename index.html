@@ -1,172 +1,461 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" id="theme-color" content="#1B4FE0">
   <title>I Thought I Knew You</title>
-  <link rel="stylesheet" href="./styles/design-system.css">
-  <link rel="stylesheet" href="./styles/game.css">
-  <style>x-dc{display:none!important}</style>
-  <script src="./assets/vendor/react.production.min.js"></script>
-  <script src="./assets/vendor/react-dom.production.min.js"></script>
-  <!-- Title home glitch (PC): Three.js + glitchGL. Personal/academic licence. -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/naughtyduk/glitchGL@main/scripts/glitchGL.min.js"></script>
+  <meta name="description" content="A class-chat game about deepfakes, rumours, and the friend you’d rather believe. Can you help her before the chat decides for you?">
+  <link rel="stylesheet" href="/styles/landing.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/bold/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css">
   <script>
-    // Public, pinned quantized bundle derived from Kyutai's Pocket TTS model.
-    // Replace this with a self-hosted mirror if the deployment needs one.
-    window.POCKET_TTS_MODEL_BASE_URL = window.POCKET_TTS_MODEL_BASE_URL
-      || 'https://huggingface.co/KevinAHM/pocket-tts-onnx/resolve/58a6d00cf13d239b6748cb0769f35c580a8f606c/onnx';
-  </script>
-  <script type="module" src="./src/tts/adapter.js"></script>
-  <script>
-    (function syncThemeColor() {
-      var meta = document.getElementById('theme-color');
-      if (!meta) return;
-      var accent = getComputedStyle(document.documentElement).getPropertyValue('--c-accent').trim();
-      if (accent) meta.setAttribute('content', accent);
-    }());
-  </script>
-  <script src="./src/game/methods/core.js"></script>
-  <script src="./src/game/methods/persistence.js"></script>
-  <script src="./src/game/methods/chat-llm.js"></script>
-  <script src="./src/game/methods/lifecycle.js"></script>
-  <script src="./src/game/methods/audio.js"></script>
-  <script src="./src/game/methods/cinematic.js"></script>
-  <script src="./src/game/methods/notifications.js"></script>
-  <script src="./src/game/methods/intro.js"></script>
-  <script src="./src/game/methods/relationships.js"></script>
-  <script src="./src/game/methods/actions.js"></script>
-  <script src="./src/game/methods/days.js"></script>
-  <script src="./src/game/methods/notebook.js"></script>
-  <script src="./src/game/methods/relation-map.js"></script>
-  <script src="./src/game/methods/ending.js"></script>
-  <script src="./src/game/methods/render.js"></script>
-  <script src="./src/game/methods/home-glitch.js"></script>
-  <script src="./src/data/load-game-data.js"></script>
-  <script>
-    // The original bundle resolves these paths through its asset manifest.
-    // The organized version serves the same assets directly from GitHub Pages.
-    window.__R = function (assetPath) { return assetPath; };
+    /* Lite mode: skip canvas/WebGL/smooth-scroll on phones & weak devices */
+    window.__lLite = (function () {
+      try {
+        var mq = window.matchMedia;
+        if (mq && mq('(prefers-reduced-motion: reduce)').matches) return true;
+        var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        if (conn && (conn.saveData || /2g/.test(conn.effectiveType || ''))) return true;
+        var narrow = mq && mq('(max-width: 900px)').matches;
+        var coarse = mq && mq('(pointer: coarse)').matches;
+        if (narrow) return true;
+        if (coarse && mq('(max-width: 1100px)').matches) return true;
+        if (typeof navigator.deviceMemory === 'number' && navigator.deviceMemory <= 2) return true;
+        if (typeof navigator.hardwareConcurrency === 'number' && navigator.hardwareConcurrency <= 2) return true;
+        return false;
+      } catch (e) {
+        return true;
+      }
+    })();
+    document.documentElement.classList.toggle('l-lite', !!window.__lLite);
   </script>
 </head>
 <body>
-  <svg aria-hidden="true" width="0" height="0" style="position:absolute;overflow:hidden">
-    <defs>
-      <filter id="g-ink-displace" x="-12%" y="-12%" width="124%" height="124%" color-interpolation-filters="sRGB">
-        <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" seed="4" result="noise"/>
-        <feDisplacementMap in="SourceGraphic" in2="noise" scale="16" xChannelSelector="R" yChannelSelector="G"/>
-      </filter>
-      <filter id="g-ink-displace-soft" x="-12%" y="-12%" width="124%" height="124%" color-interpolation-filters="sRGB">
-        <feTurbulence type="fractalNoise" baseFrequency="0.055" numOctaves="2" seed="9" result="noise"/>
-        <feDisplacementMap in="SourceGraphic" in2="noise" scale="9" xChannelSelector="R" yChannelSelector="G"/>
-      </filter>
-    </defs>
-  </svg>
-  <div id="app-loading" role="status" aria-label="Loading">
-    <span class="g-app-loading-spinner" aria-hidden="true"></span>
-  </div>
-  <!-- Outside React so glitchGL's canvas survives title re-renders. PC title only. -->
-  <div id="g-home-glitch-layer" class="g-home-glitch-layer" hidden aria-hidden="true">
-    <div class="g-home-glitch-pane is-left">
-      <img id="g-home-glitch-l" class="g-home-glitch-half" src="assets/class_10b.webp" alt="" decoding="async">
+  <a class="l-play-fixed" href="/play/">Play</a>
+
+  <header class="l-header">
+    <div class="l-header-inner">
+      <a class="l-header-logo" href="/" aria-label="I Thought I Knew You">
+        <img class="l-header-logo__stack" src="/assets/landing/brand/logo.svg" alt="" width="272" height="116">
+        <img class="l-header-logo__line" src="/assets/landing/brand/logo_oneline_black.svg" alt="" width="357" height="33">
+      </a>
     </div>
-    <div class="g-home-glitch-pane is-right">
-      <img id="g-home-glitch-r" class="g-home-glitch-half" src="assets/nicole-garden.webp" alt="" decoding="async">
+  </header>
+
+  <main>
+    <section id="top" class="l-hero">
+      <div class="l-hero-inner">
+        <div>
+          <h1 class="l-hero-logo-glitch" aria-label="I Thought I Knew You">
+            <img class="l-hero-logo" src="/assets/landing/brand/logo.svg" alt="" decoding="async">
+            <canvas class="l-hero-logo-canvas" aria-hidden="true"></canvas>
+          </h1>
+          <p class="l-hero-lead">
+            A class-chat game about deepfakes, rumours,
+            and the friend you’d rather believe.
+            Can you help her before the chat decides for you?
+          </p>
+        </div>
+
+        <div class="l-hero-stage">
+          <div class="l-film">
+            <div class="l-film-frame">
+              <span class="l-film-btn l-film-btn--silent" aria-hidden="true"></span>
+              <span class="l-film-btn l-film-btn--vol-up" aria-hidden="true"></span>
+              <span class="l-film-btn l-film-btn--vol-down" aria-hidden="true"></span>
+              <span class="l-film-btn l-film-btn--power" aria-hidden="true"></span>
+              <div class="l-film-screen">
+                <span class="l-film-island" aria-hidden="true"></span>
+                <video id="l-intro-video" poster="/assets/landing/poster.jpg" playsinline preload="metadata" autoplay muted loop>
+                  <source src="/assets/landing/intro.mp4" type="video/mp4">
+                </video>
+              </div>
+            </div>
+            <!-- Live-ish group chat feed, anchored to the phone -->
+            <div class="l-hero-chat" id="l-hero-chat" aria-hidden="true"></div>
+          </div>
+
+          <a
+            class="l-award l-award--hero"
+            href="https://www.unesco.org/en/articles/meet-winners-unescos-2026-youth-hackathon-media-and-information-literacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Awarded UNESCO Youth Hackathon 2026 — read the UNESCO article"
+          >
+            <div class="l-award-mark">
+              <img src="/assets/landing/brand/laurel.svg" alt="" aria-hidden="true">
+              <div class="l-award-copy">
+                <p class="l-award-kicker">Awarded</p>
+                <p class="l-award-unesco">UNESCO</p>
+                <p class="l-award-event">Youth Hackathon</p>
+                <p class="l-award-year">2026</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+      </div>
+
+      <button type="button" class="l-film-mute" id="l-intro-mute" data-unmuted="false" aria-label="Unmute">
+        <i class="ph-bold ph-speaker-high l-icon-unmuted" aria-hidden="true"></i>
+        <i class="ph-bold ph-speaker-slash l-icon-muted" aria-hidden="true"></i>
+      </button>
+    </section>
+
+    <!-- Media literacy -->
+    <section id="about" class="l-section l-section--panel l-section--literacy l-section--grow">
+      <div class="l-wrap l-literacy-layout">
+        <div class="l-literacy-track" id="l-literacy-track">
+          <div class="l-literacy-slide l-literacy-slide--main">
+            <div class="l-literacy-copy">
+              <h2 class="l-h2">Media literacy matters where the rumour actually lands.</h2>
+              <p class="l-lead">
+                For a teenager it isn't a news story to fact-check later. It's a
+                video in the class chat, sent by someone they trust, about someone
+                else they trust — and the room is already reacting. Generative AI
+                made that easier: a cut clip, a recycled photo, a cloned voice. The
+                missing piece isn't a lecture. It's the habit of pausing first.
+              </p>
+            </div>
+            <article class="l-fact l-fact--lead">
+              <p class="l-fact-frac"><span class="l-fact-num">1</span><span class="l-fact-in">in</span><span class="l-fact-num">5</span></p>
+              <div class="l-people" data-filled="1" data-total="5" aria-label="1 in 5"></div>
+              <div class="l-fact-bar" aria-hidden="true"><span style="--l-bar:20%"></span></div>
+              <p class="l-fact-body">teens say a false rumour was started about them.</p>
+              <a class="l-fact-source" href="https://www.pewresearch.org/internet/2022/12/15/teens-and-cyberbullying-2022/" target="_blank" rel="noopener noreferrer">Pew Research Center, 2022</a>
+            </article>
+          </div>
+
+          <article class="l-literacy-slide l-fact l-fact--compact">
+            <p class="l-fact-frac"><span class="l-fact-num">1</span><span class="l-fact-in">in</span><span class="l-fact-num">6</span></p>
+            <div class="l-people" data-filled="1" data-total="6" aria-label="1 in 6"></div>
+            <div class="l-fact-bar" aria-hidden="true"><span style="--l-bar:16.67%"></span></div>
+            <p class="l-fact-body">teenagers have been cyberbullied in school.</p>
+            <a class="l-fact-source" href="https://www.who.int/europe/news/item/27-03-2024-cyberbullying-harms-the-health-of-children-and-young-people" target="_blank" rel="noopener noreferrer">WHO/Europe, 2024</a>
+          </article>
+
+          <article class="l-literacy-slide l-fact l-fact--compact">
+            <p class="l-fact-frac"><span class="l-fact-num">1</span><span class="l-fact-in">in</span><span class="l-fact-num">5</span></p>
+            <div class="l-people" data-filled="1" data-total="5" aria-label="1 in 5"></div>
+            <div class="l-fact-bar" aria-hidden="true"><span style="--l-bar:20%"></span></div>
+            <p class="l-fact-body">secondary schools have seen a fabricated clip or image used against a student.</p>
+            <a class="l-fact-source" href="https://www.rand.org/pubs/research_reports/RRA2637-1.html" target="_blank" rel="noopener noreferrer">RAND, 2024</a>
+          </article>
+
+          <article class="l-literacy-slide l-fact l-fact--compact">
+            <p class="l-fact-frac"><span class="l-fact-num">2</span><span class="l-fact-in">in</span><span class="l-fact-num">3</span></p>
+            <div class="l-people" data-filled="2" data-total="3" aria-label="2 in 3"></div>
+            <div class="l-fact-bar" aria-hidden="true"><span style="--l-bar:66.67%"></span></div>
+            <p class="l-fact-body">educators say their students have been misled by a deepfake.</p>
+            <a class="l-fact-source" href="https://www.edweek.org/technology/why-schools-need-to-wake-up-to-the-threat-of-ai-deepfakes-and-bullying/2024/12" target="_blank" rel="noopener noreferrer">EdWeek Research Center, 2024</a>
+          </article>
+
+          <article class="l-literacy-slide l-fact l-fact--compact">
+            <p class="l-fact-frac"><span class="l-fact-num">1</span><span class="l-fact-in">in</span><span class="l-fact-num">5</span></p>
+            <div class="l-people" data-filled="1" data-total="5" aria-label="1 in 5"></div>
+            <div class="l-fact-bar" aria-hidden="true"><span style="--l-bar:20%"></span></div>
+            <p class="l-fact-body">teens have shared content they later learned was fake.</p>
+            <a class="l-fact-source" href="https://www.commonsensemedia.org/research/teens-trust-and-technology-in-the-age-of-ai" target="_blank" rel="noopener noreferrer">Common Sense Media, 2024</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SIFT -->
+    <section id="method" class="l-section l-section--panel l-section--ghost l-section--grow" data-grow="0.97">
+      <div class="l-wrap l-sift-layout">
+        <div class="l-sift-copy">
+          <h2 class="l-h2">SIFT. Four moves before you react.</h2>
+          <p class="l-lead">
+            When a rumour hits the chat, these four habits buy you time to
+            check it — based on
+            <a class="l-inline-link" href="https://hapgood.us/2019/06/19/sift-the-four-moves/" target="_blank" rel="noopener noreferrer">Mike Caulfield's SIFT method</a>
+            (2019). The game is practice: pause, look closer, then decide.
+          </p>
+        </div>
+        <div class="l-sift-board">
+          <div class="l-sift-rail" aria-hidden="true">
+            <span class="l-sift-rail-draw" id="l-sift-rail-draw"></span>
+          </div>
+          <ol class="l-sift" aria-label="SIFT — four moves before you react">
+            <li class="l-sift-step">
+              <p class="l-sift-letter">S</p>
+              <div class="l-sift-circle" aria-hidden="true">
+                <img src="/assets/landing/icons/stop.svg" alt="">
+              </div>
+              <p class="l-sift-title">Stop</p>
+              <p class="l-sift-body">Don’t react or forward yet. Take a breath.</p>
+            </li>
+            <li class="l-sift-step">
+              <p class="l-sift-letter">I</p>
+              <div class="l-sift-circle" aria-hidden="true">
+                <img src="/assets/landing/icons/source.svg" alt="">
+              </div>
+              <p class="l-sift-title">Investigate the source</p>
+              <p class="l-sift-body">Who posted this, and what do you know about them?</p>
+            </li>
+            <li class="l-sift-step">
+              <p class="l-sift-letter">F</p>
+              <div class="l-sift-circle" aria-hidden="true">
+                <img src="/assets/landing/icons/coverage.svg" alt="">
+              </div>
+              <p class="l-sift-title">Find better coverage</p>
+              <p class="l-sift-body">Has anyone else reported the same claim?</p>
+            </li>
+            <li class="l-sift-step">
+              <p class="l-sift-letter">T</p>
+              <div class="l-sift-circle" aria-hidden="true">
+                <img src="/assets/landing/icons/trace.svg" alt="">
+              </div>
+              <p class="l-sift-title">Trace the original</p>
+              <p class="l-sift-body">Find the first version — where and when it appeared.</p>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Four nights (horizontal sticky scrub) -->
+    <section id="project" class="l-nights" aria-label="Four nights">
+      <div class="l-nights-pin">
+        <div class="l-nights-rail">
+          <div class="l-nights-track" id="l-nights-track">
+            <article class="l-night-card l-night-card--coral" data-night-index="0">
+              <header class="l-night-head">
+                <p class="l-night-kicker">Day 1</p>
+                <h3 class="l-night-day">Monday</h3>
+              </header>
+              <div class="l-night-stage">
+                <div class="l-night-viz" aria-hidden="true">
+                  <div class="l-night-post">
+                    <div class="l-night-post-head">
+                      <span class="l-night-post-av l-night-post-av--blank"></span>
+                      <span class="l-night-post-name">••••••</span>
+                    </div>
+                    <div class="l-night-post-media l-night-post-media--video">
+                      <span class="l-night-post-play"></span>
+                    </div>
+                    <div class="l-night-post-actions">
+                      <i class="ph-fill ph-heart l-night-post-ico" aria-hidden="true"></i>
+                      <i class="ph-bold ph-arrows-clockwise l-night-post-ico" aria-hidden="true"></i>
+                      <i class="ph-bold ph-export l-night-post-ico" aria-hidden="true"></i>
+                    </div>
+                  </div>
+                </div>
+                <p class="l-night-evidence">A party video</p>
+              </div>
+            </article>
+            <article class="l-night-card l-night-card--amber" data-night-index="1">
+              <header class="l-night-head">
+                <p class="l-night-kicker">Day 2</p>
+                <h3 class="l-night-day">Tuesday</h3>
+              </header>
+              <div class="l-night-stage">
+                <div class="l-night-viz" aria-hidden="true">
+                  <div class="l-night-post">
+                    <div class="l-night-post-head">
+                      <span class="l-night-post-av l-night-post-av--blank"></span>
+                      <span class="l-night-post-name">••••••</span>
+                    </div>
+                    <div class="l-night-post-media l-night-post-media--photo"></div>
+                    <div class="l-night-post-actions">
+                      <i class="ph-fill ph-heart l-night-post-ico" aria-hidden="true"></i>
+                      <i class="ph-bold ph-arrows-clockwise l-night-post-ico" aria-hidden="true"></i>
+                      <i class="ph-bold ph-export l-night-post-ico" aria-hidden="true"></i>
+                    </div>
+                  </div>
+                </div>
+                <p class="l-night-evidence">A party photo</p>
+              </div>
+            </article>
+            <article class="l-night-card l-night-card--wed l-night-card--mint" data-night-index="2">
+              <header class="l-night-head">
+                <p class="l-night-kicker">Day 3</p>
+                <h3 class="l-night-day">Wednesday</h3>
+              </header>
+              <div class="l-night-wed-stack">
+                <div class="l-night-wed-row">
+                  <div class="l-night-stage l-night-stage--wed">
+                    <div class="l-night-viz l-night-viz--tight" aria-hidden="true">
+                      <div class="l-night-accounts">
+                        <div class="l-night-account">
+                          <span class="l-night-post-av l-night-post-av--blank"></span>
+                          <span>account</span>
+                        </div>
+                        <span class="l-night-accounts-vs">→</span>
+                        <div class="l-night-account l-night-account--fake">
+                          <span class="l-night-post-av l-night-post-av--blank"></span>
+                          <span>account_2</span>
+                        </div>
+                      </div>
+                    </div>
+                    <p class="l-night-evidence">A second account</p>
+                  </div>
+                </div>
+                <div class="l-night-wed-row l-night-wed-row--eve">
+                  <div class="l-night-stage l-night-stage--wed">
+                    <div class="l-night-viz l-night-viz--tight" aria-hidden="true">
+                      <div class="l-night-bubble l-night-bubble--note">
+                        <span class="l-night-post-av l-night-post-av--blank"></span>
+                        <p>did you see this?</p>
+                      </div>
+                    </div>
+                    <p class="l-night-evidence">A note about you</p>
+                  </div>
+                </div>
+              </div>
+            </article>
+            <article class="l-night-card l-night-card--violet" data-night-index="3">
+              <header class="l-night-head">
+                <p class="l-night-kicker">Day 4</p>
+                <h3 class="l-night-day">Thursday</h3>
+              </header>
+              <div class="l-night-stage">
+                <div class="l-night-viz" aria-hidden="true">
+                  <div class="l-night-bubble l-night-bubble--voice">
+                    <span class="l-night-post-av l-night-post-av--blank"></span>
+                    <div class="l-night-voice">
+                      <span class="l-night-voice-play"></span>
+                      <span class="l-night-voice-wave" aria-hidden="true">
+                        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                      </span>
+                      <span class="l-night-voice-time">0:12</span>
+                    </div>
+                  </div>
+                </div>
+                <p class="l-night-evidence">A voice message</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it plays (with the nights) -->
+    <section id="story" class="l-story" aria-label="How the game plays">
+      <div class="l-story-glitch" id="l-night-story-glitch" aria-hidden="true">
+        <img
+          id="l-night-story-glitch-img"
+          class="l-story-glitch-img"
+          src="/assets/landing/story/nicole-garden.webp"
+          alt=""
+          decoding="async"
+        >
+      </div>
+      <div class="l-story-inner">
+        <h2 class="l-night-story-heading">
+          Four nights. The truth is there if you look.
+        </h2>
+        <div class="l-night-story-panel">
+          <p data-story-line>
+            You are one of 28 classmates, ages 13 and up.
+          </p>
+          <p data-story-line>
+            The evidence arrives from someone you trust, about someone
+            you trust, while the room is already reacting.
+          </p>
+          <p data-story-line>
+            Looking costs the evening’s time. Reacting does not.
+          </p>
+          <p data-story-line>
+            Some checks are dead ends, because knowing when a search
+            isn’t helping is part of the skill.
+          </p>
+          <p data-story-line>
+            The ending is a record of what you did — forwarded, checked,
+            reported — not a quiz.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Watch the trailer -->
+    <section id="film" class="l-section l-section--center">
+      <div class="l-wrap">
+        <h2 class="l-h3 l-h3--oneline">Watch how it plays.</h2>
+        <div class="l-film-slot" data-yt-id="0_W7XPrYRe0">
+          <div class="l-film-slot-inner l-film-slot-inner--embed" id="l-film-player">
+            <button type="button" class="l-film-poster" id="l-film-poster" aria-label="Play introduction video">
+              <picture class="l-film-poster-img">
+                <source srcset="/assets/landing/film/poster.webp" type="image/webp">
+                <img
+                  src="/assets/landing/film/poster.jpg"
+                  alt=""
+                  width="1280"
+                  height="720"
+                  decoding="async"
+                >
+              </picture>
+              <span class="l-film-poster-play" aria-hidden="true">
+                <i class="ph-fill ph-play" aria-hidden="true"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+        <div class="l-section-cta l-film-cta">
+          <a class="l-play l-play--md" href="/play/">
+            <span class="l-play-face">
+              Play the game
+              <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+            </span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="l-section l-section--contact">
+      <div class="l-section--panel l-section--ghost l-contact-shell">
+        <div class="l-wrap l-contact">
+          <div class="l-contact-copy">
+            <h2 class="l-h2">Questions, pilots, partnerships — write to us.</h2>
+            <p class="l-lead">
+              Teachers, schools, and collaborators welcome. Tell us what you’re
+              after and how to reach you.
+            </p>
+          </div>
+          <form class="l-contact-form" id="l-contact-form" novalidate>
+            <div class="l-contact-fields">
+              <label class="l-field">
+                Name
+                <input name="name" type="text" required autocomplete="name" placeholder="Your name">
+              </label>
+              <label class="l-field">
+                Email
+                <input name="email" type="email" required autocomplete="email" placeholder="you@school.edu">
+              </label>
+              <label class="l-field">
+                Message
+                <textarea name="message" rows="5" required placeholder="Classroom pilot, partnership, or a question…"></textarea>
+              </label>
+            </div>
+            <button type="submit" class="l-contact-submit">Send</button>
+            <p class="l-contact-held" id="l-contact-held" hidden role="status">
+              Thanks — saved on this page for now. Inbox isn’t connected yet.
+            </p>
+            <p class="l-contact-note">
+              Form isn’t wired to email yet; nothing is sent or stored server-side.
+              <a href="/privacy/">Privacy policy</a>
+            </p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="l-footer">
+    <div class="l-footer-inner">
+      <span>© 2026 I Thought I Knew You</span>
+      <a href="/privacy/">Privacy &amp; Imprint</a>
     </div>
-  </div>
-  <script>
-    (async function bootOrganizedGame() {
-      const loading = document.getElementById('app-loading');
+  </footer>
 
-      function setError(message) {
-        if (loading) {
-          loading.textContent = message;
-          loading.style.color = getComputedStyle(document.documentElement).getPropertyValue('--c-danger-dark').trim() || '#8A1C1C';
-          loading.style.fontFamily = getComputedStyle(document.documentElement).getPropertyValue('--font-body').trim() || 'system-ui, sans-serif';
-          loading.style.fontSize = '16px';
-          loading.style.fontWeight = '600';
-          loading.style.textAlign = 'center';
-          loading.style.padding = '24px';
-        }
-        console.error('[game] ' + message);
-      }
-
-      function dismissLoading() {
-        if (loading && loading.parentNode) loading.remove();
-      }
-
-      async function readSource(path) {
-        const response = await fetch(path);
-        if (!response.ok) throw new Error(path + ' returned HTTP ' + response.status);
-        return response.text();
-      }
-
-      try {
-        await window.loadGameData();
-
-        const [template, logic] = await Promise.all([
-          readSource('./src/template/app-template.html'),
-          readSource('./src/game/game-logic.js')
-        ]);
-
-        const root = document.createElement('x-dc');
-        root.setAttribute('aria-hidden', 'true');
-        root.innerHTML = template;
-
-        const logicScript = document.createElement('script');
-        logicScript.type = 'text/x-dc';
-        logicScript.dataset.dcScript = '';
-        const accent = getComputedStyle(document.documentElement).getPropertyValue('--c-accent').trim() || '#1B4FE0';
-        const ink = getComputedStyle(document.documentElement).getPropertyValue('--c-ink').trim() || '#111111';
-        logicScript.dataset.props = JSON.stringify({
-          accent: {
-            editor: 'color',
-            default: accent,
-            tsType: 'string',
-            options: [accent, ink]
-          },
-          nightIntensity: {
-            editor: 'range',
-            default: 1,
-            min: 0.4,
-            max: 1.6,
-            step: 0.1,
-            tsType: 'number'
-          },
-          showClock: { editor: 'boolean', default: true, tsType: 'boolean' }
-        });
-        logicScript.textContent = logic;
-        root.appendChild(logicScript);
-
-        // Keep #app-loading on top until React has painted a real screen.
-        // Replacing the body early lets the raw template (videos included) flash.
-        document.body.appendChild(root);
-
-        const runtime = document.createElement('script');
-        runtime.src = './src/runtime/dc-runtime.js';
-        runtime.onerror = () => setError('Could not load the React component runtime.');
-        runtime.onload = () => {
-          let settled = false;
-          const finish = () => {
-            if (settled) return;
-            settled = true;
-            obs.disconnect();
-            requestAnimationFrame(dismissLoading);
-          };
-          const obs = new MutationObserver(() => {
-            if (document.querySelector('.g-title, .g-name-entry, .g-daycard, .g-lp-frame .g-btn')) finish();
-          });
-          obs.observe(document.body, { childList: true, subtree: true });
-          if (document.querySelector('.g-title, .g-name-entry, .g-daycard, .g-lp-frame .g-btn')) finish();
-          setTimeout(finish, 8000);
-        };
-        document.head.appendChild(runtime);
-      } catch (error) {
-        setError('Could not load the game source: ' + error.message);
-      }
-    }());
-  </script>
+  <!-- Three/glitchGL: loaded on demand for desktop story only. Lenis skipped in lite mode. -->
+  <script src="/assets/landing/vendor/gsap.min.js" defer></script>
+  <script src="/assets/landing/vendor/ScrollTrigger.min.js" defer></script>
+  <script src="/assets/landing/vendor/SplitText.min.js" defer></script>
+  <script src="/assets/landing/vendor/lenis.min.js" defer></script>
+  <script src="/assets/landing/vendor/split-type.min.js" defer></script>
+  <script src="/assets/landing/landing.js" defer></script>
 </body>
 </html>
