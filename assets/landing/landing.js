@@ -12,32 +12,6 @@
           }
         })();
 
-  function loadScriptOnce(src) {
-    return new Promise(function (resolve, reject) {
-      var existing = document.querySelector('script[data-l-src="' + src + '"]');
-      if (existing) {
-        if (existing.getAttribute('data-l-ready') === '1') resolve();
-        else {
-          existing.addEventListener('load', function () {
-            resolve();
-          }, { once: true });
-          existing.addEventListener('error', reject, { once: true });
-        }
-        return;
-      }
-      var s = document.createElement('script');
-      s.src = src;
-      s.async = true;
-      s.setAttribute('data-l-src', src);
-      s.addEventListener('load', function () {
-        s.setAttribute('data-l-ready', '1');
-        resolve();
-      }, { once: true });
-      s.addEventListener('error', reject, { once: true });
-      document.head.appendChild(s);
-    });
-  }
-
   var video = document.getElementById('l-intro-video');
   var btn = document.getElementById('l-intro-mute');
   if (video && btn) {
@@ -122,21 +96,46 @@
     }, 100);
   })();
 
-  var personPath =
-    'M8 2a2.5 2.5 0 1 0 0 5a2.5 2.5 0 0 0 0-5M4 8.5A1.5 1.5 0 0 1 5.5 7h5A1.5 1.5 0 0 1 12 8.5c0 1.33-.472 2.436-1.266 3.195C9.949 12.447 9.023 12.87 8 12.87s-1.949-.424-2.734-1.175C4.472 10.936 4 9.831 4 8.5';
+  // Media-literacy fact rows: speech bubbles (lead) or custom pictos
+  var PICTO_BASE = '/assets/landing/pictos/';
+  var PICTO_SETS = {
+    phone: ['phone'],
+    depressed: ['depressed'],
+    school: ['school'],
+    teacher: ['teacher'],
+  };
+  var BUBBLE_PATH =
+    'M6 1.5C2.96 1.5.5 3.96.5 7v8c0 3.04 2.46 5.5 5.5 5.5h1.75v5.1l7.35-5.1H26c3.04 0 5.5-2.46 5.5-5.5V7c0-3.04-2.46-5.5-5.5-5.5H6z';
 
   Array.prototype.forEach.call(document.querySelectorAll('.l-people[data-total]'), function (el) {
     var filled = parseInt(el.getAttribute('data-filled') || '0', 10);
     var total = parseInt(el.getAttribute('data-total') || '0', 10);
+    var setName = el.getAttribute('data-picto') || 'phone';
     var html = '';
-    for (var i = 0; i < total; i += 1) {
-      html +=
-        '<svg' +
-        (i < filled ? ' class="is-on"' : '') +
-        ' width="36" height="36" viewBox="0 0 16 16" aria-hidden="true">' +
-        '<path fill="currentColor" d="' +
-        personPath +
-        '"></path></svg>';
+    var i;
+
+    if (setName === 'bubble') {
+      for (i = 0; i < total; i += 1) {
+        html +=
+          '<svg class="l-people-picto l-people-bubble' +
+          (i < filled ? ' is-on' : '') +
+          '" viewBox="0 0 32 28" width="40" height="35" aria-hidden="true">' +
+          '<path fill="currentColor" d="' +
+          BUBBLE_PATH +
+          '"></path></svg>';
+      }
+    } else {
+      var set = PICTO_SETS[setName] || PICTO_SETS.phone;
+      for (i = 0; i < total; i += 1) {
+        var name = set[i % set.length];
+        html +=
+          '<img class="l-people-picto' +
+          (i < filled ? ' is-on' : '') +
+          '" src="' +
+          PICTO_BASE +
+          name +
+          '.png" alt="" width="40" height="48" decoding="async" aria-hidden="true">';
+      }
     }
     el.innerHTML = html;
   });
@@ -395,15 +394,11 @@
         var band = Math.floor(y / pitch);
         var offset = offsets[band] || 0;
         for (var x = 0; x < w; x += 1) {
+          // Clamp sample X so the logo's left/right ink isn't eaten into transparency
           var sx = Math.round(x - offset);
+          if (sx < 0) sx = 0;
+          else if (sx >= w) sx = w - 1;
           var di = (y * w + x) << 2;
-          if (sx < 0 || sx >= w) {
-            dst[di] = 0;
-            dst[di + 1] = 0;
-            dst[di + 2] = 0;
-            dst[di + 3] = 0;
-            continue;
-          }
           var si = (y * w + sx) << 2;
           dst[di] = src[si];
           dst[di + 1] = src[si + 1];
@@ -570,20 +565,21 @@
   }
 
   // —— Section grow: 92% → 100% as it settles into place (Boldly-style) ——
-  // When scale locks, run fact pictogram / bar reveal once.
+  // When scale locks, run fact pictogram reveal once.
   function playFactReveal(section) {
     var facts = section.querySelectorAll('.l-fact');
     Array.prototype.forEach.call(facts, function (fact, factIndex) {
       if (fact.classList.contains('is-animated')) return;
       fact.classList.add('is-animated');
 
-      var icons = fact.querySelectorAll('.l-people svg');
-      var bar = fact.querySelector('.l-fact-bar > span');
+      var icons = fact.querySelectorAll('.l-people-picto');
       var delay = factIndex * 0.08;
 
       if (icons.length) {
         gsap.to(icons, {
-          opacity: 1,
+          opacity: function (_i, target) {
+            return target.classList.contains('is-on') ? 1 : 0.2;
+          },
           y: 0,
           scale: 1,
           duration: 0.45,
@@ -592,20 +588,6 @@
           ease: 'power3.out',
           clearProps: 'transform',
         });
-      }
-
-      if (bar) {
-        var target = bar.style.getPropertyValue('--l-bar') || '20%';
-        gsap.fromTo(
-          bar,
-          { width: '0%' },
-          {
-            width: target,
-            duration: 0.7,
-            delay: delay + 0.12,
-            ease: 'power2.out',
-          }
-        );
       }
     });
   }
@@ -776,6 +758,22 @@
       return Math.max(0, endX - visible);
     }
 
+    function isMobileNights() {
+      try {
+        return window.matchMedia('(max-width: 899px)').matches;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    // Vertical travel for the scrub. 1:1 with horizontal px feels endless on phones.
+    function scrubTravel(dist) {
+      if (!isMobileNights()) return dist;
+      var vh = window.innerHeight || 1;
+      // ~one viewport of scroll to cross all four days — snappier, still readable
+      return Math.round(Math.min(dist, Math.max(vh * 0.95, dist * 0.62)));
+    }
+
     function killScrub() {
       if (scrubTween) {
         if (scrubTween.scrollTrigger) scrubTween.scrollTrigger.kill();
@@ -803,31 +801,38 @@
         return;
       }
 
-      // Sticky rail + tall pin spacer (not full-viewport pin — less empty top/bottom)
       nightsSection.classList.add('is-nights-scrub');
-      gsap.set(nightsTrack, { x: 0 });
+      gsap.set(nightsTrack, { x: 0, force3D: true });
 
-      var stickyH = nightsRail.offsetHeight;
-      nightsPin.style.height = stickyH + dist + 'px';
+      var railH = nightsRail.offsetHeight;
+      var travel = scrubTravel(dist);
+      nightsPin.style.height = railH + travel + 'px';
 
-      scrubTween = gsap.to(nightsTrack, {
-        x: function () {
-          return -scrollDist();
-        },
-        ease: 'none',
-        scrollTrigger: {
-          trigger: nightsPin,
-          start: 'top top',
-          end: 'bottom bottom',
-          scrub: 0.4,
-          invalidateOnRefresh: true,
-          onRefresh: function () {
-            var d = scrollDist();
-            var h = nightsRail.offsetHeight;
-            nightsPin.style.height = h + d + 'px';
+      scrubTween = gsap.fromTo(
+        nightsTrack,
+        { x: 0 },
+        {
+          x: -dist,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: nightsPin,
+            // Keep start at viewport top; CSS sticky `top` only clears the header
+            start: 'top top',
+            end: function () {
+              return '+=' + scrubTravel(scrollDist());
+            },
+            scrub: isMobileNights() ? true : 0.3,
+            invalidateOnRefresh: true,
+            onRefresh: function () {
+              var d = scrollDist();
+              var h = nightsRail.offsetHeight;
+              var t = scrubTravel(d);
+              nightsPin.style.height = h + t + 'px';
+              if (scrubTween) scrubTween.vars.x = -d;
+            },
           },
-        },
-      });
+        }
+      );
     }
 
     setupScrub();
@@ -849,7 +854,7 @@
     }
   })();
 
-  // —— Story section (after film): line reveal + Nicole glitch ——
+  // —— Story section (after film): heading + line reveal (glitch off for now) ——
   (function initStorySection() {
     var storySection = document.getElementById('story');
     if (!storySection) return;
@@ -858,279 +863,11 @@
     var storyLineEls = Array.prototype.slice.call(
       storySection.querySelectorAll('[data-story-line]')
     );
-    var storyGlitchPane = document.getElementById('l-night-story-glitch');
-    var storyGlitchImg = document.getElementById('l-night-story-glitch-img');
-    var storyGlitchMq = window.matchMedia
-      ? window.matchMedia('(min-width: 1024px)')
-      : null;
-    var STORY_GLITCH_POOL = [
-      '/assets/landing/story/nicole-garden.webp',
-      '/assets/landing/story/nicole_sad_bg.webp',
-      '/assets/landing/story/nicole_party.webp',
-    ];
-    var storyGlitchInst = null;
-    var storyGlitchMountRun = 0;
-    var storyGlitchTimer = null;
-    var storyGlitchBusy = false;
-    var storyGlitchPoolIndex = 0;
-    var storyGlitchWanted = false;
-    var storyBodyPlayed = false;
-
-    function isStoryGlitchDesktop() {
-      if (isLite) return false;
-      try {
-        return !!(storyGlitchMq && storyGlitchMq.matches);
-      } catch (e) {
-        return false;
-      }
-    }
-
-    function ensureStoryGlitchLibs() {
-      if (typeof window.glitchGL === 'function' && typeof window.THREE !== 'undefined') {
-        return Promise.resolve();
-      }
-      return loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js').then(
-        function () {
-          return loadScriptOnce(
-            'https://cdn.jsdelivr.net/gh/naughtyduk/glitchGL@main/scripts/glitchGL.min.js'
-          );
-        }
-      );
-    }
-
-    function waitImgReady(img) {
-      if (!img) return Promise.reject(new Error('missing img'));
-      if (img.complete && img.naturalWidth > 0) return Promise.resolve(img);
-      return new Promise(function (resolve, reject) {
-        img.addEventListener('load', function () {
-          resolve(img);
-        }, { once: true });
-        img.addEventListener('error', function () {
-          reject(new Error('img load failed'));
-        }, { once: true });
-      });
-    }
-
-    function storyGlitchOptions(target) {
-      return {
-        target: target,
-        intensity: 3.0,
-        aspectCorrection: true,
-        interaction: {
-          enabled: true,
-          shape: 'square',
-          customSize: '40vw',
-          customUrl: '/assets/landing/brand/logo.svg',
-          velocity: false,
-          effects: {
-            pixelation: ['pixelSize'],
-            crt: [
-              'chromaticAberration',
-              'phosphorGlow',
-              'curvature',
-              'scanlines',
-            ],
-            glitch: [
-              'rgbShift',
-              'lineDisplacement',
-              'bitCrushing',
-              'signalDropout',
-              'syncErrors',
-              'interferenceLines',
-              'frameGhosting',
-              'stutterFreeze',
-              'datamoshing',
-            ],
-          },
-        },
-        effects: {
-          pixelation: {
-            enabled: true,
-            pixelSize: 7,
-            pixelShape: 'square',
-            bitDepth: 'none',
-            dithering: 'none',
-            pixelDirection: 'square',
-          },
-          crt: {
-            enabled: true,
-            preset: 'computer-monitor',
-            curvature: 6,
-            lineDirection: 'right',
-            lineMovement: true,
-            lineSpeed: 0.38,
-          },
-          glitch: {
-            enabled: true,
-            rgbShift: 0,
-            digitalNoise: 0.18,
-            lineDisplacement: 0,
-            bitCrushDepth: 0,
-            signalDropoutFreq: 0.03,
-            signalDropoutSize: 0.4,
-            syncErrorFreq: 0.1,
-            syncErrorAmount: 0.141,
-            interferenceSpeed: 5.2,
-            interferenceIntensity: 1,
-            frameGhostAmount: 0.68,
-            stutterFreq: 0.4,
-            datamoshStrength: 2,
-          },
-        },
-      };
-    }
-
-    function cleanupStoryGlitchCanvas() {
-      if (!storyGlitchPane) return;
-      Array.prototype.slice
-        .call(storyGlitchPane.querySelectorAll('canvas, [data-glitch-target]'))
-        .forEach(function (node) {
-          if (node === storyGlitchImg) return;
-          if (node.parentNode) node.parentNode.removeChild(node);
-        });
-    }
-
-    function stopStoryGlitchCycle() {
-      if (storyGlitchTimer) {
-        clearTimeout(storyGlitchTimer);
-        storyGlitchTimer = null;
-      }
-    }
-
-    function teardownStoryGlitch() {
-      storyGlitchMountRun += 1;
-      stopStoryGlitchCycle();
-      storyGlitchBusy = false;
-      var inst = storyGlitchInst;
-      storyGlitchInst = null;
-      storySection.classList.remove('is-glitch-on');
-      if (inst && typeof inst.cleanup === 'function') {
-        try {
-          inst.cleanup();
-        } catch (e) {
-          /* ignore */
-        }
-      }
-      cleanupStoryGlitchCanvas();
-    }
-
-    function mountStoryGlitchInstance() {
-      if (typeof window.glitchGL !== 'function' || typeof window.THREE === 'undefined') {
-        return null;
-      }
-      cleanupStoryGlitchCanvas();
-      return window.glitchGL(storyGlitchOptions('#l-night-story-glitch-img'));
-    }
-
-    function nextStoryGlitchSrc() {
-      storyGlitchPoolIndex = (storyGlitchPoolIndex + 1) % STORY_GLITCH_POOL.length;
-      return STORY_GLITCH_POOL[storyGlitchPoolIndex];
-    }
-
-    function advanceStoryGlitch() {
-      if (!storyGlitchInst || !storyGlitchImg || storyGlitchBusy) {
-        return Promise.resolve();
-      }
-      if (!storyGlitchWanted || !isStoryGlitchDesktop()) {
-        return Promise.resolve();
-      }
-      storyGlitchBusy = true;
-      var run = storyGlitchMountRun;
-      var src = nextStoryGlitchSrc();
-      var probe = new Image();
-      probe.src = src;
-      return waitImgReady(probe)
-        .then(function () {
-          if (run !== storyGlitchMountRun || !storyGlitchInst) return;
-          if (storyGlitchInst && typeof storyGlitchInst.cleanup === 'function') {
-            try {
-              storyGlitchInst.cleanup();
-            } catch (e) {
-              /* ignore */
-            }
-          }
-          storyGlitchInst = null;
-          cleanupStoryGlitchCanvas();
-          storyGlitchImg.src = src;
-          return waitImgReady(storyGlitchImg);
-        })
-        .then(function () {
-          if (run !== storyGlitchMountRun || !storyGlitchWanted) return;
-          try {
-            storyGlitchInst = mountStoryGlitchInstance();
-          } catch (e) {
-            storyGlitchInst = null;
-          }
-        })
-        .catch(function () {
-          /* ignore swap errors */
-        })
-        .finally(function () {
-          storyGlitchBusy = false;
-        });
-    }
-
-    function scheduleStoryGlitchCycle() {
-      stopStoryGlitchCycle();
-      if (!storyGlitchInst || !storyGlitchWanted) return;
-      var run = storyGlitchMountRun;
-      var delay = 5200 + Math.floor(Math.random() * 2800);
-      storyGlitchTimer = setTimeout(function () {
-        if (run !== storyGlitchMountRun) return;
-        advanceStoryGlitch().finally(function () {
-          if (run !== storyGlitchMountRun) return;
-          if (!storyGlitchInst || !storyGlitchWanted) return;
-          scheduleStoryGlitchCycle();
-        });
-      }, delay);
-    }
-
-    function mountStoryGlitch() {
-      if (storyGlitchInst || !storyGlitchWanted || !isStoryGlitchDesktop()) return;
-      if (!storyGlitchPane || !storyGlitchImg) return;
-
-      storyGlitchMountRun += 1;
-      var run = storyGlitchMountRun;
-      storySection.classList.add('is-glitch-on');
-
-      ensureStoryGlitchLibs()
-        .then(function () {
-          return waitImgReady(storyGlitchImg);
-        })
-        .then(function () {
-          if (run !== storyGlitchMountRun || storyGlitchInst) return;
-          if (!storyGlitchWanted || !isStoryGlitchDesktop()) return;
-          try {
-            storyGlitchInst = mountStoryGlitchInstance();
-            scheduleStoryGlitchCycle();
-          } catch (e) {
-            storyGlitchInst = null;
-          }
-        })
-        .catch(function () {
-          /* ignore */
-        });
-    }
-
-    function syncStoryGlitch(on) {
-      storyGlitchWanted = !!on;
-      if (!on || !isStoryGlitchDesktop()) {
-        teardownStoryGlitch();
-        return;
-      }
-      if (storyGlitchInst) {
-        storySection.classList.add('is-glitch-on');
-        return;
-      }
-      requestAnimationFrame(function () {
-        mountStoryGlitch();
-      });
-    }
-
     var storyHeading = storySection.querySelector('.l-night-story-heading');
     var reduceMq = window.matchMedia('(prefers-reduced-motion: reduce)');
     var HEADING_REST = 0.55;
     var storyPlayed = false;
+    var storyBodyPlayed = false;
 
     function playStoryBody() {
       if (!storyLineEls.length || storyBodyPlayed) return;
@@ -1152,15 +889,11 @@
         if (storyHeading) gsap.set(storyHeading, { scale: 1, opacity: 1 });
         if (storyLineEls.length) gsap.set(storyLineEls, { opacity: 1, y: 0 });
         storyBodyPlayed = true;
-        syncStoryGlitch(true);
         return;
       }
 
       var tl = gsap.timeline({
         defaults: { ease: 'power3.out' },
-        onStart: function () {
-          syncStoryGlitch(true);
-        },
       });
 
       if (storyHeading) {
@@ -1191,22 +924,6 @@
       start: 'top 72%',
       once: true,
       onEnter: playStoryMotion,
-    });
-
-    if (storyGlitchMq) {
-      var onStoryGlitchMq = function () {
-        if (!isStoryGlitchDesktop()) syncStoryGlitch(false);
-        else if (storyGlitchWanted) syncStoryGlitch(true);
-      };
-      if (storyGlitchMq.addEventListener) {
-        storyGlitchMq.addEventListener('change', onStoryGlitchMq);
-      } else if (storyGlitchMq.addListener) {
-        storyGlitchMq.addListener(onStoryGlitchMq);
-      }
-    }
-
-    window.addEventListener('pagehide', function () {
-      syncStoryGlitch(false);
     });
   })();
 })();
