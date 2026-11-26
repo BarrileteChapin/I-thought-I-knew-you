@@ -3229,7 +3229,7 @@ html.l-lite .l-night-story-heading {
   }
 
   .l-nights.is-nights-scrub .l-nights-rail {
-    top: max(3.15rem, calc(env(safe-area-inset-top, 0px) + 2.55rem));
+    position: static;
   }
 
   .l-nights-rail {
@@ -3238,15 +3238,19 @@ html.l-lite .l-night-story-heading {
   }
 
   .l-nights-track {
-    gap: 0.85rem;
-    padding-right: 0;
-    align-items: stretch;
+    flex-direction: column;
+    gap: 1rem;
+    width: min(100%, 30rem);
+    min-width: 0;
+    margin-inline: auto;
+    transform: none !important;
+    will-change: auto;
   }
 
   .l-night-card {
-    flex: 0 0 min(82vw, 320px);
-    /* Tall phones: fill most of the sticky viewport so the day cards don’t float in empty space */
-    height: clamp(22.5rem, calc(100svh - 6.75rem), 44rem);
+    flex: 0 0 auto;
+    height: auto;
+    min-height: 22.5rem;
     padding: 1.05rem 1rem 1.2rem;
     border-radius: 1.35rem;
     border-width: 2.5px;
