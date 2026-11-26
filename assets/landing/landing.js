@@ -798,6 +798,7 @@
     if (!nightCards.length) return;
 
     var reduceMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var stackedMq = window.matchMedia('(max-width: 899px)');
     var scrubTween = null;
 
     function scrollDist() {
@@ -810,22 +811,6 @@
       // Stop when Thursday's right edge meets the rail's content right — no dead margin after
       var endX = last.offsetLeft + last.offsetWidth;
       return Math.max(0, endX - visible);
-    }
-
-    function isMobileNights() {
-      try {
-        return window.matchMedia('(max-width: 899px)').matches;
-      } catch (e) {
-        return false;
-      }
-    }
-
-    // Vertical travel for the scrub. 1:1 with horizontal px feels endless on phones.
-    function scrubTravel(dist) {
-      if (!isMobileNights()) return dist;
-      var vh = window.innerHeight || 1;
-      // ~one viewport of scroll to cross all four days — snappier, still readable
-      return Math.round(Math.min(dist, Math.max(vh * 0.95, dist * 0.62)));
     }
 
     function killScrub() {
@@ -842,6 +827,7 @@
 
     function setupScrub() {
       killScrub();
+      if (stackedMq.matches) return;
 
       if (reduceMq.matches) {
         nightsSection.classList.add('is-nights-native');
@@ -859,8 +845,7 @@
       gsap.set(nightsTrack, { x: 0, force3D: true });
 
       var railH = nightsRail.offsetHeight;
-      var travel = scrubTravel(dist);
-      nightsPin.style.height = railH + travel + 'px';
+      nightsPin.style.height = railH + dist + 'px';
 
       scrubTween = gsap.fromTo(
         nightsTrack,
@@ -878,7 +863,7 @@
               return 'top ' + inset + 'px';
             },
             end: function () {
-              var travel = scrubTravel(scrollDist());
+              var travel = scrollDist();
               nightsPin.style.height = nightsRail.offsetHeight + travel + 'px';
               return '+=' + travel;
             },
