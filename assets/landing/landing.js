@@ -1,4 +1,52 @@
 (function () {
+  // Pause decorative loops while their cards are outside the visible rail.
+  if ('IntersectionObserver' in window) {
+    var nightLoopObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        entry.target.classList.toggle('is-night-visible', entry.isIntersecting);
+      });
+    });
+    document.querySelectorAll('.l-night-card').forEach(function (card) {
+      card.classList.add('has-night-loops');
+      nightLoopObserver.observe(card);
+    });
+  }
+
+  // —— Film: custom poster until play ——
+  (function initFilmPosterPlay() {
+    var slot = document.querySelector('.l-film-slot[data-yt-id]');
+    var player = document.getElementById('l-film-player');
+    var poster = document.getElementById('l-film-poster');
+    if (!slot || !player || !poster) return;
+
+    var ytId = slot.getAttribute('data-yt-id');
+    if (!ytId) return;
+    var started = false;
+
+    function startFilm(event) {
+      if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      if (started) return;
+      started = true;
+      var iframe = document.createElement('iframe');
+      iframe.className = 'l-film-embed';
+      iframe.title = 'Introduction about the game';
+      iframe.allow =
+        'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.setAttribute('allowfullscreen', '');
+      iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+      iframe.src =
+        'https://www.youtube-nocookie.com/embed/' +
+        encodeURIComponent(ytId) +
+        '?autoplay=1&rel=0';
+      player.innerHTML = '';
+      player.appendChild(iframe);
+      iframe.focus({ preventScroll: true });
+    }
+
+    poster.addEventListener('click', startFilm);
+  })();
+
   // Lite: phones / reduced-motion / very weak devices — skip canvas, WebGL, smooth scroll.
   var isLite =
     typeof window.__lLite === 'boolean'
@@ -139,6 +187,53 @@
     }
     el.innerHTML = html;
   });
+
+  // Reveal each statistic once, including on devices using native scrolling.
+  (function initFactReveal() {
+    if (!('IntersectionObserver' in window) || !Element.prototype.animate) return;
+    var motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (motion.matches) return;
+
+    var observer = new IntersectionObserver(function (entries) {
+      var cardDelay = 0;
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var fact = entry.target;
+        observer.unobserve(fact);
+        fact.classList.remove('is-awaiting-reveal');
+        if (motion.matches) return;
+
+        var numerator = fact.querySelector('.l-fact-num-mask .l-fact-num');
+        var filledIcons = fact.querySelectorAll('.l-people-picto.is-on');
+        var duration = 950;
+        var iconDelay = 120;
+
+        numerator.animate(
+          [{ transform: 'translateY(110%)' }, { transform: 'translateY(0)' }],
+          {
+            delay: cardDelay,
+            duration: duration,
+            easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+            fill: 'backwards',
+          }
+        );
+        filledIcons.forEach(function (icon, index) {
+          icon.animate([{ opacity: 0.2 }, { opacity: 1 }], {
+            delay: cardDelay + iconDelay + index * 100,
+            duration: 400,
+            easing: 'ease-out',
+            fill: 'backwards',
+          });
+        });
+        cardDelay += 80;
+      });
+    });
+
+    document.querySelectorAll('.l-section--literacy .l-fact').forEach(function (fact) {
+      fact.classList.add('is-awaiting-reveal');
+      observer.observe(fact);
+    });
+  })();
 
   // Hero: continuous incoming classmate messages (game chat row look)
   (function initHeroChatFeed() {
@@ -477,6 +572,17 @@
   if (contactForm && contactHeld) {
     contactForm.addEventListener('submit', function (event) {
       event.preventDefault();
+      var fields = new FormData(contactForm);
+      var body = [
+        fields.get('message'),
+        '',
+        'Name: ' + fields.get('name'),
+        'Email: ' + fields.get('email'),
+      ].join('\r\n');
+      var recipient = contactForm.getAttribute('action');
+      window.location.href =
+        recipient + '?subject=' + encodeURIComponent('I Thought I Knew You enquiry') +
+        '&body=' + encodeURIComponent(body);
       contactHeld.hidden = false;
     });
   }
@@ -565,33 +671,6 @@
   }
 
   // —— Section grow: 92% → 100% as it settles into place (Boldly-style) ——
-  // When scale locks, run fact pictogram reveal once.
-  function playFactReveal(section) {
-    var facts = section.querySelectorAll('.l-fact');
-    Array.prototype.forEach.call(facts, function (fact, factIndex) {
-      if (fact.classList.contains('is-animated')) return;
-      fact.classList.add('is-animated');
-
-      var icons = fact.querySelectorAll('.l-people-picto');
-      var delay = factIndex * 0.08;
-
-      if (icons.length) {
-        gsap.to(icons, {
-          opacity: function (_i, target) {
-            return target.classList.contains('is-on') ? 1 : 0.2;
-          },
-          y: 0,
-          scale: 1,
-          duration: 0.45,
-          stagger: 0.06,
-          delay: delay,
-          ease: 'power3.out',
-          clearProps: 'transform',
-        });
-      }
-    });
-  }
-
   if (typeof ScrollTrigger !== 'undefined') {
     Array.prototype.forEach.call(document.querySelectorAll('.l-section--grow'), function (el) {
       var fromScale = parseFloat(el.getAttribute('data-grow') || '0.92');
@@ -609,63 +688,11 @@
             end: 'top 18%',
             scrub: 0.55,
             invalidateOnRefresh: true,
-            onLeave: function () {
-              playPanelSettle(el);
-            },
-            onEnterBack: function () {
-              /* keep settle reveals; no reverse */
-            },
           },
         }
       );
-
-      // If already past settle point on load, reveal immediately
-      ScrollTrigger.create({
-        trigger: el,
-        start: 'top 18%',
-        once: true,
-        onEnter: function () {
-          playPanelSettle(el);
-        },
-      });
     });
   }
-
-  function playPanelSettle(el) {
-    playFactReveal(el);
-  }
-
-  // —— Film: custom poster until play ——
-  (function initFilmPosterPlay() {
-    var slot = document.querySelector('.l-film-slot[data-yt-id]');
-    var player = document.getElementById('l-film-player');
-    var poster = document.getElementById('l-film-poster');
-    if (!slot || !player || !poster) return;
-
-    var ytId = slot.getAttribute('data-yt-id');
-    if (!ytId) return;
-    var started = false;
-
-    function startFilm() {
-      if (started) return;
-      started = true;
-      var iframe = document.createElement('iframe');
-      iframe.className = 'l-film-embed';
-      iframe.title = 'Introduction about the game';
-      iframe.allow =
-        'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-      iframe.setAttribute('allowfullscreen', '');
-      iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
-      iframe.src =
-        'https://www.youtube-nocookie.com/embed/' +
-        encodeURIComponent(ytId) +
-        '?autoplay=1&rel=0';
-      player.innerHTML = '';
-      player.appendChild(iframe);
-    }
-
-    poster.addEventListener('click', startFilm);
-  })();
 
   // —— SIFT: draw horizontal rail on scroll + slow circle reveal ——
   (function initSiftReveal() {
@@ -727,6 +754,33 @@
         });
       }
     }
+  })();
+
+  // Reveal the four cards when the desktop row first enters view.
+  (function initDesktopNightsReveal() {
+    var track = document.getElementById('l-nights-track');
+    if (!track || !('IntersectionObserver' in window) || !Element.prototype.animate) return;
+    var canReveal = window.matchMedia('(min-width: 1024px) and (prefers-reduced-motion: no-preference)');
+
+    var observer = new IntersectionObserver(function (entries) {
+      if (!entries.some(function (entry) { return entry.isIntersecting; })) return;
+      observer.disconnect();
+      if (!canReveal.matches) return;
+
+      track.querySelectorAll('.l-night-card').forEach(function (card, index) {
+        card.animate(
+          [{ transform: 'translateX(2rem)', opacity: 0 }, { transform: 'translateX(0)', opacity: 1 }],
+          {
+            delay: index * 80,
+            duration: 550,
+            easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+            fill: 'backwards',
+          }
+        );
+      });
+    }, { threshold: 0.15 });
+
+    observer.observe(track);
   })();
 
   // —— Nights: vertical scroll drives horizontal rail until Thursday ——
@@ -812,24 +866,24 @@
         nightsTrack,
         { x: 0 },
         {
-          x: -dist,
+          x: function () {
+            return -scrollDist();
+          },
           ease: 'none',
           scrollTrigger: {
             trigger: nightsPin,
-            // Keep start at viewport top; CSS sticky `top` only clears the header
-            start: 'top top',
+            // Use the rail's sticky inset so the tween spans exactly the pinned interval.
+            start: function () {
+              var inset = parseFloat(window.getComputedStyle(nightsRail).top) || 0;
+              return 'top ' + inset + 'px';
+            },
             end: function () {
-              return '+=' + scrubTravel(scrollDist());
+              var travel = scrubTravel(scrollDist());
+              nightsPin.style.height = nightsRail.offsetHeight + travel + 'px';
+              return '+=' + travel;
             },
-            scrub: isMobileNights() ? true : 0.3,
+            scrub: true,
             invalidateOnRefresh: true,
-            onRefresh: function () {
-              var d = scrollDist();
-              var h = nightsRail.offsetHeight;
-              var t = scrubTravel(d);
-              nightsPin.style.height = h + t + 'px';
-              if (scrubTween) scrubTween.vars.x = -d;
-            },
           },
         }
       );
